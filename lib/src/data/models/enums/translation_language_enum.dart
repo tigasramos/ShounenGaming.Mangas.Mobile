@@ -1,0 +1,1 @@
+enum TranslationLanguageEnum { PT, EN }

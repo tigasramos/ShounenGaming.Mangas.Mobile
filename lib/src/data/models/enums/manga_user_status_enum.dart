@@ -1,0 +1,1 @@
+enum MangaUserStatusEnum { READING, PLANNING, DROPPED, IGNORED }

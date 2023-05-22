@@ -1,0 +1,9 @@
+enum MangaSourceEnum {
+  GEKKOU_SCANS,
+  NEO_X_SCANS,
+  MANGANATO,
+  SILENCE_SCANS,
+  HUNTERS_SCANS,
+  BR_MANGAS,
+  MANGAS_CHAN,
+}
