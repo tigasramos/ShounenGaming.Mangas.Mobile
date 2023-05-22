@@ -1,4 +1,4 @@
-package com.example.shounengaming_mangas_mobile
+package com.tramos.shounengaming_mangas_mobile
 
 import io.flutter.embedding.android.FlutterActivity
 

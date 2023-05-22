@@ -8,7 +8,7 @@
 PRODUCT_NAME = shounengaming_mangas_mobile
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.shounengamingMangasMobile
+PRODUCT_BUNDLE_IDENTIFIER = com.tramos.shounengamingMangasMobile
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2023 com.example. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2023 com.tramos. All rights reserved.
