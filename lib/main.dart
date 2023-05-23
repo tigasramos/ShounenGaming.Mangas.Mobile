@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shounengaming_mangas_mobile/src/features/home/home_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/features/search/search_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/others/menu_items.dart';
 import 'package:shounengaming_mangas_mobile/src/others/theme.dart';
 
@@ -60,10 +61,13 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
       body: PersistentTabView(
         context,
         controller: controller,
+        onItemSelected: (i) {
+          setState(() {});
+        },
         screens: const [
           HomeScreen(),
           Scaffold(body: Text('Library')),
-          Scaffold(body: Text('Search')),
+          SearchScreen(),
           Scaffold(body: Text('History')),
           Scaffold(body: Text('Settings')),
         ],

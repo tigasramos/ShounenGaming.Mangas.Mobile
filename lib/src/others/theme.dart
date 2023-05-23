@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 var theme = ThemeData(
-  primarySwatch: Colors.purple,
-  useMaterial3: true,
-  brightness: Brightness.dark,
-  primaryColor: Colors.purple,
-);
+    useMaterial3: true, brightness: Brightness.dark, primaryColor: Colors.purple
+    //primaryColor: const Color.fromARGB(255, 85, 8, 163),
+    );

@@ -12,4 +12,4 @@ Anyone who is in our Shounen Gaming's Discord Server is able to login and use ou
 
 ## Motivation
 
-My mine motivation developing this was not only to have a tool for me and my weeb friends but to learn Riverpod and develop my Flutter skills at the same time.
+My main motivation developing this was not only to have a tool for me and my "Weeb" friends but to learn Riverpod and develop my Flutter skills at the same time.

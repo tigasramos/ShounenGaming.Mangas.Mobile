@@ -1,1 +1,1 @@
-enum MangaUserStatusEnum { READING, PLANNING, DROPPED, IGNORED }
+enum MangaUserStatusEnum { READING, COMPLETED, PLANNING, DROPPED, IGNORED }
