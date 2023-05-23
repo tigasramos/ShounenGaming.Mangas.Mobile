@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shounengaming_mangas_mobile/src/features/home/home_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/others/menu_items.dart';
+import 'package:shounengaming_mangas_mobile/src/others/theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,14 +23,27 @@ final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
   throw UnimplementedError();
 });
 
-class SGMangasApp extends StatefulWidget {
+class SGMangasApp extends StatelessWidget {
   const SGMangasApp({super.key});
 
   @override
-  State<SGMangasApp> createState() => _SGMangasAppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        title: 'SG Mangas',
+        debugShowCheckedModeBanner: false,
+        theme: theme,
+        home: const MainLayoutScreen());
+  }
 }
 
-class _SGMangasAppState extends State<SGMangasApp> {
+class MainLayoutScreen extends StatefulWidget {
+  const MainLayoutScreen({super.key});
+
+  @override
+  State<MainLayoutScreen> createState() => _MainLayoutScreenState();
+}
+
+class _MainLayoutScreenState extends State<MainLayoutScreen> {
   PersistentTabController? controller;
   @override
   void initState() {
@@ -37,82 +53,51 @@ class _SGMangasAppState extends State<SGMangasApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'SG Mangas',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-            primarySwatch: Colors.blue,
-            useMaterial3: true,
-            brightness: Brightness.dark),
-        home: Scaffold(
-          body: PersistentTabView(
-            context,
-            controller: controller,
-            screens: const [
-              SafeArea(
-                  child: Scaffold(
-                body: Text('Home'),
-              )),
-              SafeArea(child: Scaffold(body: Text('Library'))),
-              SafeArea(child: Scaffold(body: Text('Search'))),
-              SafeArea(child: Scaffold(body: Text('History'))),
-              SafeArea(child: Scaffold(body: Text('Settings'))),
-            ],
-            items: [
-              PersistentBottomNavBarItem(
-                icon: const Icon(Icons.home),
-                title: ("Home"),
-                activeColorPrimary: Colors.blue,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('SG Mangas'),
+      ),
+      body: PersistentTabView(
+        context,
+        controller: controller,
+        screens: const [
+          HomeScreen(),
+          Scaffold(body: Text('Library')),
+          Scaffold(body: Text('Search')),
+          Scaffold(body: Text('History')),
+          Scaffold(body: Text('Settings')),
+        ],
+        items: menuItems
+            .map(
+              (e) => PersistentBottomNavBarItem(
+                icon: Icon(e.icon),
+                title: (e.name),
+                activeColorPrimary: Theme.of(context).primaryColor,
                 inactiveColorPrimary: Colors.grey,
               ),
-              PersistentBottomNavBarItem(
-                icon: const Icon(Icons.menu_book),
-                title: ("Library"),
-                activeColorPrimary: Colors.blue,
-                inactiveColorPrimary: Colors.grey,
-              ),
-              PersistentBottomNavBarItem(
-                icon: const Icon(Icons.search),
-                title: ("Search"),
-                activeColorPrimary: Colors.blue,
-                inactiveColorPrimary: Colors.grey,
-              ),
-              PersistentBottomNavBarItem(
-                icon: const Icon(Icons.history),
-                title: ("History"),
-                activeColorPrimary: Colors.blue,
-                inactiveColorPrimary: Colors.grey,
-              ),
-              PersistentBottomNavBarItem(
-                icon: const Icon(Icons.settings),
-                title: ("Settings"),
-                activeColorPrimary: Colors.blue,
-                inactiveColorPrimary: Colors.grey,
-              ),
-            ],
-            confineInSafeArea: true,
-            backgroundColor: Theme.of(context).cardColor,
-            handleAndroidBackButtonPress: true,
-            resizeToAvoidBottomInset: true,
-            stateManagement: true,
-            hideNavigationBarWhenKeyboardShows: true,
-            decoration: const NavBarDecoration(
-              colorBehindNavBar: Colors.white,
-            ),
-            popAllScreensOnTapOfSelectedTab: true,
-            popActionScreens: PopActionScreensType.all,
-            itemAnimationProperties: const ItemAnimationProperties(
-              duration: Duration(milliseconds: 200),
-              curve: Curves.ease,
-            ),
-            screenTransitionAnimation: const ScreenTransitionAnimation(
-              animateTabTransition: true,
-              curve: Curves.ease,
-              duration: Duration(milliseconds: 200),
-            ),
-            navBarStyle: NavBarStyle.style9,
-          ),
-        ));
+            )
+            .toList(),
+        confineInSafeArea: true,
+        backgroundColor: Theme.of(context).cardColor,
+        handleAndroidBackButtonPress: true,
+        resizeToAvoidBottomInset: true,
+        stateManagement: true,
+        hideNavigationBarWhenKeyboardShows: true,
+        decoration: const NavBarDecoration(),
+        popAllScreensOnTapOfSelectedTab: true,
+        popActionScreens: PopActionScreensType.all,
+        itemAnimationProperties: const ItemAnimationProperties(
+          duration: Duration(milliseconds: 200),
+          curve: Curves.ease,
+        ),
+        screenTransitionAnimation: const ScreenTransitionAnimation(
+          animateTabTransition: true,
+          curve: Curves.ease,
+          duration: Duration(milliseconds: 200),
+        ),
+        navBarStyle: NavBarStyle.style9,
+      ),
+    );
   }
 }
 

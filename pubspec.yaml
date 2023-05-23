@@ -15,6 +15,9 @@ dependencies:
   google_fonts: ^4.0.4
   dio: ^5.1.2
   persistent_bottom_nav_bar: ^5.0.2
+  flutter_carousel_slider: ^1.1.0
+  cached_network_image: ^3.2.3
+  auto_size_text: ^3.0.0
 
 dev_dependencies:
   flutter_test:
