@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:badges/badges.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart' hide Badge;
@@ -13,20 +14,40 @@ class SearchScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
-                const Text('Name'),
-                const SizedBox(
+                Text(
+                  'Name',
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                ),
+                SizedBox(
                   width: 10,
                 ),
-                Expanded(child: TextFormField())
+                Expanded(
+                    child: TextField(
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
+                  decoration: InputDecoration(
+                      isCollapsed: true,
+                      contentPadding: EdgeInsets.all(8),
+                      isDense: true,
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.zero))),
+                ))
               ],
+            ),
+            const SizedBox(
+              height: 5,
             ),
             MaterialButton(
                 onPressed: () {},
                 minWidth: double.infinity,
                 color: Theme.of(context).primaryColor,
                 child: const Text('Search')),
+            const SizedBox(
+              height: 10,
+            ),
             RichText(
                 text: const TextSpan(
                     text: 'Found ',
@@ -35,6 +56,9 @@ class SearchScreen extends StatelessWidget {
                   TextSpan(text: '22', style: TextStyle(color: Colors.white)),
                   TextSpan(text: ' Results')
                 ])),
+            const SizedBox(
+              height: 5,
+            ),
             for (int i = 0; i < 10; i++) const MangaSearchedTile()
           ],
         ),
@@ -76,18 +100,25 @@ class MangaSearchedTile extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Blue Lock',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
+                AutoSizeText('Blue Lock',
+                    style: TextStyle(shadows: <Shadow>[
+                      Shadow(
+                        offset: const Offset(2, 2),
+                        blurRadius: 4.0,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ], fontWeight: FontWeight.w500, fontSize: 20, height: 1.2)),
                 const Text(
                   'Action, Sports',
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+                const SizedBox(
+                  height: 8,
                 ),
                 RichText(
                     text: const TextSpan(
                         text: 'Status: ',
-                        style: TextStyle(color: Colors.grey),
+                        style: TextStyle(color: Colors.grey, fontSize: 10),
                         children: [
                       TextSpan(
                           text: 'Releasing',
@@ -96,7 +127,7 @@ class MangaSearchedTile extends StatelessWidget {
                 RichText(
                     text: const TextSpan(
                         text: 'Last Update: ',
-                        style: TextStyle(color: Colors.grey),
+                        style: TextStyle(color: Colors.grey, fontSize: 10),
                         children: [
                       TextSpan(
                           text: ' 22 Feb 2022',
