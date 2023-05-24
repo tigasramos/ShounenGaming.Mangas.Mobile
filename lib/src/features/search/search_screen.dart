@@ -103,7 +103,7 @@ class MangaSearchedTile extends StatelessWidget {
                 AutoSizeText('Blue Lock',
                     style: TextStyle(shadows: <Shadow>[
                       Shadow(
-                        offset: const Offset(2, 2),
+                        offset: const Offset(1, 2),
                         blurRadius: 4.0,
                         color: Theme.of(context).primaryColor,
                       ),
@@ -123,6 +123,14 @@ class MangaSearchedTile extends StatelessWidget {
                       TextSpan(
                           text: 'Releasing',
                           style: TextStyle(color: Colors.white)),
+                    ])),
+                RichText(
+                    text: const TextSpan(
+                        text: 'Tyoe: ',
+                        style: TextStyle(color: Colors.grey, fontSize: 10),
+                        children: [
+                      TextSpan(
+                          text: 'Manga', style: TextStyle(color: Colors.white)),
                     ])),
                 RichText(
                     text: const TextSpan(

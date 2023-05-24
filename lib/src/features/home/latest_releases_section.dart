@@ -72,7 +72,7 @@ class ChapterReleaseCard extends StatelessWidget {
                 fit: BoxFit.fitHeight,
                 filterQuality: FilterQuality.high,
                 imageUrl:
-                    'https://cdn.myanimelist.net/images/manga/5/213340.jpg',
+                    'https://cdn.myanimelist.net/images/manga/2/253146.jpg',
               )),
           const SizedBox(
             width: 10,
@@ -81,20 +81,20 @@ class ChapterReleaseCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Blue Lock',
+                'One Piece',
                 style: Theme.of(context).textTheme.titleSmall,
               ),
               InkWell(
                 onTap: () {},
                 child: const Text(
-                  '#290',
+                  '#1060',
                   style: TextStyle(color: Colors.grey),
                 ),
               ),
               InkWell(
                 onTap: () {},
                 child: const Text(
-                  '#289',
+                  '#1059',
                   style: TextStyle(color: Colors.grey),
                 ),
               )

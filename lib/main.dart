@@ -1,15 +1,21 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shounengaming_mangas_mobile/src/features/home/home_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/features/library/library_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/search/search_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/others/menu_items.dart';
 import 'package:shounengaming_mangas_mobile/src/others/theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
 
   final sharedPreferences = await SharedPreferences.getInstance();
   runApp(ProviderScope(
@@ -66,7 +72,7 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
         },
         screens: const [
           HomeScreen(),
-          Scaffold(body: Text('Library')),
+          LibraryScreen(),
           SearchScreen(),
           Scaffold(body: Text('History')),
           Scaffold(body: Text('Settings')),
@@ -85,7 +91,7 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
         backgroundColor: Theme.of(context).cardColor,
         handleAndroidBackButtonPress: true,
         resizeToAvoidBottomInset: true,
-        stateManagement: true,
+        stateManagement: false,
         hideNavigationBarWhenKeyboardShows: true,
         decoration: const NavBarDecoration(),
         popAllScreensOnTapOfSelectedTab: true,
