@@ -31,6 +31,7 @@ class LibraryIgnoredScreen extends StatelessWidget {
             crossAxisCount: 3,
             crossAxisSpacing: 10,
             shrinkWrap: true,
+            childAspectRatio: 0.70,
             mainAxisSpacing: 10,
             children: const [
               LibraryIgnoredMangaTile(),
@@ -54,8 +55,6 @@ class LibraryIgnoredMangaTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 50,
-      //color: Colors.green,
       child: Column(
         children: [
           Expanded(

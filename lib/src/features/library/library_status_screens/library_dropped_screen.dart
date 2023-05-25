@@ -141,7 +141,7 @@ class LibraryDroppedMangaTile extends StatelessWidget {
               ),
             ),
             const SizedBox(
-              width: 25,
+              width: 15,
             )
           ],
         ),
