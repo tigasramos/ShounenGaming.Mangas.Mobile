@@ -37,7 +37,7 @@ class PaginatedMangaResponse {
   factory PaginatedMangaResponse.fromMap(Map<String, dynamic> map) {
     return PaginatedMangaResponse(
       data: List<Manga>.from(
-        (map['data'] as List<int>).map<Manga>(
+        (map['data']).map<Manga>(
           (x) => Manga.fromMap(x as Map<String, dynamic>),
         ),
       ),

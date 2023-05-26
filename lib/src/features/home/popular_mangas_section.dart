@@ -1,14 +1,19 @@
-import 'dart:math';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_repository.dart';
 
-class PopularMangasSection extends StatelessWidget {
+final popularMangasProvider = FutureProvider.autoDispose((ref) async {
+  var mangasRepo = ref.watch(mangaRepositoryProvider);
+  return await mangasRepo.getPopularMangas();
+});
+
+class PopularMangasSection extends ConsumerWidget {
   const PopularMangasSection({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15),
       child: Column(
@@ -33,16 +38,21 @@ class PopularMangasSection extends StatelessWidget {
             ],
           ),
           SizedBox(
-            height: 135,
-            child: ListView.separated(
-              separatorBuilder: (context, index) => const SizedBox(
-                width: 15,
-              ),
-              scrollDirection: Axis.horizontal,
-              itemCount: 8,
-              itemBuilder: (context, index) => const PopularMangaCard(),
-            ),
-          )
+              height: 135,
+              child: ref.watch(popularMangasProvider).when(
+                  data: (data) => ListView.separated(
+                        separatorBuilder: (context, index) => const SizedBox(
+                          width: 15,
+                        ),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: data.length,
+                        itemBuilder: (context, index) => PopularMangaCard(
+                            data[index].id,
+                            data[index].name,
+                            data[index].imageUrl),
+                      ),
+                  error: (error, stacktrace) => Container(),
+                  loading: () => const CircularProgressIndicator()))
         ],
       ),
     );
@@ -50,7 +60,10 @@ class PopularMangasSection extends StatelessWidget {
 }
 
 class PopularMangaCard extends StatelessWidget {
-  const PopularMangaCard({super.key});
+  final int id;
+  final String imageUrl;
+  final String name;
+  const PopularMangaCard(this.id, this.name, this.imageUrl, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -71,14 +84,13 @@ class PopularMangaCard extends StatelessWidget {
                     child: CachedNetworkImage(
                       fit: BoxFit.fitWidth,
                       filterQuality: FilterQuality.high,
-                      imageUrl:
-                          'https://cdn.myanimelist.net/images/manga/5/213340.jpg',
+                      imageUrl: imageUrl,
                     )),
               ),
               SizedBox(
                 height: 16,
                 child: AutoSizeText(
-                  generateRandomString(Random().nextInt(30) + 1),
+                  name,
                   maxLines: 1,
                   minFontSize: 8,
                   overflow: TextOverflow.ellipsis,
@@ -90,16 +102,4 @@ class PopularMangaCard extends StatelessWidget {
       ),
     );
   }
-}
-
-String generateRandomString(int lengthOfString) {
-  final random = Random();
-  const allChars =
-      'AaBbCcDdlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1EeFfGgHhIiJjKkL234567890';
-  // below statement will generate a random string of length using the characters
-  // and length provided to it
-  final randomString = List.generate(
-          lengthOfString, (index) => allChars[random.nextInt(allChars.length)])
-      .join();
-  return randomString; // return the generated string
 }

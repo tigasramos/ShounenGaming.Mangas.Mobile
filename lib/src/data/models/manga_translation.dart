@@ -3,18 +3,22 @@ import 'dart:convert';
 import 'enums/translation_language_enum.dart';
 
 class MangaTranslation {
+  int id;
   TranslationLanguageEnum language;
   DateTime? releasedDate;
   MangaTranslation({
+    required this.id,
     required this.language,
     this.releasedDate,
   });
 
   MangaTranslation copyWith({
+    int? id,
     TranslationLanguageEnum? language,
     DateTime? releasedDate,
   }) {
     return MangaTranslation(
+      id: id ?? this.id,
       language: language ?? this.language,
       releasedDate: releasedDate ?? this.releasedDate,
     );
@@ -22,6 +26,7 @@ class MangaTranslation {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'id': id,
       'language': language.name,
       'releasedDate': releasedDate?.toString(),
     };
@@ -29,6 +34,7 @@ class MangaTranslation {
 
   factory MangaTranslation.fromMap(Map<String, dynamic> map) {
     return MangaTranslation(
+      id: map['id'] as int,
       language: TranslationLanguageEnum.values.byName(map['language']),
       releasedDate: map['releasedDate'] != null
           ? DateTime.parse(map['releasedDate'])
@@ -43,15 +49,17 @@ class MangaTranslation {
 
   @override
   String toString() =>
-      'MangaTranslation(language: $language, releasedDate: $releasedDate)';
+      'MangaTranslation(id: $id, language: $language, releasedDate: $releasedDate)';
 
   @override
   bool operator ==(covariant MangaTranslation other) {
     if (identical(this, other)) return true;
 
-    return other.language == language && other.releasedDate == releasedDate;
+    return other.language == language &&
+        other.releasedDate == releasedDate &&
+        other.id == id;
   }
 
   @override
-  int get hashCode => language.hashCode ^ releasedDate.hashCode;
+  int get hashCode => language.hashCode ^ releasedDate.hashCode ^ id.hashCode;
 }

@@ -1,5 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_repository.dart';
+
+final newChaptersProvider = FutureProvider.autoDispose((ref) async {
+  var mangasRepo = ref.watch(mangaRepositoryProvider);
+  return await mangasRepo.getRecentlyReleasedChapters();
+});
 
 class LatestReleasesSection extends StatelessWidget {
   const LatestReleasesSection({super.key});

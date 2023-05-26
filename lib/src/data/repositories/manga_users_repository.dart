@@ -20,13 +20,13 @@ class MangaUsersRepository {
       int userId, MangaUserStatusEnum status) async {
     var response = await _client.get('$_baseURL/user/$userId/status/$status');
     return (response.data as List)
-        .map((m) => MangaUserData.fromJson(m))
+        .map((m) => MangaUserData.fromMap(m))
         .toList();
   }
 
   Future<MangaUserData> getDataByMangaByUser(int mangaId, int userId) async {
     var response = await _client.get('$_baseURL/$mangaId/user/$userId');
-    return MangaUserData.fromJson(response.data);
+    return MangaUserData.fromMap(response.data);
   }
 
   Future markChapterRead(int chapterId) async {

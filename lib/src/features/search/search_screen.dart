@@ -2,33 +2,56 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:badges/badges.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart' hide Badge;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/manga.dart';
+import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_repository.dart';
 
-class SearchScreen extends StatelessWidget {
+final searchMangaNameProvider = StateProvider.autoDispose<String>(
+  (ref) => "",
+);
+
+final searchMangaTagsProvider = StateProvider.autoDispose<List<String>>(
+  (ref) => [],
+);
+
+final searchMangaProvider = FutureProvider.autoDispose((ref) async {
+  var name = ref.read(searchMangaNameProvider);
+  var tags = ref.read(searchMangaTagsProvider);
+
+  var mangaRepo = ref.read(mangaRepositoryProvider);
+
+  return await mangaRepo.searchMangas(name: name, tags: tags);
+});
+
+class SearchScreen extends ConsumerWidget {
   const SearchScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
-                Text(
+                const Text(
                   'Name',
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 Expanded(
-                    child: TextField(
-                  style: TextStyle(
+                    child: TextFormField(
+                  initialValue: ref.watch(searchMangaNameProvider),
+                  onChanged: (value) =>
+                      ref.watch(searchMangaNameProvider.notifier).state = value,
+                  style: const TextStyle(
                     fontSize: 15,
                   ),
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       isCollapsed: true,
                       contentPadding: EdgeInsets.all(8),
                       isDense: true,
@@ -41,7 +64,9 @@ class SearchScreen extends StatelessWidget {
               height: 5,
             ),
             MaterialButton(
-                onPressed: () {},
+                onPressed: () {
+                  ref.invalidate(searchMangaProvider);
+                },
                 minWidth: double.infinity,
                 color: Theme.of(context).primaryColor,
                 child: const Text('Search')),
@@ -49,17 +74,28 @@ class SearchScreen extends StatelessWidget {
               height: 10,
             ),
             RichText(
-                text: const TextSpan(
+                text: TextSpan(
                     text: 'Found ',
-                    style: TextStyle(color: Colors.grey),
+                    style: const TextStyle(color: Colors.grey),
                     children: [
-                  TextSpan(text: '22', style: TextStyle(color: Colors.white)),
-                  TextSpan(text: ' Results')
+                  ref.watch(searchMangaProvider).when(
+                        data: (data) => TextSpan(
+                            text: data.maxCount.toString(),
+                            style: const TextStyle(color: Colors.white)),
+                        error: (error, stackTrace) =>
+                            const TextSpan(text: 'Error'),
+                        loading: () => const TextSpan(text: 'Loading'),
+                      ),
+                  const TextSpan(text: ' Results')
                 ])),
             const SizedBox(
               height: 5,
             ),
-            for (int i = 0; i < 10; i++) const MangaSearchedTile()
+            ...ref.watch(searchMangaProvider).when(
+                data: (data) =>
+                    data.data.map((e) => MangaSearchedTile(e)).toList(),
+                error: (error, stacktrace) => [Container()],
+                loading: () => [const CircularProgressIndicator()])
           ],
         ),
       ),
@@ -68,7 +104,8 @@ class SearchScreen extends StatelessWidget {
 }
 
 class MangaSearchedTile extends StatelessWidget {
-  const MangaSearchedTile({Key? key}) : super(key: key);
+  final Manga manga;
+  const MangaSearchedTile(this.manga, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -81,9 +118,9 @@ class MangaSearchedTile extends StatelessWidget {
         child: Row(
           children: [
             Badge(
-                badgeContent: const Text(
-                  '200',
-                  style: TextStyle(fontSize: 10),
+                badgeContent: Text(
+                  manga.chapters.length.toString(),
+                  style: const TextStyle(fontSize: 10),
                 ),
                 badgeStyle: BadgeStyle(
                     badgeColor: Theme.of(context).primaryColor,
@@ -91,57 +128,66 @@ class MangaSearchedTile extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
                     shape: BadgeShape.square),
-                child: CachedNetworkImage(
-                    imageUrl:
-                        'https://cdn.myanimelist.net/images/manga/5/213340.jpg')),
+                child: CachedNetworkImage(imageUrl: manga.imageUrl)),
             const SizedBox(
               width: 15,
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AutoSizeText('Blue Lock',
-                    style: TextStyle(shadows: <Shadow>[
-                      Shadow(
-                        offset: const Offset(1, 2),
-                        blurRadius: 4.0,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ], fontWeight: FontWeight.w500, fontSize: 20, height: 1.2)),
-                const Text(
-                  'Action, Sports',
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                RichText(
-                    text: const TextSpan(
-                        text: 'Status: ',
-                        style: TextStyle(color: Colors.grey, fontSize: 10),
-                        children: [
-                      TextSpan(
-                          text: 'Releasing',
-                          style: TextStyle(color: Colors.white)),
-                    ])),
-                RichText(
-                    text: const TextSpan(
-                        text: 'Tyoe: ',
-                        style: TextStyle(color: Colors.grey, fontSize: 10),
-                        children: [
-                      TextSpan(
-                          text: 'Manga', style: TextStyle(color: Colors.white)),
-                    ])),
-                RichText(
-                    text: const TextSpan(
-                        text: 'Last Update: ',
-                        style: TextStyle(color: Colors.grey, fontSize: 10),
-                        children: [
-                      TextSpan(
-                          text: ' 22 Feb 2022',
-                          style: TextStyle(color: Colors.white)),
-                    ])),
-              ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AutoSizeText(manga.name,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: TextStyle(
+                          shadows: <Shadow>[
+                            Shadow(
+                              offset: const Offset(1, 2),
+                              blurRadius: 4.0,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ],
+                          fontWeight: FontWeight.w500,
+                          fontSize: 20,
+                          height: 1.2)),
+                  Text(
+                    manga.tags.join(", "),
+                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  RichText(
+                      text: TextSpan(
+                          text: 'Status: ',
+                          style:
+                              const TextStyle(color: Colors.grey, fontSize: 10),
+                          children: [
+                        TextSpan(
+                            text: manga.isReleasing ? 'Releasing' : 'Finished',
+                            style: const TextStyle(color: Colors.white)),
+                      ])),
+                  RichText(
+                      text: TextSpan(
+                          text: 'Type: ',
+                          style:
+                              const TextStyle(color: Colors.grey, fontSize: 10),
+                          children: [
+                        TextSpan(
+                            text: manga.type.name,
+                            style: const TextStyle(color: Colors.white)),
+                      ])),
+                  RichText(
+                      text: const TextSpan(
+                          text: 'Last Update: ',
+                          style: TextStyle(color: Colors.grey, fontSize: 10),
+                          children: [
+                        TextSpan(
+                            text: ' 22 Feb 2022',
+                            style: TextStyle(color: Colors.white)),
+                      ])),
+                ],
+              ),
             )
           ],
         ),

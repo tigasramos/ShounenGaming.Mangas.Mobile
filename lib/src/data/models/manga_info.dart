@@ -60,7 +60,7 @@ class MangaInfo {
       name: map['name'] as String,
       isReleasing: map['isReleasing'] as bool,
       type: MangaTypeEnum.values.byName(map['type']),
-      tags: List<String>.from(map['tags'] as List<String>),
+      tags: List<String>.from(map['tags']),
       chaptersCount: map['chaptersCount'] as int,
       imageUrl: map['imageUrl'] as String,
     );

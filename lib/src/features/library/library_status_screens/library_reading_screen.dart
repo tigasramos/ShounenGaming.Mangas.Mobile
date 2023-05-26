@@ -2,6 +2,10 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+/*
+Each Filter and Sort is a StateProvider
+the list is a Provider from those StateProviders + FutureProvider
+*/
 class LibraryReadingScreen extends StatelessWidget {
   const LibraryReadingScreen({super.key});
 

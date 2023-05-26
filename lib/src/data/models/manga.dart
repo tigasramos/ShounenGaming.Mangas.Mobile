@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/string_pair.dart';
 
 import 'enums/manga_type_enum.dart';
 import 'manga_chapter.dart';
@@ -8,7 +9,7 @@ import 'manga_chapter.dart';
 class Manga {
   int id;
   String name;
-  Map<String, String> alternativeNames;
+  List<StringPair> alternativeNames;
   String description;
   bool isReleasing;
   MangaTypeEnum type;
@@ -37,7 +38,7 @@ class Manga {
   Manga copyWith({
     int? id,
     String? name,
-    Map<String, String>? alternativeNames,
+    List<StringPair>? alternativeNames,
     String? description,
     bool? isReleasing,
     List<String>? tags,
@@ -68,7 +69,7 @@ class Manga {
     return <String, dynamic>{
       'id': id,
       'name': name,
-      'alternativeNames': alternativeNames,
+      'alternativeNames': alternativeNames.map((x) => x.toMap()).toList(),
       'description': description,
       'isReleasing': isReleasing,
       'type': type,
@@ -85,14 +86,17 @@ class Manga {
     return Manga(
       id: map['id'] as int,
       name: map['name'] as String,
-      alternativeNames: Map<String, String>.from(
-          map['alternativeNames'] as Map<String, String>),
+      alternativeNames: List<StringPair>.from(
+        (map['alternativeNames']).map<StringPair>(
+          (x) => StringPair.fromMap(x as Map<String, dynamic>),
+        ),
+      ),
       description: map['description'] as String,
       isReleasing: map['isReleasing'] as bool,
-      tags: List<String>.from(map['tags'] as List<String>),
+      tags: List<String>.from(map['tags']),
       type: MangaTypeEnum.values.byName(map['type']),
       chapters: List<MangaChapter>.from(
-        (map['chapters'] as List<int>).map<MangaChapter>(
+        (map['chapters']).map<MangaChapter>(
           (x) => MangaChapter.fromMap(x as Map<String, dynamic>),
         ),
       ),
@@ -123,7 +127,7 @@ class Manga {
 
     return other.id == id &&
         other.name == name &&
-        mapEquals(other.alternativeNames, alternativeNames) &&
+        listEquals(other.alternativeNames, alternativeNames) &&
         other.description == description &&
         other.isReleasing == isReleasing &&
         listEquals(other.tags, tags) &&
