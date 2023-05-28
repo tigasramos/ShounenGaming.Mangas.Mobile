@@ -2,12 +2,65 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:badges/badges.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart' hide Badge;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_status_enum.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart';
+import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
 
-class LibraryPlanningScreen extends StatelessWidget {
+enum PlanningOrderByEnum { alphabetical, lastAdded }
+
+final orderPlanningProvider = StateProvider.autoDispose<PlanningOrderByEnum?>(
+  (ref) => null,
+);
+final orderASCPlanningProvider = StateProvider.autoDispose<bool>(
+  (ref) => true,
+);
+
+final planningMangasProvider =
+    FutureProvider.autoDispose<List<MangaUserData>>((ref) async {
+  var mangaUsersRepo = ref.read(mangaUsersRepositoryProvider);
+  return mangaUsersRepo.getMangaDataByStatusByUser(
+      1, MangaUserStatusEnum.PLANNED);
+});
+
+final filteredPlanningMangasProvider =
+    Provider.autoDispose<List<MangaUserData>>((ref) {
+  var orderFilter = ref.watch(orderPlanningProvider);
+  var orderASCFilter = ref.watch(orderASCPlanningProvider);
+  var readingMangas = ref
+          .watch(planningMangasProvider)
+          .asData
+          ?.value
+          .where(
+              (element) => element.chaptersRead < element.manga.chaptersCount)
+          .toList() ??
+      [];
+
+  switch (orderFilter) {
+    case PlanningOrderByEnum.alphabetical:
+      return readingMangas
+        ..sort((a, b) =>
+            a.manga.name.compareTo(b.manga.name) * (orderASCFilter ? 1 : -1));
+    case PlanningOrderByEnum.lastAdded:
+      return readingMangas
+        ..sort((a, b) =>
+            (a.addedToStatusDate == null
+                ? 0
+                : b.addedToStatusDate == null
+                    ? 1
+                    : a.addedToStatusDate!.compareTo(b.addedToStatusDate!)) *
+            (orderASCFilter ? 1 : -1));
+    default:
+      return readingMangas;
+  }
+});
+
+class LibraryPlanningScreen extends ConsumerWidget {
   const LibraryPlanningScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
         Container(
@@ -22,23 +75,23 @@ class LibraryPlanningScreen extends StatelessWidget {
             Expanded(
                 child: IconButton(
                     onPressed: () {}, icon: const Icon(Icons.filter_alt))),
-            const Expanded(flex: 4, child: Center(child: Text('6 Mangas'))),
+            Expanded(
+                flex: 4,
+                child: Center(
+                    child: Text(
+                        '${ref.watch(filteredPlanningMangasProvider).length.toString()} Mangas'))),
             Expanded(
                 child: IconButton(
                     onPressed: () {}, icon: const Icon(Icons.sort))) //or Tune
           ]),
         ),
-        const Expanded(
+        Expanded(
           child: SingleChildScrollView(
             child: Column(
-              children: [
-                LibraryPlanningMangTile(),
-                LibraryPlanningMangTile(),
-                LibraryPlanningMangTile(),
-                LibraryPlanningMangTile(),
-                LibraryPlanningMangTile(),
-                LibraryPlanningMangTile(),
-              ],
+              children: ref
+                  .watch(filteredPlanningMangasProvider)
+                  .map((e) => LibraryPlanningMangTile(e))
+                  .toList(),
             ),
           ),
         ),
@@ -48,7 +101,8 @@ class LibraryPlanningScreen extends StatelessWidget {
 }
 
 class LibraryPlanningMangTile extends StatelessWidget {
-  const LibraryPlanningMangTile({super.key});
+  final MangaUserData mangaUserData;
+  const LibraryPlanningMangTile(this.mangaUserData, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -60,10 +114,13 @@ class LibraryPlanningMangTile extends StatelessWidget {
         width: double.infinity,
         child: Row(
           children: [
+            const SizedBox(
+              width: 10,
+            ),
             Badge(
-              badgeContent: const Text(
-                '200',
-                style: TextStyle(fontSize: 9),
+              badgeContent: Text(
+                mangaUserData.manga.chaptersCount.toString(),
+                style: const TextStyle(fontSize: 9),
               ),
               badgeStyle: BadgeStyle(
                   shape: BadgeShape.square,
@@ -72,8 +129,7 @@ class LibraryPlanningMangTile extends StatelessWidget {
                       const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
                   borderRadius: BorderRadius.circular(2)),
               child: CachedNetworkImage(
-                imageUrl:
-                    'https://cdn.myanimelist.net/images/manga/2/253146.jpg',
+                imageUrl: mangaUserData.manga.imageUrl,
                 filterQuality: FilterQuality.high,
                 fit: BoxFit.fitHeight,
               ),
@@ -81,37 +137,38 @@ class LibraryPlanningMangTile extends StatelessWidget {
             const SizedBox(
               width: 15,
             ),
-            const Expanded(
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AutoSizeText(
-                    'One Piece',
+                    mangaUserData.manga.name,
                     minFontSize: 16,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontSize: 21, fontWeight: FontWeight.w500, height: 1.2),
                   ),
                   Text(
-                    'Manga, 1999-?',
-                    style: TextStyle(color: Colors.grey, fontSize: 11),
+                    '${mangaUserData.manga.type.name}, ${mangaUserData.manga.startedAt?.year ?? "?"}-${mangaUserData.manga.finishedAt?.year ?? "?"}',
+                    style: const TextStyle(color: Colors.grey, fontSize: 11),
                   ),
                   Text(
-                    'Shounen, Adventure',
-                    style: TextStyle(color: Colors.grey, fontSize: 10),
+                    mangaUserData.manga.tags.join(', '),
+                    style: const TextStyle(color: Colors.grey, fontSize: 10),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   Row(
                     children: [
-                      Spacer(),
+                      const Spacer(),
                       Text(
-                        'Added at: 21st Feb 2023',
-                        style: TextStyle(color: Colors.white, fontSize: 11),
+                        'Added at: ${mangaUserData.addedToStatusDate != null ? DateFormat("dd MMM yyyy").format(mangaUserData.addedToStatusDate!) : "Not Found"}',
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 11),
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 6,
                   )
                 ],

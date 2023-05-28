@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_status_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/features/library/library_status_screens/library_completed_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/library/library_status_screens/library_reading_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/features/library/library_status_screens/library_waiting_screen.dart';
 
 import 'library_status_screens/library_dropped_screen.dart';
 import 'library_status_screens/library_ignored_screen.dart';
@@ -13,19 +13,24 @@ class LibraryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: MangaUserStatusEnum.values.length,
+        length: 6,
         child: Column(
           children: [
             TabBar(
-                isScrollable: true,
-                tabs: MangaUserStatusEnum.values
-                    .map((e) => Tab(
-                          text: e.name,
-                        ))
-                    .toList()),
+              isScrollable: true,
+              tabs: [
+                'Reading',
+                'Waiting',
+                'Completed',
+                'Planning',
+                'Dropped',
+                'Ignored'
+              ].map((e) => Tab(text: e)).toList(),
+            ),
             const Expanded(
               child: TabBarView(children: [
                 LibraryReadingScreen(),
+                LibraryWaitingScreen(),
                 LibraryCompletedScreen(),
                 LibraryPlanningScreen(),
                 LibraryDroppedScreen(),

@@ -1,16 +1,10 @@
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_status_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
 
-/*
-Each Filter and Sort is a StateProvider
-the list is a Provider from those StateProviders + FutureProvider
-*/
+import 'library_reading_screen.dart';
 
 enum ReadingOrderByEnum { alphabetical, lastRead, lastUpdated }
 
@@ -21,23 +15,23 @@ final orderASCReadingProvider = StateProvider.autoDispose<bool>(
   (ref) => true,
 );
 
-final readingMangasProvider =
+final waitingMangasProvider =
     FutureProvider.autoDispose<List<MangaUserData>>((ref) async {
   var mangaUsersRepo = ref.read(mangaUsersRepositoryProvider);
   return mangaUsersRepo.getMangaDataByStatusByUser(
       1, MangaUserStatusEnum.READING);
 });
 
-final filteredReadingMangasProvider =
+final filteredWaitingMangasProvider =
     Provider.autoDispose<List<MangaUserData>>((ref) {
   var orderFilter = ref.watch(orderReadingProvider);
   var orderASCFilter = ref.watch(orderASCReadingProvider);
   var readingMangas = ref
-          .watch(readingMangasProvider)
+          .watch(waitingMangasProvider)
           .asData
           ?.value
           .where(
-              (element) => element.chaptersRead < element.manga.chaptersCount)
+              (element) => element.manga.chaptersCount == element.chaptersRead)
           .toList() ??
       [];
 
@@ -83,8 +77,8 @@ final filteredReadingMangasProvider =
 
 
 */
-class LibraryReadingScreen extends ConsumerWidget {
-  const LibraryReadingScreen({super.key});
+class LibraryWaitingScreen extends ConsumerWidget {
+  const LibraryWaitingScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -132,26 +126,16 @@ class LibraryReadingScreen extends ConsumerWidget {
                 flex: 4,
                 child: Center(
                     child: Text(
-                        '${ref.watch(filteredReadingMangasProvider).length.toString()} Mangas'))),
+                        '${ref.watch(filteredWaitingMangasProvider).length.toString()} Mangas'))),
             Expanded(
               child: PopupMenuButton(
                 tooltip: 'Order By',
                 initialValue: ref.watch(orderReadingProvider),
                 onSelected: (selected) {
                   if (ref.read(orderReadingProvider) == selected) {
-                    //If selects the same and is Desc, clears order by
-                    if (!ref.watch(orderASCReadingProvider)) {
-                      ref.watch(orderReadingProvider.notifier).state = null;
-                      ref.watch(orderASCReadingProvider.notifier).state = true;
-                    }
-                    // If select the same and its asc, goes desc
-                    else {
-                      ref.watch(orderASCReadingProvider.notifier).state =
-                          !ref.watch(orderASCReadingProvider);
-                    }
-                  }
-                  // If not the same changes and goes asc
-                  else {
+                    ref.watch(orderASCReadingProvider.notifier).state =
+                        !ref.watch(orderASCReadingProvider);
+                  } else {
                     ref.watch(orderReadingProvider.notifier).state = selected;
                     ref.watch(orderASCReadingProvider.notifier).state = true;
                   }
@@ -209,122 +193,13 @@ class LibraryReadingScreen extends ConsumerWidget {
           child: SingleChildScrollView(
             child: Column(
               children: ref
-                  .watch(filteredReadingMangasProvider)
+                  .watch(filteredWaitingMangasProvider)
                   .map((e) => LibraryReadingMangaTile(e))
                   .toList(),
             ),
           ),
         ),
       ],
-    );
-  }
-}
-
-class LibraryReadingMangaTile extends StatelessWidget {
-  final MangaUserData mangaUserData;
-  const LibraryReadingMangaTile(this.mangaUserData, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {},
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-        height: 100,
-        width: double.infinity,
-        child: Row(
-          children: [
-            const SizedBox(
-              width: 10,
-            ),
-            Container(
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(6),
-                      bottomLeft: Radius.circular(6)),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Color.fromARGB(255, 75, 75, 75),
-                        blurRadius: 0,
-                        spreadRadius: 0,
-                        offset: Offset(3, 4))
-                  ]),
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                    topRight: Radius.circular(6),
-                    bottomLeft: Radius.circular(6)),
-                child: CachedNetworkImage(
-                  imageUrl: mangaUserData.manga.imageUrl,
-                  filterQuality: FilterQuality.high,
-                  fit: BoxFit.fitHeight,
-                ),
-              ),
-            ),
-            const SizedBox(
-              width: 15,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AutoSizeText(
-                    mangaUserData.manga.name,
-                    minFontSize: 16,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(shadows: <Shadow>[
-                      Shadow(
-                        offset: const Offset(1, 2),
-                        blurRadius: 4.0,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ], fontSize: 21, fontWeight: FontWeight.w500, height: 1.2),
-                  ),
-                  Text(
-                    '${mangaUserData.manga.type.name}, ${mangaUserData.manga.startedAt?.year ?? "?"}-${mangaUserData.manga.finishedAt?.year ?? "?"}',
-                    style: const TextStyle(color: Colors.grey, fontSize: 11),
-                  ),
-                  const Spacer(),
-                  Row(
-                    children: [
-                      const Spacer(),
-                      Text(
-                        '${mangaUserData.chaptersRead} / ${mangaUserData.manga.chaptersCount}',
-                        style: const TextStyle(fontSize: 11),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 3,
-                  ),
-                  ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    child: LinearProgressIndicator(
-                      minHeight: 9,
-                      value: mangaUserData.chaptersRead /
-                          mangaUserData.manga.chaptersCount,
-                    ),
-                  ),
-                  const Spacer(),
-                  Row(
-                    children: [
-                      const Spacer(),
-                      Text(
-                        'Last Chapter: ${mangaUserData.manga.lastChapterDate != null ? DateFormat("dd MMM yyyy").format(mangaUserData.manga.lastChapterDate!) : "Not Found"}',
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 11),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(
-              width: 15,
-            )
-          ],
-        ),
-      ),
     );
   }
 }

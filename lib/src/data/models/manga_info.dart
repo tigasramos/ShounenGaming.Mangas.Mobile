@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -12,6 +13,11 @@ class MangaInfo {
   List<String> tags;
   int chaptersCount;
   String imageUrl;
+  int? myAnimeListId;
+  int? anilistId;
+  DateTime? startedAt;
+  DateTime? finishedAt;
+  DateTime? lastChapterDate;
   MangaInfo({
     required this.id,
     required this.name,
@@ -20,6 +26,11 @@ class MangaInfo {
     required this.tags,
     required this.chaptersCount,
     required this.imageUrl,
+    this.myAnimeListId,
+    this.anilistId,
+    this.startedAt,
+    this.finishedAt,
+    this.lastChapterDate,
   });
 
   MangaInfo copyWith({
@@ -30,6 +41,11 @@ class MangaInfo {
     List<String>? tags,
     int? chaptersCount,
     String? imageUrl,
+    int? myAnimeListId,
+    int? anilistId,
+    DateTime? startedAt,
+    DateTime? finishedAt,
+    DateTime? lastChapterDate,
   }) {
     return MangaInfo(
       id: id ?? this.id,
@@ -39,6 +55,11 @@ class MangaInfo {
       tags: tags ?? this.tags,
       chaptersCount: chaptersCount ?? this.chaptersCount,
       imageUrl: imageUrl ?? this.imageUrl,
+      myAnimeListId: myAnimeListId ?? this.myAnimeListId,
+      anilistId: anilistId ?? this.anilistId,
+      startedAt: startedAt ?? this.startedAt,
+      finishedAt: finishedAt ?? this.finishedAt,
+      lastChapterDate: lastChapterDate ?? this.lastChapterDate,
     );
   }
 
@@ -51,6 +72,11 @@ class MangaInfo {
       'tags': tags,
       'chaptersCount': chaptersCount,
       'imageUrl': imageUrl,
+      'myAnimeListId': myAnimeListId,
+      'anilistId': anilistId,
+      'startedAt': startedAt?.toString(),
+      'finishedAt': finishedAt?.toString(),
+      'lastChapterDate': lastChapterDate?.toString(),
     };
   }
 
@@ -63,6 +89,16 @@ class MangaInfo {
       tags: List<String>.from(map['tags']),
       chaptersCount: map['chaptersCount'] as int,
       imageUrl: map['imageUrl'] as String,
+      myAnimeListId:
+          map['myAnimeListId'] != null ? map['myAnimeListId'] as int : null,
+      anilistId: map['anilistId'] != null ? map['anilistId'] as int : null,
+      startedAt:
+          map['startedAt'] != null ? DateTime.parse(map['startedAt']) : null,
+      finishedAt:
+          map['finishedAt'] != null ? DateTime.parse(map['finishedAt']) : null,
+      lastChapterDate: map['lastChapterDate'] != null
+          ? DateTime.parse(map['lastChapterDate'])
+          : null,
     );
   }
 
@@ -73,7 +109,7 @@ class MangaInfo {
 
   @override
   String toString() {
-    return 'MangaInfo(id: $id, name: $name, isReleasing: $isReleasing, type: $type, tags: $tags, chaptersCount: $chaptersCount, imageUrl: $imageUrl)';
+    return 'MangaInfo(id: $id, name: $name, isReleasing: $isReleasing, type: $type, tags: $tags, chaptersCount: $chaptersCount, imageUrl: $imageUrl, myAnimeListId: $myAnimeListId, anilistId: $anilistId, startedAt: $startedAt, finishedAt: $finishedAt, lastChapterDate: $lastChapterDate)';
   }
 
   @override
@@ -86,7 +122,12 @@ class MangaInfo {
         other.type == type &&
         listEquals(other.tags, tags) &&
         other.chaptersCount == chaptersCount &&
-        other.imageUrl == imageUrl;
+        other.imageUrl == imageUrl &&
+        other.myAnimeListId == myAnimeListId &&
+        other.anilistId == anilistId &&
+        other.startedAt == startedAt &&
+        other.finishedAt == finishedAt &&
+        other.lastChapterDate == lastChapterDate;
   }
 
   @override
@@ -97,6 +138,11 @@ class MangaInfo {
         type.hashCode ^
         tags.hashCode ^
         chaptersCount.hashCode ^
-        imageUrl.hashCode;
+        imageUrl.hashCode ^
+        myAnimeListId.hashCode ^
+        anilistId.hashCode ^
+        startedAt.hashCode ^
+        finishedAt.hashCode ^
+        lastChapterDate.hashCode;
   }
 }

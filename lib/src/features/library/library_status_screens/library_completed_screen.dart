@@ -1,12 +1,60 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_status_enum.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart';
+import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
 
-class LibraryCompletedScreen extends StatelessWidget {
+enum CompletedOrderByEnum { alphabetical, completedDate }
+
+final orderReadingProvider = StateProvider.autoDispose<CompletedOrderByEnum?>(
+  (ref) => null,
+);
+final orderASCReadingProvider = StateProvider.autoDispose<bool>(
+  (ref) => true,
+);
+
+final completedMangasProvider =
+    FutureProvider.autoDispose<List<MangaUserData>>((ref) async {
+  var mangaUsersRepo = ref.read(mangaUsersRepositoryProvider);
+  return mangaUsersRepo.getMangaDataByStatusByUser(
+      1, MangaUserStatusEnum.COMPLETED);
+});
+
+final filteredCompletedMangasProvider =
+    Provider.autoDispose<List<MangaUserData>>((ref) {
+  var orderFilter = ref.watch(orderReadingProvider);
+  var orderASCFilter = ref.watch(orderASCReadingProvider);
+  var completedMangas = ref.watch(completedMangasProvider).asData?.value ?? [];
+
+  switch (orderFilter) {
+    case CompletedOrderByEnum.alphabetical:
+      return completedMangas
+        ..sort((a, b) =>
+            a.manga.name.compareTo(b.manga.name) * (orderASCFilter ? 1 : -1));
+    case CompletedOrderByEnum.completedDate:
+      return completedMangas
+        ..sort((a, b) =>
+            (a.finishedReadingDate == null
+                ? 0
+                : b.finishedReadingDate == null
+                    ? 1
+                    : a.finishedReadingDate!
+                        .compareTo(b.finishedReadingDate!)) *
+            (orderASCFilter ? 1 : -1));
+
+    default:
+      return completedMangas;
+  }
+});
+
+class LibraryCompletedScreen extends ConsumerWidget {
   const LibraryCompletedScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
         Container(
@@ -21,23 +69,23 @@ class LibraryCompletedScreen extends StatelessWidget {
             Expanded(
                 child: IconButton(
                     onPressed: () {}, icon: const Icon(Icons.filter_alt))),
-            const Expanded(flex: 4, child: Center(child: Text('6 Mangas'))),
+            Expanded(
+                flex: 4,
+                child: Center(
+                    child: Text(
+                        '${ref.watch(filteredCompletedMangasProvider).length} Mangas'))),
             Expanded(
                 child: IconButton(
                     onPressed: () {}, icon: const Icon(Icons.sort))) //or Tune
           ]),
         ),
-        const Expanded(
+        Expanded(
           child: SingleChildScrollView(
             child: Column(
-              children: [
-                LibraryCompletedMangaTile(),
-                LibraryCompletedMangaTile(),
-                LibraryCompletedMangaTile(),
-                LibraryCompletedMangaTile(),
-                LibraryCompletedMangaTile(),
-                LibraryCompletedMangaTile(),
-              ],
+              children: ref
+                  .watch(filteredCompletedMangasProvider)
+                  .map((e) => LibraryCompletedMangaTile(e))
+                  .toList(),
             ),
           ),
         ),
@@ -47,7 +95,8 @@ class LibraryCompletedScreen extends StatelessWidget {
 }
 
 class LibraryCompletedMangaTile extends StatelessWidget {
-  const LibraryCompletedMangaTile({super.key});
+  final MangaUserData mangaUserData;
+  const LibraryCompletedMangaTile(this.mangaUserData, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -59,8 +108,11 @@ class LibraryCompletedMangaTile extends StatelessWidget {
         width: double.infinity,
         child: Row(
           children: [
+            const SizedBox(
+              width: 10,
+            ),
             CachedNetworkImage(
-              imageUrl: 'https://cdn.myanimelist.net/images/manga/2/166254.jpg',
+              imageUrl: mangaUserData.manga.imageUrl,
               filterQuality: FilterQuality.high,
               fit: BoxFit.fitHeight,
             ),
@@ -71,17 +123,17 @@ class LibraryCompletedMangaTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const AutoSizeText(
-                    'Black Clover',
+                  AutoSizeText(
+                    mangaUserData.manga.name,
                     minFontSize: 16,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontSize: 21, fontWeight: FontWeight.w500, height: 1.2),
                   ),
-                  const Text(
-                    'Manga, 2012-2021',
-                    style: TextStyle(color: Colors.grey, fontSize: 11),
+                  Text(
+                    '${mangaUserData.manga.type.name}, ${mangaUserData.manga.startedAt?.year ?? "?"}-${mangaUserData.manga.finishedAt?.year ?? "?"}',
+                    style: const TextStyle(color: Colors.grey, fontSize: 11),
                   ),
                   const Spacer(),
                   Row(
@@ -96,9 +148,10 @@ class LibraryCompletedMangaTile extends StatelessWidget {
                         ),
                       ),
                       const Spacer(),
-                      const Text(
-                        'Completed at: 20th Feb 2022',
-                        style: TextStyle(color: Colors.white, fontSize: 11),
+                      Text(
+                        'Completed at: ${mangaUserData.finishedReadingDate != null ? DateFormat("dd MMM yyyy").format(mangaUserData.finishedReadingDate!) : "Not Found"}',
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 11),
                       ),
                     ],
                   ),

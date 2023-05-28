@@ -5,7 +5,7 @@ import 'package:shounengaming_mangas_mobile/main.dart';
 import '../models/enums/manga_user_status_enum.dart';
 import '../models/manga_user_data.dart';
 
-final mangaRepositoryProvider = Provider<MangaUsersRepository>((ref) {
+final mangaUsersRepositoryProvider = Provider<MangaUsersRepository>((ref) {
   final dio = ref.read(dioProvider);
   return MangaUsersRepository(dio);
 });
@@ -18,7 +18,8 @@ class MangaUsersRepository {
 
   Future<List<MangaUserData>> getMangaDataByStatusByUser(
       int userId, MangaUserStatusEnum status) async {
-    var response = await _client.get('$_baseURL/user/$userId/status/$status');
+    var response =
+        await _client.get('$_baseURL/user/$userId/status/${status.name}');
     return (response.data as List)
         .map((m) => MangaUserData.fromMap(m))
         .toList();
@@ -37,8 +38,9 @@ class MangaUsersRepository {
     await _client.put('$_baseURL/unread/$chapterId');
   }
 
-  Future updateMangaStatusByUser(
+  Future<MangaUserData> updateMangaStatusByUser(
       int mangaId, MangaUserStatusEnum status) async {
-    await _client.put('$_baseURL/$mangaId/status/$status');
+    var response = await _client.put('$_baseURL/$mangaId/status/$status');
+    return MangaUserData.fromMap(response.data);
   }
 }

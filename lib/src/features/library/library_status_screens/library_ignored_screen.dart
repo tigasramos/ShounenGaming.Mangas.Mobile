@@ -28,7 +28,7 @@ class LibraryIgnoredScreen extends StatelessWidget {
         ),
         Expanded(
           child: GridView.count(
-            crossAxisCount: 3,
+            crossAxisCount: MediaQuery.of(context).size.width ~/ 110,
             crossAxisSpacing: 10,
             shrinkWrap: true,
             childAspectRatio: 0.70,

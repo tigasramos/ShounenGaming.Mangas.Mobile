@@ -1,12 +1,59 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_status_enum.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart';
+import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
 
-class LibraryDroppedScreen extends StatelessWidget {
+enum DroppedOrderByEnum { alphabetical, droppedDate }
+
+final orderDroppedProvider = StateProvider.autoDispose<DroppedOrderByEnum?>(
+  (ref) => null,
+);
+final orderASCDroppedProvider = StateProvider.autoDispose<bool>(
+  (ref) => true,
+);
+
+final droppedMangasProvider =
+    FutureProvider.autoDispose<List<MangaUserData>>((ref) async {
+  var mangaUsersRepo = ref.read(mangaUsersRepositoryProvider);
+  return mangaUsersRepo.getMangaDataByStatusByUser(
+      1, MangaUserStatusEnum.DROPPED);
+});
+
+final filteredDroppedMangasProvider =
+    Provider.autoDispose<List<MangaUserData>>((ref) {
+  var orderFilter = ref.watch(orderDroppedProvider);
+  var orderASCFilter = ref.watch(orderASCDroppedProvider);
+  var droppedMangas = ref.watch(droppedMangasProvider).asData?.value ?? [];
+
+  switch (orderFilter) {
+    case DroppedOrderByEnum.alphabetical:
+      return droppedMangas
+        ..sort((a, b) =>
+            a.manga.name.compareTo(b.manga.name) * (orderASCFilter ? 1 : -1));
+    case DroppedOrderByEnum.droppedDate:
+      return droppedMangas
+        ..sort((a, b) =>
+            (a.addedToStatusDate == null
+                ? 0
+                : b.addedToStatusDate == null
+                    ? 1
+                    : a.addedToStatusDate!.compareTo(b.addedToStatusDate!)) *
+            (orderASCFilter ? 1 : -1));
+
+    default:
+      return droppedMangas;
+  }
+});
+
+class LibraryDroppedScreen extends ConsumerWidget {
   const LibraryDroppedScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
         Container(
@@ -21,23 +68,23 @@ class LibraryDroppedScreen extends StatelessWidget {
             Expanded(
                 child: IconButton(
                     onPressed: () {}, icon: const Icon(Icons.filter_alt))),
-            const Expanded(flex: 4, child: Center(child: Text('6 Mangas'))),
+            Expanded(
+                flex: 4,
+                child: Center(
+                    child: Text(
+                        '${ref.watch(filteredDroppedMangasProvider).length.toString()} Mangas'))),
             Expanded(
                 child: IconButton(
                     onPressed: () {}, icon: const Icon(Icons.sort))) //or Tune
           ]),
         ),
-        const Expanded(
+        Expanded(
           child: SingleChildScrollView(
             child: Column(
-              children: [
-                LibraryDroppedMangaTile(),
-                LibraryDroppedMangaTile(),
-                LibraryDroppedMangaTile(),
-                LibraryDroppedMangaTile(),
-                LibraryDroppedMangaTile(),
-                LibraryDroppedMangaTile(),
-              ],
+              children: ref
+                  .watch(filteredDroppedMangasProvider)
+                  .map((e) => LibraryDroppedMangaTile(e))
+                  .toList(),
             ),
           ),
         ),
@@ -47,7 +94,8 @@ class LibraryDroppedScreen extends StatelessWidget {
 }
 
 class LibraryDroppedMangaTile extends StatelessWidget {
-  const LibraryDroppedMangaTile({super.key});
+  final MangaUserData mangaUserData;
+  const LibraryDroppedMangaTile(this.mangaUserData, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +107,9 @@ class LibraryDroppedMangaTile extends StatelessWidget {
         width: double.infinity,
         child: Row(
           children: [
+            const SizedBox(
+              width: 10,
+            ),
             Container(
               decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(
@@ -76,8 +127,7 @@ class LibraryDroppedMangaTile extends StatelessWidget {
                     topRight: Radius.circular(6),
                     bottomLeft: Radius.circular(6)),
                 child: CachedNetworkImage(
-                  imageUrl:
-                      'https://cdn.myanimelist.net/images/manga/5/213340.jpg',
+                  imageUrl: mangaUserData.manga.imageUrl,
                   filterQuality: FilterQuality.high,
                   fit: BoxFit.fitHeight,
                 ),
@@ -91,7 +141,7 @@ class LibraryDroppedMangaTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AutoSizeText(
-                    'Blue Lock',
+                    mangaUserData.manga.name,
                     minFontSize: 16,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -103,37 +153,39 @@ class LibraryDroppedMangaTile extends StatelessWidget {
                       ),
                     ], fontSize: 21, fontWeight: FontWeight.w500, height: 1.2),
                   ),
-                  const Text(
-                    'Manga, 2017-2022',
-                    style: TextStyle(color: Colors.grey, fontSize: 11),
+                  Text(
+                    '${mangaUserData.manga.type.name}, ${mangaUserData.manga.startedAt?.year ?? "?"}-${mangaUserData.manga.finishedAt?.year ?? "?"}',
+                    style: const TextStyle(color: Colors.grey, fontSize: 11),
                   ),
                   const Spacer(),
-                  const Row(
+                  Row(
                     children: [
-                      Spacer(),
+                      const Spacer(),
                       Text(
-                        '102 / 200',
-                        style: TextStyle(fontSize: 11),
+                        '${mangaUserData.chaptersRead} / ${mangaUserData.manga.chaptersCount}',
+                        style: const TextStyle(fontSize: 11),
                       ),
                     ],
                   ),
                   const SizedBox(
                     height: 3,
                   ),
-                  const ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
                     child: LinearProgressIndicator(
                       minHeight: 9,
-                      value: 0.6,
+                      value: mangaUserData.chaptersRead /
+                          mangaUserData.manga.chaptersCount,
                     ),
                   ),
                   const Spacer(),
-                  const Row(
+                  Row(
                     children: [
-                      Spacer(),
+                      const Spacer(),
                       Text(
-                        'Dropped at: 21st Feb 2023',
-                        style: TextStyle(color: Colors.white, fontSize: 11),
+                        'Dropped at: ${mangaUserData.addedToStatusDate != null ? DateFormat("dd MMM yyyy").format(mangaUserData.addedToStatusDate!) : "Not Found"}',
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 11),
                       ),
                     ],
                   )
