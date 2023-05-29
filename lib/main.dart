@@ -30,6 +30,8 @@ final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
   throw UnimplementedError();
 });
 
+final navigationKey = GlobalKey<NavigatorState>();
+
 class SGMangasApp extends StatelessWidget {
   const SGMangasApp({super.key});
 
@@ -39,6 +41,7 @@ class SGMangasApp extends StatelessWidget {
         title: 'SG Mangas',
         debugShowCheckedModeBanner: false,
         theme: theme,
+        navigatorKey: navigationKey,
         home: const MainLayoutScreen());
   }
 }
@@ -68,6 +71,7 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
         context,
         controller: controller,
         onItemSelected: (i) {
+          //TODO: Refresh providers state
           setState(() {});
         },
         screens: const [

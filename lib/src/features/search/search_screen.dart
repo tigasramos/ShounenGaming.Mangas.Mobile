@@ -3,10 +3,13 @@ import 'package:badges/badges.dart';
 import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_info.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_repository.dart';
+import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_profile_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/others/manga_image.dart';
 
+//TODO: Search from synopsys aswell, not only name
 final searchMangaNameProvider = StateProvider.autoDispose<String>(
   (ref) => "",
 );
@@ -111,7 +114,11 @@ class MangaSearchedTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        navigationKey.currentState?.push(
+          MaterialPageRoute(builder: (context) => MangaProfileScreen(manga.id)),
+        );
+      },
       child: Container(
         height: 100,
         width: double.infinity,

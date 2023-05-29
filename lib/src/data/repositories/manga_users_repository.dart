@@ -30,17 +30,23 @@ class MangaUsersRepository {
     return MangaUserData.fromMap(response.data);
   }
 
-  Future markChapterRead(int chapterId) async {
-    await _client.put('$_baseURL/read/$chapterId');
+  Future<MangaUserData> markChapterRead(int chapterId) async {
+    var response = await _client.put('$_baseURL/read/$chapterId');
+    return MangaUserData.fromMap(response.data);
   }
 
-  Future unmarkChapterRead(int chapterId) async {
-    await _client.put('$_baseURL/unread/$chapterId');
+  Future<MangaUserData?> unmarkChapterRead(int chapterId) async {
+    var response = await _client.put('$_baseURL/unread/$chapterId');
+    if (response.data != null) {
+      return MangaUserData.fromMap(response.data);
+    }
+    return null;
   }
 
   Future<MangaUserData> updateMangaStatusByUser(
       int mangaId, MangaUserStatusEnum status) async {
-    var response = await _client.put('$_baseURL/$mangaId/status/$status');
+    var response =
+        await _client.put('$_baseURL/$mangaId/status/${status.name}');
     return MangaUserData.fromMap(response.data);
   }
 }

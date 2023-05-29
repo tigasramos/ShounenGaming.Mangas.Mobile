@@ -13,7 +13,7 @@ class MangaImage extends StatelessWidget {
               topLeft: Radius.circular(6), bottomRight: Radius.circular(6)),
           boxShadow: [
             BoxShadow(
-                color: Color.fromARGB(255, 173, 173, 173),
+                color: Colors.deepPurpleAccent,
                 blurRadius: 0,
                 spreadRadius: 0,
                 offset: Offset(2, 2))

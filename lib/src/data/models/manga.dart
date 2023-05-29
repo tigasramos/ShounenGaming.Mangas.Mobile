@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/manga_writer.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/string_pair.dart';
 
 import 'enums/manga_type_enum.dart';
@@ -16,7 +17,7 @@ class Manga {
   List<String> tags;
   List<MangaChapter> chapters;
   String imageUrl;
-  //Writer
+  MangaWriter writer;
   int? mangaMyAnimeListId;
   DateTime? startedAt;
   DateTime? finishedAt;
@@ -30,6 +31,7 @@ class Manga {
     required this.tags,
     required this.chapters,
     required this.imageUrl,
+    required this.writer,
     this.mangaMyAnimeListId,
     this.startedAt,
     this.finishedAt,
@@ -45,6 +47,7 @@ class Manga {
     MangaTypeEnum? type,
     List<MangaChapter>? chapters,
     String? imageUrl,
+    MangaWriter? writer,
     int? mangaMyAnimeListId,
     DateTime? startedAt,
     DateTime? finishedAt,
@@ -59,6 +62,7 @@ class Manga {
       tags: tags ?? this.tags,
       chapters: chapters ?? this.chapters,
       imageUrl: imageUrl ?? this.imageUrl,
+      writer: writer ?? this.writer,
       mangaMyAnimeListId: mangaMyAnimeListId ?? this.mangaMyAnimeListId,
       startedAt: startedAt ?? this.startedAt,
       finishedAt: finishedAt ?? this.finishedAt,
@@ -76,6 +80,7 @@ class Manga {
       'tags': tags,
       'chapters': chapters.map((x) => x.toMap()).toList(),
       'imageUrl': imageUrl,
+      'writer': writer,
       'mangaMyAnimeListId': mangaMyAnimeListId,
       'startedAt': startedAt?.toString(),
       'finishedAt': finishedAt?.toString(),
@@ -101,6 +106,7 @@ class Manga {
         ),
       ),
       imageUrl: map['imageUrl'] as String,
+      writer: MangaWriter.fromMap(map['writer']),
       mangaMyAnimeListId: map['mangaMyAnimeListId'] != null
           ? map['mangaMyAnimeListId'] as int
           : null,
@@ -118,7 +124,7 @@ class Manga {
 
   @override
   String toString() {
-    return 'Manga(id: $id, name: $name, alternativeNames: $alternativeNames, description: $description, isReleasing: $isReleasing, tags: $tags, chapters: $chapters, imageUrl: $imageUrl, mangaMyAnimeListId: $mangaMyAnimeListId, startedAt: $startedAt, finishedAt: $finishedAt)';
+    return 'Manga(id: $id, name: $name, alternativeNames: $alternativeNames, description: $description, isReleasing: $isReleasing, tags: $tags, chapters: $chapters, imageUrl: $imageUrl, writer: $writer, mangaMyAnimeListId: $mangaMyAnimeListId, startedAt: $startedAt, finishedAt: $finishedAt)';
   }
 
   @override
@@ -134,6 +140,7 @@ class Manga {
         listEquals(other.chapters, chapters) &&
         other.imageUrl == imageUrl &&
         other.type == type &&
+        other.writer == writer &&
         other.mangaMyAnimeListId == mangaMyAnimeListId &&
         other.startedAt == startedAt &&
         other.finishedAt == finishedAt;
@@ -150,6 +157,7 @@ class Manga {
         type.hashCode ^
         chapters.hashCode ^
         imageUrl.hashCode ^
+        writer.hashCode ^
         mangaMyAnimeListId.hashCode ^
         startedAt.hashCode ^
         finishedAt.hashCode;
