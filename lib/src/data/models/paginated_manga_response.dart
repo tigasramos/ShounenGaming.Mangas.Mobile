@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
-import 'manga.dart';
+import 'manga_info.dart';
 
 class PaginatedMangaResponse {
-  List<Manga> data;
+  List<MangaInfo> data;
   int currentPage;
   int maxCount;
   PaginatedMangaResponse({
@@ -15,7 +15,7 @@ class PaginatedMangaResponse {
   });
 
   PaginatedMangaResponse copyWith({
-    List<Manga>? data,
+    List<MangaInfo>? data,
     int? currentPage,
     int? maxCount,
   }) {
@@ -36,9 +36,9 @@ class PaginatedMangaResponse {
 
   factory PaginatedMangaResponse.fromMap(Map<String, dynamic> map) {
     return PaginatedMangaResponse(
-      data: List<Manga>.from(
-        (map['data']).map<Manga>(
-          (x) => Manga.fromMap(x as Map<String, dynamic>),
+      data: List<MangaInfo>.from(
+        (map['data']).map<MangaInfo>(
+          (x) => MangaInfo.fromMap(x as Map<String, dynamic>),
         ),
       ),
       currentPage: map['currentPage'] as int,

@@ -1,10 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:badges/badges.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shounengaming_mangas_mobile/src/data/models/manga.dart';
+import 'package:intl/intl.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/manga_info.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_repository.dart';
+import 'package:shounengaming_mangas_mobile/src/others/manga_image.dart';
 
 final searchMangaNameProvider = StateProvider.autoDispose<String>(
   (ref) => "",
@@ -28,9 +29,9 @@ class SearchScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      child: SingleChildScrollView(
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -104,7 +105,7 @@ class SearchScreen extends ConsumerWidget {
 }
 
 class MangaSearchedTile extends StatelessWidget {
-  final Manga manga;
+  final MangaInfo manga;
   const MangaSearchedTile(this.manga, {Key? key}) : super(key: key);
 
   @override
@@ -119,7 +120,7 @@ class MangaSearchedTile extends StatelessWidget {
           children: [
             Badge(
                 badgeContent: Text(
-                  manga.chapters.length.toString(),
+                  manga.chaptersCount.toString(),
                   style: const TextStyle(fontSize: 10),
                 ),
                 badgeStyle: BadgeStyle(
@@ -128,7 +129,7 @@ class MangaSearchedTile extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
                     shape: BadgeShape.square),
-                child: CachedNetworkImage(imageUrl: manga.imageUrl)),
+                child: MangaImage(manga.imageUrl)),
             const SizedBox(
               width: 15,
             ),
@@ -178,13 +179,15 @@ class MangaSearchedTile extends StatelessWidget {
                             style: const TextStyle(color: Colors.white)),
                       ])),
                   RichText(
-                      text: const TextSpan(
+                      text: TextSpan(
                           text: 'Last Update: ',
-                          style: TextStyle(color: Colors.grey, fontSize: 10),
+                          style:
+                              const TextStyle(color: Colors.grey, fontSize: 10),
                           children: [
                         TextSpan(
-                            text: ' 22 Feb 2022',
-                            style: TextStyle(color: Colors.white)),
+                            text:
+                                ' ${manga.lastChapterDate != null ? DateFormat("dd MMM yyyy").format(manga.lastChapterDate!) : "Not Found"}',
+                            style: const TextStyle(color: Colors.white)),
                       ])),
                 ],
               ),

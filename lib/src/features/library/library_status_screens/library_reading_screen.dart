@@ -1,11 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_status_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
+import 'package:shounengaming_mangas_mobile/src/others/manga_image.dart';
 
 /*
 Each Filter and Sort is a StateProvider
@@ -237,29 +237,7 @@ class LibraryReadingMangaTile extends StatelessWidget {
             const SizedBox(
               width: 10,
             ),
-            Container(
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(6),
-                      bottomLeft: Radius.circular(6)),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Color.fromARGB(255, 75, 75, 75),
-                        blurRadius: 0,
-                        spreadRadius: 0,
-                        offset: Offset(3, 4))
-                  ]),
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                    topRight: Radius.circular(6),
-                    bottomLeft: Radius.circular(6)),
-                child: CachedNetworkImage(
-                  imageUrl: mangaUserData.manga.imageUrl,
-                  filterQuality: FilterQuality.high,
-                  fit: BoxFit.fitHeight,
-                ),
-              ),
-            ),
+            MangaImage(mangaUserData.manga.imageUrl),
             const SizedBox(
               width: 15,
             ),
