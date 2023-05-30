@@ -194,11 +194,12 @@ class MangaProfileScreen extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               //TODO: Check If has UserStatus or not
-                              if (!mangaState.isLoadingUserData)
-                                MangaUserStatusSection(
-                                    mangaState.manga!,
-                                    mangaState.userData!,
-                                    functions.changeMangaUserStatus),
+                              !mangaState.isLoadingUserData
+                                  ? MangaUserStatusSection(
+                                      mangaState.manga!,
+                                      mangaState.userData!,
+                                      functions.changeMangaUserStatus)
+                                  : const CircularProgressIndicator(),
                               MangaDetailsSection(mangaState.manga!),
                               if (!mangaState.isLoadingUserData)
                                 MangaChaptersSection(
@@ -288,7 +289,7 @@ class MangaUserStatusSection extends StatelessWidget {
           borderRadius: const BorderRadius.all(Radius.circular(6)),
           child: LinearProgressIndicator(
               minHeight: 8,
-              value: userData.chaptersRead / manga.chapters.length,
+              value: userData.chaptersRead.length / manga.chapters.length,
               color: Theme.of(context).primaryColor,
               backgroundColor: Colors.white),
         ),
@@ -461,6 +462,7 @@ class MangaChaptersSection extends StatelessWidget {
   final void Function(TranslationLanguageEnum) changeSelectedLanguage;
   final Future Function(int) markChapterRead;
   final Future Function(int) unmarkChapterRead;
+
   const MangaChaptersSection(this.manga, this.userData, this.selectedLanguage,
       this.changeSelectedLanguage, this.markChapterRead, this.unmarkChapterRead,
       {super.key});
@@ -480,7 +482,7 @@ class MangaChaptersSection extends StatelessWidget {
               width: 5,
             ),
             Text(
-              '(${userData.chaptersRead}/${manga.chapters.where((c) => c.translations.any((t) => t.language == selectedLanguage)).length})',
+              '(${userData.chaptersRead.length}/${manga.chapters.where((c) => c.translations.any((t) => t.language == selectedLanguage)).length})',
               style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
             const Spacer(),
@@ -523,8 +525,8 @@ class MangaChaptersSection extends StatelessWidget {
           height: 10,
         ),
         Wrap(
-          runSpacing: 10,
-          spacing: 10,
+          runSpacing: 8,
+          spacing: 8,
           children: manga.chapters
               .where((c) =>
                   c.translations.any((t) => t.language == selectedLanguage))
@@ -538,7 +540,10 @@ class MangaChaptersSection extends StatelessWidget {
                     width: 55,
                     height: 35,
                     decoration: BoxDecoration(
-                        color: Colors.purple,
+                        color: userData.chaptersRead.contains(e.id)
+                            ? Colors.green[700]
+                            : Colors.purple,
+                        border: Border.all(color: Colors.white54),
                         borderRadius: BorderRadius.circular(8)),
                     child: Center(child: Text(e.name)),
                   ),

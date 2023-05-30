@@ -36,8 +36,8 @@ final filteredReadingMangasProvider =
           .watch(readingMangasProvider)
           .asData
           ?.value
-          .where(
-              (element) => element.chaptersRead < element.manga.chaptersCount)
+          .where((element) =>
+              element.chaptersRead.length < element.manga.chaptersCount)
           .toList() ??
       [];
 
@@ -279,7 +279,7 @@ class LibraryReadingMangaTile extends StatelessWidget {
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                     child: LinearProgressIndicator(
                       minHeight: 9,
-                      value: mangaUserData.chaptersRead /
+                      value: mangaUserData.chaptersRead.length /
                           mangaUserData.manga.chaptersCount,
                     ),
                   ),

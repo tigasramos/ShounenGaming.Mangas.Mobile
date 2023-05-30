@@ -8,15 +8,15 @@ class MangaImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
+      decoration: BoxDecoration(
+          borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(6), bottomRight: Radius.circular(6)),
           boxShadow: [
             BoxShadow(
-                color: Colors.deepPurpleAccent,
+                color: Theme.of(context).secondaryHeaderColor,
                 blurRadius: 0,
                 spreadRadius: 0,
-                offset: Offset(2, 2))
+                offset: const Offset(2, 2))
           ]),
       child: ClipRRect(
         borderRadius: const BorderRadius.only(

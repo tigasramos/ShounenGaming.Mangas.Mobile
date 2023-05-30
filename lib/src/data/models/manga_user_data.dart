@@ -11,7 +11,7 @@ class MangaUserData {
   DateTime? addedToStatusDate;
   DateTime? startedReadingDate;
   DateTime? finishedReadingDate;
-  int chaptersRead;
+  List<int> chaptersRead;
   MangaUserData({
     required this.userId,
     required this.manga,
@@ -29,7 +29,7 @@ class MangaUserData {
     DateTime? addedToStatusDate,
     DateTime? startedReadingDate,
     DateTime? finishedReadingDate,
-    int? chaptersRead,
+    List<int>? chaptersRead,
   }) {
     return MangaUserData(
       userId: userId ?? this.userId,
@@ -68,7 +68,7 @@ class MangaUserData {
       finishedReadingDate: map['finishedReadingDate'] != null
           ? DateTime.parse(map['finishedReadingDate'])
           : null,
-      chaptersRead: map['chaptersRead'] as int,
+      chaptersRead: List<int>.from(map['chaptersRead']),
     );
   }
 

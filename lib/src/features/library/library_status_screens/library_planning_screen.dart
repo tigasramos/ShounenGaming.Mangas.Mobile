@@ -32,8 +32,8 @@ final filteredPlanningMangasProvider =
           .watch(planningMangasProvider)
           .asData
           ?.value
-          .where(
-              (element) => element.chaptersRead < element.manga.chaptersCount)
+          .where((element) =>
+              element.chaptersRead.length < element.manga.chaptersCount)
           .toList() ??
       [];
 

@@ -174,7 +174,7 @@ class LibraryDroppedMangaTile extends StatelessWidget {
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                     child: LinearProgressIndicator(
                       minHeight: 9,
-                      value: mangaUserData.chaptersRead /
+                      value: mangaUserData.chaptersRead.length /
                           mangaUserData.manga.chaptersCount,
                     ),
                   ),
