@@ -2,12 +2,12 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'manga_translation.dart';
+import 'manga_translation_info.dart';
 
 class MangaChapter {
   int id;
   String name;
-  List<MangaTranslation> translations;
+  List<MangaTranslationInfo> translations;
   MangaChapter({
     required this.id,
     required this.name,
@@ -17,7 +17,7 @@ class MangaChapter {
   MangaChapter copyWith({
     int? id,
     String? name,
-    List<MangaTranslation>? translations,
+    List<MangaTranslationInfo>? translations,
   }) {
     return MangaChapter(
       id: id ?? this.id,
@@ -38,9 +38,9 @@ class MangaChapter {
     return MangaChapter(
       id: map['id'] as int,
       name: map['name'] as String,
-      translations: List<MangaTranslation>.from(
-        (map['translations']).map<MangaTranslation>(
-          (x) => MangaTranslation.fromMap(x as Map<String, dynamic>),
+      translations: List<MangaTranslationInfo>.from(
+        (map['translations']).map<MangaTranslationInfo>(
+          (x) => MangaTranslationInfo.fromMap(x as Map<String, dynamic>),
         ),
       ),
     );

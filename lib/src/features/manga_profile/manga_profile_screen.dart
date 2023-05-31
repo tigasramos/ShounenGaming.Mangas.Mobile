@@ -7,6 +7,7 @@ import 'package:dash_flags/dash_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:shounengaming_mangas_mobile/main.dart';
 
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_status_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/translation_language_enum.dart';
@@ -14,6 +15,7 @@ import 'package:shounengaming_mangas_mobile/src/data/models/manga.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
+import 'package:shounengaming_mangas_mobile/src/features/chapter/chapter_screen.dart';
 
 final mangaProfileProvider = StateNotifierProvider.family
     .autoDispose<MangaProfileController, MangaProfileState, int>(
@@ -111,7 +113,7 @@ class MangaProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var mangaState = ref.watch(mangaProfileProvider(mangaId));
     var functions = ref.read(mangaProfileProvider(mangaId).notifier);
-
+    print('Rebuilt');
     if (mangaState.isLoadingManga) {
       return Scaffold(
         appBar: AppBar(
@@ -535,7 +537,11 @@ class MangaChaptersSection extends StatelessWidget {
                   customBorder: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  onTap: () {},
+                  onTap: () async {
+                    await navigationKey.currentState?.push(MaterialPageRoute(
+                        builder: (context) =>
+                            ChapterScreen(manga.id, e.id, selectedLanguage)));
+                  },
                   child: Container(
                     width: 55,
                     height: 35,

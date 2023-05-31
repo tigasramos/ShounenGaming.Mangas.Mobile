@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/enums/translation_language_enum.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/manga_translation.dart';
 
 import '../models/chapter_release.dart';
 import '../models/mal_manga.dart';
@@ -24,6 +26,13 @@ class MangaRepository {
   Future<Manga> getMangaById(int id) async {
     var response = await _client.get('$_baseURL/$id');
     return Manga.fromMap(response.data);
+  }
+
+  Future<MangaTranslation> getMangaTranslation(
+      int mangaId, int chapterId, TranslationLanguageEnum language) async {
+    var response = await _client.get(
+        '$_baseURL/$mangaId/chapters/$chapterId/translations/${language.name}');
+    return MangaTranslation.fromMap(response.data);
   }
 
   Future<PaginatedMangaResponse> searchMangas(
