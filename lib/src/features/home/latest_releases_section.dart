@@ -1,9 +1,13 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dash_flags/dash_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/chapter_release.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_repository.dart';
+import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_profile_screen.dart';
 
 final newChaptersProvider = FutureProvider.autoDispose((ref) async {
   var mangasRepo = ref.watch(mangaRepositoryProvider);
@@ -56,48 +60,74 @@ class ChapterReleaseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      width: double.infinity,
-      height: 100,
-      child: Row(
-        children: [
-          AspectRatio(
-              aspectRatio: 0.66,
-              child: CachedNetworkImage(
-                fit: BoxFit.fitHeight,
-                filterQuality: FilterQuality.high,
-                imageUrl: chapterRelease.manga.imageUrl,
-              )),
-          const SizedBox(
-            width: 10,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AutoSizeText(
-                  chapterRelease.manga.name,
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-                InkWell(
-                  onTap: () {},
-                  child: Text(
-                    '#${chapterRelease.name}',
+    return InkWell(
+      onTap: () {
+        navigationKey.currentState?.push(
+          MaterialPageRoute(
+              builder: (context) =>
+                  MangaProfileScreen(chapterRelease.manga.id)),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        width: double.infinity,
+        height: 100,
+        child: Row(
+          children: [
+            AspectRatio(
+                aspectRatio: 0.66,
+                child: CachedNetworkImage(
+                  errorWidget: (context, url, error) =>
+                      const CircularProgressIndicator(),
+                  fit: BoxFit.fitHeight,
+                  filterQuality: FilterQuality.high,
+                  imageUrl: chapterRelease.manga.imagesUrls[0],
+                )),
+            const SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AutoSizeText(
+                    chapterRelease.manga.name,
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                  Text(
+                    chapterRelease.manga.tags.join(", "),
                     style: const TextStyle(color: Colors.grey),
                   ),
-                ),
-                InkWell(
-                  onTap: () {},
-                  child: const Text(
-                    '#1059',
-                    style: TextStyle(color: Colors.grey),
+                  const Spacer(),
+                  Row(
+                    children: [
+                      SizedBox(
+                        height: 13,
+                        width: 18,
+                        child: CountryFlag(country: Country.pt),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        "#${chapterRelease.name}",
+                      ),
+                      const Spacer(),
+                      Text(
+                        DateFormat("dd MMM yyyy")
+                            .format(chapterRelease.createdAt),
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ],
                   ),
-                )
-              ],
+                  const Spacer(
+                    flex: 4,
+                  ),
+                ],
+              ),
             ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }

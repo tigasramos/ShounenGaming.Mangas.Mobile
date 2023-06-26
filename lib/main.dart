@@ -5,8 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shounengaming_mangas_mobile/src/features/home/home_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/features/home/latest_releases_section.dart';
+import 'package:shounengaming_mangas_mobile/src/features/home/popular_mangas_section.dart';
 import 'package:shounengaming_mangas_mobile/src/features/library/library_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/features/library/library_status_screens/library_reading_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/search/search_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/features/settings/settings_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/others/menu_items.dart';
 import 'package:shounengaming_mangas_mobile/src/others/theme.dart';
 
@@ -46,14 +50,14 @@ class SGMangasApp extends StatelessWidget {
   }
 }
 
-class MainLayoutScreen extends StatefulWidget {
+class MainLayoutScreen extends ConsumerStatefulWidget {
   const MainLayoutScreen({super.key});
 
   @override
-  State<MainLayoutScreen> createState() => _MainLayoutScreenState();
+  ConsumerState<MainLayoutScreen> createState() => _MainLayoutScreenState();
 }
 
-class _MainLayoutScreenState extends State<MainLayoutScreen> {
+class _MainLayoutScreenState extends ConsumerState<MainLayoutScreen> {
   PersistentTabController? controller;
   @override
   void initState() {
@@ -72,14 +76,33 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
         controller: controller,
         onItemSelected: (i) {
           //TODO: Refresh providers state
+          switch (i) {
+            case 0:
+              ref.invalidate(popularMangasProvider);
+              ref.invalidate(newChaptersProvider);
+              break;
+            case 1:
+              ref.invalidate(readingMangasProvider);
+              break;
+            case 2:
+              ref.invalidate(mangaSearchProvider);
+              break;
+            case 3:
+              break;
+            case 4:
+              break;
+          }
           setState(() {});
         },
         screens: const [
           HomeScreen(),
           LibraryScreen(),
           SearchScreen(),
-          Scaffold(body: Text('History')),
-          Scaffold(body: Text('Settings')),
+          Scaffold(
+              body: Center(
+            child: Text('In Construction'),
+          )),
+          SettingsScreen()
         ],
         items: menuItems
             .map(
@@ -96,9 +119,9 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
         handleAndroidBackButtonPress: true,
         resizeToAvoidBottomInset: true,
         stateManagement: false,
+        popAllScreensOnTapAnyTabs: true,
         hideNavigationBarWhenKeyboardShows: true,
         decoration: const NavBarDecoration(),
-        popAllScreensOnTapOfSelectedTab: true,
         popActionScreens: PopActionScreensType.all,
         itemAnimationProperties: const ItemAnimationProperties(
           duration: Duration(milliseconds: 200),

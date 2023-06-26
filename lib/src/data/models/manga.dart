@@ -11,12 +11,13 @@ class Manga {
   int id;
   String name;
   List<StringPair> alternativeNames;
+  List<String> synonyms;
   String description;
   bool isReleasing;
   MangaTypeEnum type;
   List<String> tags;
   List<MangaChapter> chapters;
-  String imageUrl;
+  List<String> imagesUrls;
   MangaWriter writer;
   int? mangaMyAnimeListId;
   DateTime? startedAt;
@@ -25,12 +26,13 @@ class Manga {
     required this.id,
     required this.name,
     required this.alternativeNames,
+    required this.synonyms,
     required this.description,
     required this.isReleasing,
     required this.type,
     required this.tags,
     required this.chapters,
-    required this.imageUrl,
+    required this.imagesUrls,
     required this.writer,
     this.mangaMyAnimeListId,
     this.startedAt,
@@ -41,12 +43,13 @@ class Manga {
     int? id,
     String? name,
     List<StringPair>? alternativeNames,
+    List<String>? synonyms,
     String? description,
     bool? isReleasing,
     List<String>? tags,
     MangaTypeEnum? type,
     List<MangaChapter>? chapters,
-    String? imageUrl,
+    List<String>? imagesUrls,
     MangaWriter? writer,
     int? mangaMyAnimeListId,
     DateTime? startedAt,
@@ -56,12 +59,13 @@ class Manga {
       id: id ?? this.id,
       name: name ?? this.name,
       alternativeNames: alternativeNames ?? this.alternativeNames,
+      synonyms: synonyms ?? this.synonyms,
       description: description ?? this.description,
       isReleasing: isReleasing ?? this.isReleasing,
       type: type ?? this.type,
       tags: tags ?? this.tags,
       chapters: chapters ?? this.chapters,
-      imageUrl: imageUrl ?? this.imageUrl,
+      imagesUrls: imagesUrls ?? this.imagesUrls,
       writer: writer ?? this.writer,
       mangaMyAnimeListId: mangaMyAnimeListId ?? this.mangaMyAnimeListId,
       startedAt: startedAt ?? this.startedAt,
@@ -74,12 +78,13 @@ class Manga {
       'id': id,
       'name': name,
       'alternativeNames': alternativeNames.map((x) => x.toMap()).toList(),
+      'synonyms': synonyms,
       'description': description,
       'isReleasing': isReleasing,
       'type': type,
       'tags': tags,
       'chapters': chapters.map((x) => x.toMap()).toList(),
-      'imageUrl': imageUrl,
+      'imagesUrls': imagesUrls,
       'writer': writer,
       'mangaMyAnimeListId': mangaMyAnimeListId,
       'startedAt': startedAt?.toString(),
@@ -96,6 +101,7 @@ class Manga {
           (x) => StringPair.fromMap(x as Map<String, dynamic>),
         ),
       ),
+      synonyms: List<String>.from(map['synonyms']),
       description: map['description'] as String,
       isReleasing: map['isReleasing'] as bool,
       tags: List<String>.from(map['tags']),
@@ -105,7 +111,7 @@ class Manga {
           (x) => MangaChapter.fromMap(x as Map<String, dynamic>),
         ),
       ),
-      imageUrl: map['imageUrl'] as String,
+      imagesUrls: List<String>.from(map['imagesUrls']),
       writer: MangaWriter.fromMap(map['writer']),
       mangaMyAnimeListId: map['mangaMyAnimeListId'] != null
           ? map['mangaMyAnimeListId'] as int
@@ -124,7 +130,7 @@ class Manga {
 
   @override
   String toString() {
-    return 'Manga(id: $id, name: $name, alternativeNames: $alternativeNames, description: $description, isReleasing: $isReleasing, tags: $tags, chapters: $chapters, imageUrl: $imageUrl, writer: $writer, mangaMyAnimeListId: $mangaMyAnimeListId, startedAt: $startedAt, finishedAt: $finishedAt)';
+    return 'Manga(id: $id, name: $name, alternativeNames: $alternativeNames, description: $description, isReleasing: $isReleasing, tags: $tags, chapters: $chapters, imagesUrls: $imagesUrls, writer: $writer, mangaMyAnimeListId: $mangaMyAnimeListId, startedAt: $startedAt, finishedAt: $finishedAt)';
   }
 
   @override
@@ -136,9 +142,10 @@ class Manga {
         listEquals(other.alternativeNames, alternativeNames) &&
         other.description == description &&
         other.isReleasing == isReleasing &&
+        listEquals(other.synonyms, synonyms) &&
         listEquals(other.tags, tags) &&
         listEquals(other.chapters, chapters) &&
-        other.imageUrl == imageUrl &&
+        listEquals(other.imagesUrls, imagesUrls) &&
         other.type == type &&
         other.writer == writer &&
         other.mangaMyAnimeListId == mangaMyAnimeListId &&
@@ -152,11 +159,12 @@ class Manga {
         name.hashCode ^
         alternativeNames.hashCode ^
         description.hashCode ^
+        synonyms.hashCode ^
         isReleasing.hashCode ^
         tags.hashCode ^
         type.hashCode ^
         chapters.hashCode ^
-        imageUrl.hashCode ^
+        imagesUrls.hashCode ^
         writer.hashCode ^
         mangaMyAnimeListId.hashCode ^
         startedAt.hashCode ^

@@ -12,7 +12,7 @@ class MangaInfo {
   MangaTypeEnum type;
   List<String> tags;
   int chaptersCount;
-  String imageUrl;
+  List<String> imagesUrls;
   int? myAnimeListId;
   int? anilistId;
   DateTime? startedAt;
@@ -25,7 +25,7 @@ class MangaInfo {
     required this.type,
     required this.tags,
     required this.chaptersCount,
-    required this.imageUrl,
+    required this.imagesUrls,
     this.myAnimeListId,
     this.anilistId,
     this.startedAt,
@@ -40,7 +40,7 @@ class MangaInfo {
     MangaTypeEnum? type,
     List<String>? tags,
     int? chaptersCount,
-    String? imageUrl,
+    List<String>? imagesUrls,
     int? myAnimeListId,
     int? anilistId,
     DateTime? startedAt,
@@ -54,7 +54,7 @@ class MangaInfo {
       type: type ?? this.type,
       tags: tags ?? this.tags,
       chaptersCount: chaptersCount ?? this.chaptersCount,
-      imageUrl: imageUrl ?? this.imageUrl,
+      imagesUrls: imagesUrls ?? this.imagesUrls,
       myAnimeListId: myAnimeListId ?? this.myAnimeListId,
       anilistId: anilistId ?? this.anilistId,
       startedAt: startedAt ?? this.startedAt,
@@ -71,7 +71,7 @@ class MangaInfo {
       'type': type.name,
       'tags': tags,
       'chaptersCount': chaptersCount,
-      'imageUrl': imageUrl,
+      'imagesUrls': imagesUrls,
       'myAnimeListId': myAnimeListId,
       'anilistId': anilistId,
       'startedAt': startedAt?.toString(),
@@ -88,7 +88,7 @@ class MangaInfo {
       type: MangaTypeEnum.values.byName(map['type']),
       tags: List<String>.from(map['tags']),
       chaptersCount: map['chaptersCount'] as int,
-      imageUrl: map['imageUrl'] as String,
+      imagesUrls: List<String>.from(map['imagesUrls']),
       myAnimeListId:
           map['myAnimeListId'] != null ? map['myAnimeListId'] as int : null,
       anilistId: map['anilistId'] != null ? map['anilistId'] as int : null,
@@ -109,7 +109,7 @@ class MangaInfo {
 
   @override
   String toString() {
-    return 'MangaInfo(id: $id, name: $name, isReleasing: $isReleasing, type: $type, tags: $tags, chaptersCount: $chaptersCount, imageUrl: $imageUrl, myAnimeListId: $myAnimeListId, anilistId: $anilistId, startedAt: $startedAt, finishedAt: $finishedAt, lastChapterDate: $lastChapterDate)';
+    return 'MangaInfo(id: $id, name: $name, isReleasing: $isReleasing, type: $type, tags: $tags, chaptersCount: $chaptersCount, imageUrl: $imagesUrls, myAnimeListId: $myAnimeListId, anilistId: $anilistId, startedAt: $startedAt, finishedAt: $finishedAt, lastChapterDate: $lastChapterDate)';
   }
 
   @override
@@ -122,7 +122,7 @@ class MangaInfo {
         other.type == type &&
         listEquals(other.tags, tags) &&
         other.chaptersCount == chaptersCount &&
-        other.imageUrl == imageUrl &&
+        listEquals(other.imagesUrls, imagesUrls) &&
         other.myAnimeListId == myAnimeListId &&
         other.anilistId == anilistId &&
         other.startedAt == startedAt &&
@@ -138,7 +138,7 @@ class MangaInfo {
         type.hashCode ^
         tags.hashCode ^
         chaptersCount.hashCode ^
-        imageUrl.hashCode ^
+        imagesUrls.hashCode ^
         myAnimeListId.hashCode ^
         anilistId.hashCode ^
         startedAt.hashCode ^

@@ -3,9 +3,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_status_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
+import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_profile_screen.dart';
 
 enum CompletedOrderByEnum { alphabetical, completedDate }
 
@@ -101,7 +103,12 @@ class LibraryCompletedMangaTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        navigationKey.currentState?.push(
+          MaterialPageRoute(
+              builder: (context) => MangaProfileScreen(mangaUserData.manga.id)),
+        );
+      },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
         height: 100,
@@ -112,7 +119,9 @@ class LibraryCompletedMangaTile extends StatelessWidget {
               width: 10,
             ),
             CachedNetworkImage(
-              imageUrl: mangaUserData.manga.imageUrl,
+              errorWidget: (context, url, error) =>
+                  const CircularProgressIndicator(),
+              imageUrl: mangaUserData.manga.imagesUrls[0],
               filterQuality: FilterQuality.high,
               fit: BoxFit.fitHeight,
             ),

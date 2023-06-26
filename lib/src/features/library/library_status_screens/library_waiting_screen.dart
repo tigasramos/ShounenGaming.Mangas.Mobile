@@ -30,8 +30,8 @@ final filteredWaitingMangasProvider =
           .watch(waitingMangasProvider)
           .asData
           ?.value
-          .where(
-              (element) => element.manga.chaptersCount == element.chaptersRead)
+          .where((element) =>
+              element.manga.chaptersCount == element.chaptersRead.length)
           .toList() ??
       [];
 

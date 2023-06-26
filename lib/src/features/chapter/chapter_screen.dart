@@ -7,6 +7,7 @@ import 'package:shounengaming_mangas_mobile/src/data/models/manga_translation.da
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 final chapterProfileProvider = StateNotifierProvider.family<
         ChapterProfileController, ChapterProfileState, ChapterScreenParameters>(
@@ -37,29 +38,39 @@ class ChapterProfileState {
   MangaTranslation? translation;
   MangaUserData? userData;
 
+  int currentPage;
+  double currentPagePercentage;
+
   bool isLoadingUserData;
   bool isLoadingTranslation;
 
   ChapterProfileState({
     this.translation,
     this.userData,
+    this.currentPage = 1,
+    this.currentPagePercentage = 100,
     this.isLoadingTranslation = true,
     this.isLoadingUserData = true,
   });
   @override
   String toString() {
-    return '($isLoadingTranslation, $isLoadingUserData, $translation, $userData)';
+    return '($isLoadingTranslation, $currentPage, $currentPagePercentage, $isLoadingUserData, $translation, $userData)';
   }
 
   ChapterProfileState copyWith({
     MangaTranslation? translation,
     MangaUserData? userData,
+    int? currentPage,
+    double? currentPagePercentage,
     bool? isLoadingTranslation,
     bool? isLoadingUserData,
   }) {
     return ChapterProfileState(
       translation: translation ?? this.translation,
       userData: userData ?? this.userData,
+      currentPage: currentPage ?? this.currentPage,
+      currentPagePercentage:
+          currentPagePercentage ?? this.currentPagePercentage,
       isLoadingTranslation: isLoadingTranslation ?? this.isLoadingTranslation,
       isLoadingUserData: isLoadingUserData ?? this.isLoadingUserData,
     );
@@ -112,6 +123,29 @@ class ChapterProfileController extends StateNotifier<ChapterProfileState> {
         .unmarkChapterRead(state.translation!.chapterId);
     state = state.copyWith(isLoadingUserData: false, userData: userData);
   }
+
+  Future automaticReadChapter(String key, double percentage) async {
+    if (state.translation == null) return;
+
+    var currentPage =
+        state.translation!.pages.indexWhere((element) => element == key) + 1;
+    if (currentPage == state.currentPage) {
+      state = state.copyWith(currentPagePercentage: percentage);
+    } else if (percentage > state.currentPagePercentage) {
+      state = state.copyWith(
+          currentPage: currentPage, currentPagePercentage: percentage);
+    }
+
+    if (state.translation!.pages.indexWhere((element) => element == key) <
+        state.translation!.pages.length - 2) return;
+
+    if (state.userData == null) return;
+    if (state.userData!.chaptersRead.contains(state.translation!.chapterId)) {
+      return;
+    }
+
+    await readChapter();
+  }
 }
 
 class ChapterScreen extends ConsumerWidget {
@@ -124,10 +158,9 @@ class ChapterScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var chapterState = ref.watch(chapterProfileProvider(ChapterScreenParameters(
         mangaId: mangaId, chapterId: chapterId, language: language)));
-    // var functions = ref
-    //     .read(chapterProfileProvider([mangaId, chapterId, language]).notifier);
-    print('Rebuilt');
-    print(chapterState.toString());
+    var functions = ref.read(chapterProfileProvider(ChapterScreenParameters(
+            mangaId: mangaId, chapterId: chapterId, language: language))
+        .notifier);
 
     if (chapterState.isLoadingTranslation) {
       return Scaffold(
@@ -154,8 +187,13 @@ class ChapterScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(
-            width: 6,
+            width: 12,
           ),
+          chapterState.userData == null ||
+                  !chapterState.userData!.chaptersRead.contains(chapterId)
+              ? const Tooltip(
+                  message: 'Not Watched', child: Icon(Icons.visibility))
+              : const Tooltip(message: 'Already Seen', child: Icon(Icons.done)),
           // PopupMenuButton(
           //   itemBuilder: (context) {
           //     return [
@@ -165,6 +203,7 @@ class ChapterScreen extends ConsumerWidget {
           //   },
           // ),
           //IconButton(onPressed: (){}, icon: icon)
+
           const SizedBox(
             width: 10,
           )
@@ -172,18 +211,67 @@ class ChapterScreen extends ConsumerWidget {
       ),
       body: SizedBox(
           width: double.infinity,
-          child: SingleChildScrollView(
-            child: Column(
-                children: chapterState.translation!.pages
-                    .map((e) => InteractiveViewer(
-                          child: CachedNetworkImage(
-                              imageUrl: e,
-                              filterQuality: FilterQuality.high,
-                              fit: BoxFit.fitWidth,
-                              placeholder: (context, url) =>
-                                  const CircularProgressIndicator()),
-                        ))
-                    .toList()),
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Column(
+                    children: chapterState.translation!.pages
+                        .map((e) => InteractiveViewer(
+                              child: VisibilityDetector(
+                                key: Key(e),
+                                onVisibilityChanged: (info) {
+                                  functions.automaticReadChapter(
+                                      e, info.visibleFraction);
+                                },
+                                child: CachedNetworkImage(
+                                    errorWidget: (context, url, error) =>
+                                        const CircularProgressIndicator(),
+                                    imageUrl: e,
+                                    httpHeaders:
+                                        chapterState.translation!.pageHeaders,
+                                    filterQuality: FilterQuality.high,
+                                    fit: BoxFit.fitWidth,
+                                    placeholder: (context, url) =>
+                                        const CircularProgressIndicator()),
+                              ),
+                            ))
+                        .toList()),
+              ),
+              Positioned(
+                  bottom: 0,
+                  left: 0,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    decoration: const BoxDecoration(color: Colors.black45),
+                    child: Text(
+                        "${chapterState.currentPage}/${chapterState.translation!.pages.length}"),
+                  )),
+              if (chapterState.currentPage == 1 ||
+                  (chapterState.translation == null &&
+                      chapterState.translation!.pages.length ==
+                          chapterState.currentPage)) ...[
+                if (chapterState.translation!.previousChapterTranslationId !=
+                    null)
+                  Positioned(
+                    left: 20,
+                    bottom: 25,
+                    child: FloatingActionButton(
+                        heroTag: "back",
+                        onPressed: () {},
+                        child: const Icon(Icons.arrow_back)),
+                  ),
+                if (chapterState.translation!.nextChapterTranslationId != null)
+                  Positioned(
+                    right: 20,
+                    bottom: 25,
+                    child: FloatingActionButton(
+                        heroTag: "next",
+                        onPressed: () {},
+                        child: const Icon(Icons.arrow_forward)),
+                  )
+              ]
+            ],
           )),
     );
   }

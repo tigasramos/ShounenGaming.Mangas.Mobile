@@ -59,6 +59,8 @@ class LibraryIgnoredMangaTile extends StatelessWidget {
         children: [
           Expanded(
               child: CachedNetworkImage(
+                  errorWidget: (context, url, error) =>
+                      const CircularProgressIndicator(),
                   imageUrl:
                       'https://cdn.myanimelist.net/images/manga/2/253146.jpg')),
           const Text('One Piece')

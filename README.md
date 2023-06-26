@@ -13,3 +13,21 @@ Anyone who is in our Shounen Gaming's Discord Server is able to login and use ou
 ## Motivation
 
 My main motivation developing this was not only to have a tool for me and my "Weeb" friends but to learn Riverpod and develop my Flutter skills at the same time.
+
+## TODO
+
+Login and Connection #1
+Settings Screen #1
+Add New Mangas #1
+History Screen #?
+Ignored Mangas Behaviour #?
+Search Filters #2
+Library Filters #2
+Tags Screens #2
+Writers Screens #2
+Refactor Library Code #2
+Library MAL Launch #2
+Mark Seen and Unseen Chapters #2
+
+See Later:
+https://docs.consumet.org/

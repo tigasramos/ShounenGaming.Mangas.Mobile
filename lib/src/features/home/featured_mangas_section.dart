@@ -69,6 +69,8 @@ class FeaturedMangaBanner extends StatelessWidget {
               imageFilter: ImageFilter.blur(
                   sigmaY: 3, sigmaX: 3, tileMode: TileMode.mirror),
               child: CachedNetworkImage(
+                errorWidget: (context, url, error) =>
+                    const CircularProgressIndicator(),
                 imageUrl:
                     'https://cdn.myanimelist.net/images/manga/2/166254.jpg',
                 fit: BoxFit.fitWidth,

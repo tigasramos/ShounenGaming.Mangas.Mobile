@@ -4,9 +4,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_status_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
+import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_profile_screen.dart';
 
 enum PlanningOrderByEnum { alphabetical, lastAdded }
 
@@ -28,22 +30,16 @@ final filteredPlanningMangasProvider =
     Provider.autoDispose<List<MangaUserData>>((ref) {
   var orderFilter = ref.watch(orderPlanningProvider);
   var orderASCFilter = ref.watch(orderASCPlanningProvider);
-  var readingMangas = ref
-          .watch(planningMangasProvider)
-          .asData
-          ?.value
-          .where((element) =>
-              element.chaptersRead.length < element.manga.chaptersCount)
-          .toList() ??
-      [];
+  var planningMangas =
+      ref.watch(planningMangasProvider).asData?.value.toList() ?? [];
 
   switch (orderFilter) {
     case PlanningOrderByEnum.alphabetical:
-      return readingMangas
+      return planningMangas
         ..sort((a, b) =>
             a.manga.name.compareTo(b.manga.name) * (orderASCFilter ? 1 : -1));
     case PlanningOrderByEnum.lastAdded:
-      return readingMangas
+      return planningMangas
         ..sort((a, b) =>
             (a.addedToStatusDate == null
                 ? 0
@@ -52,7 +48,7 @@ final filteredPlanningMangasProvider =
                     : a.addedToStatusDate!.compareTo(b.addedToStatusDate!)) *
             (orderASCFilter ? 1 : -1));
     default:
-      return readingMangas;
+      return planningMangas;
   }
 });
 
@@ -107,7 +103,12 @@ class LibraryPlanningMangTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        navigationKey.currentState?.push(
+          MaterialPageRoute(
+              builder: (context) => MangaProfileScreen(mangaUserData.manga.id)),
+        );
+      },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
         height: 100,
@@ -129,7 +130,9 @@ class LibraryPlanningMangTile extends StatelessWidget {
                       const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
                   borderRadius: BorderRadius.circular(2)),
               child: CachedNetworkImage(
-                imageUrl: mangaUserData.manga.imageUrl,
+                imageUrl: mangaUserData.manga.imagesUrls[0],
+                errorWidget: (context, url, error) =>
+                    const CircularProgressIndicator(),
                 filterQuality: FilterQuality.high,
                 fit: BoxFit.fitHeight,
               ),

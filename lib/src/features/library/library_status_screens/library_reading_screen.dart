@@ -2,9 +2,11 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_status_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
+import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_profile_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/others/manga_image.dart';
 
 /*
@@ -227,7 +229,12 @@ class LibraryReadingMangaTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        navigationKey.currentState?.push(
+          MaterialPageRoute(
+              builder: (context) => MangaProfileScreen(mangaUserData.manga.id)),
+        );
+      },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
         height: 100,
@@ -237,7 +244,7 @@ class LibraryReadingMangaTile extends StatelessWidget {
             const SizedBox(
               width: 10,
             ),
-            MangaImage(mangaUserData.manga.imageUrl),
+            MangaImage(mangaUserData.manga.imagesUrls[0]),
             const SizedBox(
               width: 15,
             ),
@@ -267,7 +274,7 @@ class LibraryReadingMangaTile extends StatelessWidget {
                     children: [
                       const Spacer(),
                       Text(
-                        '${mangaUserData.chaptersRead} / ${mangaUserData.manga.chaptersCount}',
+                        '${mangaUserData.chaptersRead.length} / ${mangaUserData.manga.chaptersCount}',
                         style: const TextStyle(fontSize: 11),
                       ),
                     ],
@@ -279,8 +286,10 @@ class LibraryReadingMangaTile extends StatelessWidget {
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                     child: LinearProgressIndicator(
                       minHeight: 9,
-                      value: mangaUserData.chaptersRead.length /
-                          mangaUserData.manga.chaptersCount,
+                      value: mangaUserData.manga.chaptersCount == 0
+                          ? 0
+                          : mangaUserData.chaptersRead.length /
+                              mangaUserData.manga.chaptersCount,
                     ),
                   ),
                   const Spacer(),

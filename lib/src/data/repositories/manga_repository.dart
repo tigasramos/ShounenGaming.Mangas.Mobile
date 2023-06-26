@@ -2,15 +2,15 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/translation_language_enum.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/manga_source.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_translation.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/search_manga_query.dart';
 
 import '../models/chapter_release.dart';
-import '../models/mal_manga.dart';
 import '../models/manga.dart';
 import '../models/manga_info.dart';
 import '../models/manga_writer.dart';
 import '../models/paginated_manga_response.dart';
-import '../models/scrapped_simple_manga.dart';
 
 final mangaRepositoryProvider = Provider<MangaRepository>((ref) {
   final dio = ref.read(dioProvider);
@@ -28,6 +28,11 @@ class MangaRepository {
     return Manga.fromMap(response.data);
   }
 
+  Future<List<MangaSource>> getMangaSourcesById(int id) async {
+    var response = await _client.get('$_baseURL/$id/sources');
+    return (response.data as List).map((m) => MangaSource.fromMap(m)).toList();
+  }
+
   Future<MangaTranslation> getMangaTranslation(
       int mangaId, int chapterId, TranslationLanguageEnum language) async {
     var response = await _client.get(
@@ -36,9 +41,9 @@ class MangaRepository {
   }
 
   Future<PaginatedMangaResponse> searchMangas(
-      {String? name, List<String>? tags}) async {
-    var response = await _client
-        .get('$_baseURL/search', queryParameters: {'name': name, 'tags': tags});
+      SearchMangaQuery query, int page) async {
+    var response = await _client.get('$_baseURL/search',
+        queryParameters: {'page': page}, data: query.toMap());
     return PaginatedMangaResponse.fromMap(response.data);
   }
 
@@ -74,23 +79,22 @@ class MangaRepository {
     return (response.data as List).map((m) => m.toString()).toList();
   }
 
-  Future<MALManga> searchMangaMetaData(String name) async {
-    var response = await _client
-        .get('$_baseURL/search/myanimelist', queryParameters: {'name': name});
-    return MALManga.fromMap(response.data);
+  Future<List<MangaSource>> searchMangaSource(String name) async {
+    var response = await _client.get('$_baseURL/search/sources?name=$name');
+    return (response.data as List).map((m) => MangaSource.fromMap(m)).toList();
   }
 
-  Future<List<ScrappedSimpleManga>> searchMangaSource(String name) async {
-    var response = await _client.get('$_baseURL/search/sources');
-    return (response.data as List)
-        .map((m) => ScrappedSimpleManga.fromMap(m))
-        .toList();
+  Future<List<MangaSource>> linkSourcesToManga(
+      int mangaId, List<MangaSource> mangas) async {
+    var body = mangas.map((e) => e.toMap()).toList();
+    var response = await _client.put('$_baseURL/$mangaId/links', data: body);
+    return (response.data as List).map((m) => MangaSource.fromMap(m)).toList();
   }
 
-  Future<Manga> linkSourcesToManga(
-      int myAnimeListId, List<ScrappedSimpleManga> mangas) async {
-    var response =
-        await _client.put('$_baseURL/$myAnimeListId/links', data: mangas);
-    return Manga.fromMap(response.data);
+  Future fetchChaptersForManga(int mangaId) async {
+    var response = await _client.put('$_baseURL/$mangaId/chapters');
+    if (response.statusCode != 200) {
+      throw Exception("Status Code: ${response.statusCode}");
+    }
   }
 }

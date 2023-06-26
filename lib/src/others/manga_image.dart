@@ -23,8 +23,11 @@ class MangaImage extends StatelessWidget {
             topLeft: Radius.circular(6), bottomRight: Radius.circular(6)),
         child: CachedNetworkImage(
           imageUrl: imageUrl,
+          width: 66,
           filterQuality: FilterQuality.high,
-          fit: BoxFit.fitHeight,
+          fit: BoxFit.fitWidth,
+          errorWidget: (context, url, error) =>
+              const CircularProgressIndicator(),
         ),
       ),
     );

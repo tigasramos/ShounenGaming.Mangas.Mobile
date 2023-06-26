@@ -6,18 +6,18 @@ import 'package:collection/collection.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/translation_language_enum.dart';
 
 class MangaTranslation {
-  int id;
   TranslationLanguageEnum language;
   DateTime? releasedDate;
   int chapterId;
-  String chapterNumber;
+  double chapterNumber;
   String mangaName;
   int? previousChapterTranslationId;
   int? nextChapterTranslationId;
+  String source;
   List<String> pages;
+  Map<String, String>? pageHeaders;
 
   MangaTranslation({
-    required this.id,
     required this.language,
     this.releasedDate,
     required this.chapterId,
@@ -25,38 +25,40 @@ class MangaTranslation {
     required this.mangaName,
     this.previousChapterTranslationId,
     this.nextChapterTranslationId,
+    required this.source,
     required this.pages,
+    this.pageHeaders,
   });
 
   MangaTranslation copyWith({
-    int? id,
     TranslationLanguageEnum? language,
     DateTime? releasedDate,
     int? chapterId,
-    String? chapterNumber,
+    double? chapterNumber,
     String? mangaName,
     int? previousChapterTranslationId,
     int? nextChapterTranslationId,
     List<String>? pages,
+    String? source,
+    Map<String, String>? pageHeaders,
   }) {
     return MangaTranslation(
-      id: id ?? this.id,
-      language: language ?? this.language,
-      releasedDate: releasedDate ?? this.releasedDate,
-      chapterId: chapterId ?? this.chapterId,
-      chapterNumber: chapterNumber ?? this.chapterNumber,
-      mangaName: mangaName ?? this.mangaName,
-      previousChapterTranslationId:
-          previousChapterTranslationId ?? this.previousChapterTranslationId,
-      nextChapterTranslationId:
-          nextChapterTranslationId ?? this.nextChapterTranslationId,
-      pages: pages ?? this.pages,
-    );
+        language: language ?? this.language,
+        releasedDate: releasedDate ?? this.releasedDate,
+        chapterId: chapterId ?? this.chapterId,
+        chapterNumber: chapterNumber ?? this.chapterNumber,
+        mangaName: mangaName ?? this.mangaName,
+        previousChapterTranslationId:
+            previousChapterTranslationId ?? this.previousChapterTranslationId,
+        nextChapterTranslationId:
+            nextChapterTranslationId ?? this.nextChapterTranslationId,
+        pages: pages ?? this.pages,
+        source: source ?? this.source,
+        pageHeaders: pageHeaders ?? this.pageHeaders);
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'id': id,
       'language': language.name,
       'releasedDate': releasedDate?.toString(),
       'chapterId': chapterId,
@@ -64,19 +66,21 @@ class MangaTranslation {
       'mangaName': mangaName,
       'previousChapterTranslationId': previousChapterTranslationId,
       'nextChapterTranslationId': nextChapterTranslationId,
+      'source': source,
       'pages': pages,
     };
   }
 
   factory MangaTranslation.fromMap(Map<String, dynamic> map) {
     return MangaTranslation(
-      id: map['id'] as int,
       language: TranslationLanguageEnum.values.byName(map['language']),
       releasedDate: map['releasedDate'] != null
           ? DateTime.parse(map['releasedDate'])
           : null,
       chapterId: map['chapterId'] as int,
-      chapterNumber: map['chapterNumber'] as String,
+      chapterNumber: map['chapterNumber'] is String
+          ? double.parse(map['chapterNumber'])
+          : map['chapterNumber'].toDouble(),
       mangaName: map['mangaName'] as String,
       previousChapterTranslationId: map['previousChapterTranslationId'] != null
           ? map['previousChapterTranslationId'] as int
@@ -85,6 +89,10 @@ class MangaTranslation {
           ? map['nextChapterTranslationId'] as int
           : null,
       pages: List<String>.from(map['pages']),
+      source: map['source'] as String,
+      pageHeaders: map['pageHeaders'] != null
+          ? Map<String, String>.from(map['pageHeaders'])
+          : null,
     );
   }
 
@@ -95,7 +103,7 @@ class MangaTranslation {
 
   @override
   String toString() {
-    return 'MangaTranslation(id: $id, language: $language, releasedDate: $releasedDate, chapterId: $chapterId, chapterNumber: $chapterNumber, mangaName: $mangaName, previousChapterTranslationId: $previousChapterTranslationId, nextChapterTranslationId: $nextChapterTranslationId, pages: $pages)';
+    return 'MangaTranslation(language: $language, releasedDate: $releasedDate, source: $source, chapterId: $chapterId, chapterNumber: $chapterNumber, mangaName: $mangaName, previousChapterTranslationId: $previousChapterTranslationId, nextChapterTranslationId: $nextChapterTranslationId, pages: $pages)';
   }
 
   @override
@@ -103,11 +111,11 @@ class MangaTranslation {
     if (identical(this, other)) return true;
     final listEquals = const DeepCollectionEquality().equals;
 
-    return other.id == id &&
-        other.language == language &&
+    return other.language == language &&
         other.releasedDate == releasedDate &&
         other.chapterId == chapterId &&
         other.chapterNumber == chapterNumber &&
+        other.source == source &&
         other.mangaName == mangaName &&
         other.previousChapterTranslationId == previousChapterTranslationId &&
         other.nextChapterTranslationId == nextChapterTranslationId &&
@@ -116,11 +124,11 @@ class MangaTranslation {
 
   @override
   int get hashCode {
-    return id.hashCode ^
-        language.hashCode ^
+    return language.hashCode ^
         releasedDate.hashCode ^
         chapterId.hashCode ^
         chapterNumber.hashCode ^
+        source.hashCode ^
         mangaName.hashCode ^
         previousChapterTranslationId.hashCode ^
         nextChapterTranslationId.hashCode ^

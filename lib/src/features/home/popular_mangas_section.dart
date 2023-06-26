@@ -2,7 +2,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_repository.dart';
+import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_profile_screen.dart';
 
 final popularMangasProvider = FutureProvider.autoDispose((ref) async {
   var mangasRepo = ref.watch(mangaRepositoryProvider);
@@ -49,7 +51,7 @@ class PopularMangasSection extends ConsumerWidget {
                         itemBuilder: (context, index) => PopularMangaCard(
                             data[index].id,
                             data[index].name,
-                            data[index].imageUrl),
+                            data[index].imagesUrls[0]),
                       ),
                   error: (error, stacktrace) => Container(),
                   loading: () => const CircularProgressIndicator()))
@@ -68,7 +70,11 @@ class PopularMangaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        navigationKey.currentState?.push(
+          MaterialPageRoute(builder: (context) => MangaProfileScreen(id)),
+        );
+      },
       child: Padding(
         padding: const EdgeInsets.only(
           top: 10,
@@ -82,6 +88,8 @@ class PopularMangaCard extends StatelessWidget {
                 child: AspectRatio(
                     aspectRatio: 0.66,
                     child: CachedNetworkImage(
+                      errorWidget: (context, url, error) =>
+                          const CircularProgressIndicator(),
                       fit: BoxFit.fitWidth,
                       filterQuality: FilterQuality.high,
                       imageUrl: imageUrl,
