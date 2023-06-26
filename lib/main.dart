@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shounengaming_mangas_mobile/src/features/home/featured_mangas_section.dart';
 import 'package:shounengaming_mangas_mobile/src/features/home/home_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/home/latest_releases_section.dart';
 import 'package:shounengaming_mangas_mobile/src/features/home/popular_mangas_section.dart';
@@ -78,6 +79,7 @@ class _MainLayoutScreenState extends ConsumerState<MainLayoutScreen> {
           //TODO: Refresh providers state
           switch (i) {
             case 0:
+              ref.invalidate(featuredMangasProvider);
               ref.invalidate(popularMangasProvider);
               ref.invalidate(newChaptersProvider);
               break;

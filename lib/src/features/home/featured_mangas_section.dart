@@ -10,12 +10,20 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_carousel_slider/carousel_slider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/manga_info.dart';
+import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_repository.dart';
 
-class FeaturedMangasSection extends StatelessWidget {
+final featuredMangasProvider = FutureProvider.autoDispose((ref) async {
+  var mangasRepo = ref.watch(mangaRepositoryProvider);
+  return await mangasRepo.getFeaturedMangas();
+});
+
+class FeaturedMangasSection extends ConsumerWidget {
   const FeaturedMangasSection({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // return CarouselSlider(
     //   options: CarouselOptions(
     //       height: min(MediaQuery.of(context).size.width / 2.55, 260)),
@@ -30,30 +38,39 @@ class FeaturedMangasSection extends StatelessWidget {
 
     return SizedBox(
       height: min(MediaQuery.of(context).size.width / 2, 260),
-      child: CarouselSlider.builder(
-          unlimitedMode: true,
-          enableAutoSlider: true,
-          autoSliderTransitionTime: const Duration(seconds: 1),
-          autoSliderDelay: const Duration(seconds: 4),
-          slideBuilder: (index) {
-            return const FeaturedMangaBanner();
-          },
-          slideTransform: const CubeTransform(),
-          slideIndicator: CircularSlideIndicator(
-            padding: const EdgeInsets.only(bottom: 10),
-            indicatorRadius: 5,
-            itemSpacing: 15,
-            currentIndicatorColor: Theme.of(context).primaryColor,
-            indicatorBorderColor: Theme.of(context).primaryColor,
-            indicatorBackgroundColor: Colors.white,
+      child: ref.watch(featuredMangasProvider).when(
+            data: (data) => CarouselSlider.builder(
+                unlimitedMode: true,
+                enableAutoSlider: true,
+                autoSliderTransitionTime: const Duration(seconds: 1),
+                autoSliderDelay: const Duration(seconds: 4),
+                slideBuilder: (index) {
+                  return FeaturedMangaBanner(data[index]);
+                },
+                slideTransform: const CubeTransform(),
+                slideIndicator: CircularSlideIndicator(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  indicatorRadius: 5,
+                  itemSpacing: 15,
+                  currentIndicatorColor: Theme.of(context).primaryColor,
+                  indicatorBorderColor: Theme.of(context).primaryColor,
+                  indicatorBackgroundColor: Colors.white,
+                ),
+                itemCount: data.length),
+            error: (error, stackTrace) => Container(
+              child: Text(error.toString()),
+            ),
+            loading: () => const Center(
+              child: CircularProgressIndicator(),
+            ),
           ),
-          itemCount: 3),
     );
   }
 }
 
 class FeaturedMangaBanner extends StatelessWidget {
-  const FeaturedMangaBanner({super.key});
+  final MangaInfo manga;
+  const FeaturedMangaBanner(this.manga, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -71,8 +88,7 @@ class FeaturedMangaBanner extends StatelessWidget {
               child: CachedNetworkImage(
                 errorWidget: (context, url, error) =>
                     const CircularProgressIndicator(),
-                imageUrl:
-                    'https://cdn.myanimelist.net/images/manga/2/166254.jpg',
+                imageUrl: manga.imagesUrls[0],
                 fit: BoxFit.fitWidth,
                 filterQuality: FilterQuality.high,
                 alignment: const Alignment(0, -0.5),
@@ -96,7 +112,7 @@ class FeaturedMangaBanner extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       AutoSizeText(
-                        'Black Clover',
+                        manga.name,
                         style: Theme.of(context)
                             .textTheme
                             .headlineMedium!
@@ -105,7 +121,7 @@ class FeaturedMangaBanner extends StatelessWidget {
                                 fontWeight: FontWeight.w500),
                       ),
                       Text(
-                        'Action, Adventure',
+                        manga.tags.take(3).join(", "),
                         style: Theme.of(context)
                             .textTheme
                             .labelMedium!

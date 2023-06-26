@@ -47,6 +47,11 @@ class MangaRepository {
     return PaginatedMangaResponse.fromMap(response.data);
   }
 
+  Future<List<MangaInfo>> getFeaturedMangas() async {
+    var response = await _client.get('$_baseURL/featured');
+    return (response.data as List).map((m) => MangaInfo.fromMap(m)).toList();
+  }
+
   Future<List<MangaInfo>> getPopularMangas() async {
     var response = await _client.get('$_baseURL/popular');
     return (response.data as List).map((m) => MangaInfo.fromMap(m)).toList();
