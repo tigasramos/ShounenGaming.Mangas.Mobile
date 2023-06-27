@@ -103,38 +103,51 @@ class LibraryReadingScreen extends ConsumerWidget {
           child: Row(children: [
             Expanded(
                 child: IconButton(
+                    tooltip: 'Filters',
                     onPressed: () {
-                      showModalBottomSheet<void>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return SizedBox(
-                            height: 300,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  const Text('Modal BottomSheet'),
-                                  ElevatedButton(
-                                    child: const Text('Close BottomSheet'),
-                                    onPressed: () => Navigator.pop(context),
-                                  ),
-                                  const Text('Show Only with New Chapters'),
-                                  const Text('Manga Type'),
-                                  const Text('Show Only with New Chapters'),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
+                      // TODO: Modal for Filters
+                      // showModalBottomSheet<void>(
+                      //   context: context,
+                      //   builder: (BuildContext context) {
+                      //     return SizedBox(
+                      //       height: 300,
+                      //       child: Center(
+                      //         child: Column(
+                      //           mainAxisAlignment: MainAxisAlignment.center,
+                      //           mainAxisSize: MainAxisSize.min,
+                      //           children: <Widget>[
+                      //             const Text('Modal BottomSheet'),
+                      //             ElevatedButton(
+                      //               child: const Text('Close BottomSheet'),
+                      //               onPressed: () => Navigator.pop(context),
+                      //             ),
+                      //             const Text('Show Only with New Chapters'),
+                      //             const Text('Manga Type'),
+                      //             const Text('Show Only with New Chapters'),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     );
+                      //   },
+                      // );
                     },
                     icon: const Icon(Icons.filter_alt))),
             Expanded(
                 flex: 4,
                 child: Center(
-                    child: Text(
-                        '${ref.watch(filteredReadingMangasProvider).length.toString()} Mangas'))),
+                    child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      ref
+                          .watch(filteredReadingMangasProvider)
+                          .length
+                          .toString(),
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    const Text(' Mangas')
+                  ],
+                ))),
             Expanded(
               child: PopupMenuButton(
                 tooltip: 'Order By',
@@ -257,12 +270,12 @@ class LibraryReadingMangaTile extends StatelessWidget {
                     minFontSize: 16,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(shadows: <Shadow>[
-                      Shadow(
-                        offset: const Offset(1, 2),
-                        blurRadius: 4.0,
-                        color: Theme.of(context).primaryColor,
-                      ),
+                    style: const TextStyle(shadows: <Shadow>[
+                      // Shadow(
+                      //   offset: const Offset(1, 2),
+                      //   blurRadius: 4.0,
+                      //   color: Theme.of(context).primaryColor,
+                      // ),
                     ], fontSize: 21, fontWeight: FontWeight.w500, height: 1.2),
                   ),
                   Text(
@@ -298,8 +311,9 @@ class LibraryReadingMangaTile extends StatelessWidget {
                       const Spacer(),
                       Text(
                         'Last Chapter: ${mangaUserData.manga.lastChapterDate != null ? DateFormat("dd MMM yyyy").format(mangaUserData.manga.lastChapterDate!) : "Not Found"}',
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 11),
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 150, 79, 194),
+                            fontSize: 11),
                       ),
                     ],
                   )

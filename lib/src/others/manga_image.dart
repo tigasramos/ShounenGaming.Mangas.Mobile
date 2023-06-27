@@ -11,12 +11,13 @@ class MangaImage extends StatelessWidget {
       decoration: BoxDecoration(
           borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(6), bottomRight: Radius.circular(6)),
-          boxShadow: [
-            BoxShadow(
-                color: Theme.of(context).secondaryHeaderColor,
-                blurRadius: 0,
-                spreadRadius: 0,
-                offset: const Offset(2, 2))
+          border: Border.all(color: Colors.white30),
+          boxShadow: const [
+            // BoxShadow(
+            //     color: Color.fromARGB(255, 58, 58, 58),
+            //     blurRadius: 0,
+            //     spreadRadius: 0,
+            //     offset: Offset(2, 2))
           ]),
       child: ClipRRect(
         borderRadius: const BorderRadius.only(

@@ -1,5 +1,4 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +7,7 @@ import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_sta
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_profile_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/others/manga_image.dart';
 
 enum DroppedOrderByEnum { alphabetical, droppedDate }
 
@@ -117,31 +117,7 @@ class LibraryDroppedMangaTile extends StatelessWidget {
             const SizedBox(
               width: 10,
             ),
-            Container(
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(6),
-                      bottomLeft: Radius.circular(6)),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Color.fromARGB(255, 75, 75, 75),
-                        blurRadius: 0,
-                        spreadRadius: 0,
-                        offset: Offset(3, 4))
-                  ]),
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                    topRight: Radius.circular(6),
-                    bottomLeft: Radius.circular(6)),
-                child: CachedNetworkImage(
-                  errorWidget: (context, url, error) =>
-                      const CircularProgressIndicator(),
-                  imageUrl: mangaUserData.manga.imagesUrls[0],
-                  filterQuality: FilterQuality.high,
-                  fit: BoxFit.fitHeight,
-                ),
-              ),
-            ),
+            MangaImage(mangaUserData.manga.imagesUrls[0]),
             const SizedBox(
               width: 15,
             ),

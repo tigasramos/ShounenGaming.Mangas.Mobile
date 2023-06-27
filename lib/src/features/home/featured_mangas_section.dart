@@ -11,8 +11,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_carousel_slider/carousel_slider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_info.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_repository.dart';
+import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_profile_screen.dart';
 
 final featuredMangasProvider = FutureProvider.autoDispose((ref) async {
   var mangasRepo = ref.watch(mangaRepositoryProvider);
@@ -133,9 +135,15 @@ class FeaturedMangaBanner extends StatelessWidget {
                     children: [
                       const Spacer(),
                       MaterialButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          navigationKey.currentState?.push(
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    MangaProfileScreen(manga.id)),
+                          );
+                        },
                         minWidth: 80,
-                        height: 30,
+                        height: 34,
                         elevation: 5,
                         color: Theme.of(context).primaryColor,
                         child: const Text(

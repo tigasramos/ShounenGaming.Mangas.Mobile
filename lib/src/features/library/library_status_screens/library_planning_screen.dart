@@ -1,6 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:badges/badges.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -9,6 +8,7 @@ import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_sta
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_profile_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/others/manga_image.dart';
 
 enum PlanningOrderByEnum { alphabetical, lastAdded }
 
@@ -123,19 +123,14 @@ class LibraryPlanningMangTile extends StatelessWidget {
                 mangaUserData.manga.chaptersCount.toString(),
                 style: const TextStyle(fontSize: 9),
               ),
+              badgeAnimation: const BadgeAnimation.fade(),
               badgeStyle: BadgeStyle(
                   shape: BadgeShape.square,
                   badgeColor: Theme.of(context).primaryColor,
                   padding:
                       const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
                   borderRadius: BorderRadius.circular(2)),
-              child: CachedNetworkImage(
-                imageUrl: mangaUserData.manga.imagesUrls[0],
-                errorWidget: (context, url, error) =>
-                    const CircularProgressIndicator(),
-                filterQuality: FilterQuality.high,
-                fit: BoxFit.fitHeight,
-              ),
+              child: MangaImage(mangaUserData.manga.imagesUrls[0]),
             ),
             const SizedBox(
               width: 15,

@@ -203,6 +203,7 @@ class MangaSearchedTile extends StatelessWidget {
                   manga.chaptersCount.toString(),
                   style: const TextStyle(fontSize: 10),
                 ),
+                badgeAnimation: const BadgeAnimation.fade(),
                 badgeStyle: BadgeStyle(
                     badgeColor: Theme.of(context).primaryColor,
                     borderRadius: BorderRadius.circular(10),
@@ -220,14 +221,14 @@ class MangaSearchedTile extends StatelessWidget {
                   AutoSizeText(manga.name,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
-                      style: TextStyle(
-                          shadows: <Shadow>[
-                            Shadow(
-                              offset: const Offset(1, 2),
-                              blurRadius: 4.0,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ],
+                      style: const TextStyle(
+                          // shadows: <Shadow>[
+                          //   Shadow(
+                          //     offset: const Offset(1, 2),
+                          //     blurRadius: 4.0,
+                          //     color: Theme.of(context).primaryColor,
+                          //   ),
+                          // ],
                           fontWeight: FontWeight.w500,
                           fontSize: 20,
                           height: 1.2)),
@@ -242,8 +243,8 @@ class MangaSearchedTile extends StatelessWidget {
                   RichText(
                       text: TextSpan(
                           text: 'Status: ',
-                          style:
-                              const TextStyle(color: Colors.grey, fontSize: 10),
+                          style: TextStyle(
+                              color: Colors.purple[300], fontSize: 10),
                           children: [
                         TextSpan(
                             text: manga.isReleasing ? 'Releasing' : 'Finished',
@@ -252,8 +253,8 @@ class MangaSearchedTile extends StatelessWidget {
                   RichText(
                       text: TextSpan(
                           text: 'Type: ',
-                          style:
-                              const TextStyle(color: Colors.grey, fontSize: 10),
+                          style: TextStyle(
+                              color: Colors.purple[300], fontSize: 10),
                           children: [
                         TextSpan(
                             text: manga.type.name,
@@ -262,8 +263,8 @@ class MangaSearchedTile extends StatelessWidget {
                   RichText(
                       text: TextSpan(
                           text: 'Last Update: ',
-                          style:
-                              const TextStyle(color: Colors.grey, fontSize: 10),
+                          style: TextStyle(
+                              color: Colors.purple[300], fontSize: 10),
                           children: [
                         TextSpan(
                             text:

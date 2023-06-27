@@ -1,5 +1,4 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +7,7 @@ import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_sta
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_profile_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/others/manga_image.dart';
 
 enum CompletedOrderByEnum { alphabetical, completedDate }
 
@@ -77,8 +77,61 @@ class LibraryCompletedScreen extends ConsumerWidget {
                     child: Text(
                         '${ref.watch(filteredCompletedMangasProvider).length} Mangas'))),
             Expanded(
-                child: IconButton(
-                    onPressed: () {}, icon: const Icon(Icons.sort))) //or Tune
+              child: PopupMenuButton(
+                tooltip: 'Order By',
+                initialValue: ref.watch(orderReadingProvider),
+                onSelected: (selected) {
+                  if (ref.read(orderReadingProvider) == selected) {
+                    //If selects the same and is Desc, clears order by
+                    if (!ref.watch(orderASCReadingProvider)) {
+                      ref.watch(orderReadingProvider.notifier).state = null;
+                      ref.watch(orderASCReadingProvider.notifier).state = true;
+                    }
+                    // If select the same and its asc, goes desc
+                    else {
+                      ref.watch(orderASCReadingProvider.notifier).state =
+                          !ref.watch(orderASCReadingProvider);
+                    }
+                  }
+                  // If not the same changes and goes asc
+                  else {
+                    ref.watch(orderReadingProvider.notifier).state = selected;
+                    ref.watch(orderASCReadingProvider.notifier).state = true;
+                  }
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: CompletedOrderByEnum.alphabetical,
+                    child: Row(
+                      children: [
+                        const Text('Alphabetical'),
+                        const Spacer(),
+                        if (ref.watch(orderReadingProvider) ==
+                            CompletedOrderByEnum.alphabetical)
+                          Icon(ref.watch(orderASCReadingProvider)
+                              ? Icons.arrow_upward
+                              : Icons.arrow_downward)
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: CompletedOrderByEnum.completedDate,
+                    child: Row(
+                      children: [
+                        const Text('Completed At'),
+                        const Spacer(),
+                        if (ref.watch(orderReadingProvider) ==
+                            CompletedOrderByEnum.completedDate)
+                          Icon(ref.watch(orderASCReadingProvider)
+                              ? Icons.arrow_upward
+                              : Icons.arrow_downward)
+                      ],
+                    ),
+                  ),
+                ],
+                child: const Icon(Icons.sort),
+              ),
+            ),
           ]),
         ),
         Expanded(
@@ -118,13 +171,7 @@ class LibraryCompletedMangaTile extends StatelessWidget {
             const SizedBox(
               width: 10,
             ),
-            CachedNetworkImage(
-              errorWidget: (context, url, error) =>
-                  const CircularProgressIndicator(),
-              imageUrl: mangaUserData.manga.imagesUrls[0],
-              filterQuality: FilterQuality.high,
-              fit: BoxFit.fitHeight,
-            ),
+            MangaImage(mangaUserData.manga.imagesUrls[0]),
             const SizedBox(
               width: 15,
             ),
@@ -148,17 +195,29 @@ class LibraryCompletedMangaTile extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(4),
-                        color: Colors.blue,
-                        child: const Text(
-                          'MyAnimeList',
-                          style: TextStyle(fontSize: 9),
+                      if (mangaUserData.manga.myAnimeListId != null) ...[
+                        GestureDetector(
+                          onTap: () {},
+                          child: Image.asset(
+                            "assets/images/sources/mal_icon.png",
+                            height: 25,
+                          ),
                         ),
-                      ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                      ],
+                      if (mangaUserData.manga.anilistId != null)
+                        GestureDetector(
+                          onTap: () {},
+                          child: Image.asset(
+                            "assets/images/sources/al_icon.png",
+                            height: 25,
+                          ),
+                        ),
                       const Spacer(),
                       Text(
-                        'Completed at: ${mangaUserData.finishedReadingDate != null ? DateFormat("dd MMM yyyy").format(mangaUserData.finishedReadingDate!) : "Not Found"}',
+                        'Completed at: ${mangaUserData.addedToStatusDate != null ? DateFormat("dd MMM yyyy").format(mangaUserData.addedToStatusDate!) : "Not Found"}',
                         style:
                             const TextStyle(color: Colors.white, fontSize: 11),
                       ),
