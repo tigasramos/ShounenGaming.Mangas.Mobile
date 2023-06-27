@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/chapter_release.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/enums/translation_language_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_profile_screen.dart';
 
@@ -99,27 +100,32 @@ class ChapterReleaseCard extends StatelessWidget {
                     style: const TextStyle(color: Colors.grey),
                   ),
                   const Spacer(),
-                  Row(
-                    children: [
-                      SizedBox(
-                        height: 13,
-                        width: 18,
-                        child: CountryFlag(country: Country.pt),
+                  ...chapterRelease.translations.take(2).map(
+                        (e) => Row(
+                          children: [
+                            SizedBox(
+                              height: 13,
+                              width: 18,
+                              child: CountryFlag(
+                                  country:
+                                      e.language == TranslationLanguageEnum.PT
+                                          ? Country.pt
+                                          : Country.gb),
+                            ),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              "#${chapterRelease.name}",
+                            ),
+                            const Spacer(),
+                            Text(
+                              DateFormat("dd MMM yyyy").format(e.createdAt),
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        "#${chapterRelease.name}",
-                      ),
-                      const Spacer(),
-                      Text(
-                        DateFormat("dd MMM yyyy")
-                            .format(chapterRelease.createdAt),
-                        style: const TextStyle(color: Colors.grey),
-                      ),
-                    ],
-                  ),
                   const Spacer(
                     flex: 4,
                   ),

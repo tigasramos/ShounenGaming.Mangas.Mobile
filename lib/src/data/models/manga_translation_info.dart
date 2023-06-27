@@ -5,22 +5,22 @@ import 'enums/translation_language_enum.dart';
 class MangaTranslationInfo {
   int id;
   TranslationLanguageEnum language;
-  DateTime? releasedDate;
+  DateTime createdAt;
   MangaTranslationInfo({
     required this.id,
     required this.language,
-    this.releasedDate,
+    required this.createdAt,
   });
 
   MangaTranslationInfo copyWith({
     int? id,
     TranslationLanguageEnum? language,
-    DateTime? releasedDate,
+    DateTime? createdAt,
   }) {
     return MangaTranslationInfo(
       id: id ?? this.id,
       language: language ?? this.language,
-      releasedDate: releasedDate ?? this.releasedDate,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 
@@ -28,7 +28,7 @@ class MangaTranslationInfo {
     return <String, dynamic>{
       'id': id,
       'language': language.name,
-      'releasedDate': releasedDate?.toString(),
+      'createdAt': createdAt.toString(),
     };
   }
 
@@ -36,9 +36,7 @@ class MangaTranslationInfo {
     return MangaTranslationInfo(
       id: map['id'] as int,
       language: TranslationLanguageEnum.values.byName(map['language']),
-      releasedDate: map['releasedDate'] != null
-          ? DateTime.parse(map['releasedDate'])
-          : null,
+      createdAt: DateTime.parse(map['createdAt']),
     );
   }
 
@@ -49,17 +47,17 @@ class MangaTranslationInfo {
 
   @override
   String toString() =>
-      'MangaTranslation(id: $id, language: $language, releasedDate: $releasedDate)';
+      'MangaTranslation(id: $id, language: $language, createdAt: $createdAt)';
 
   @override
   bool operator ==(covariant MangaTranslationInfo other) {
     if (identical(this, other)) return true;
 
     return other.language == language &&
-        other.releasedDate == releasedDate &&
+        other.createdAt == createdAt &&
         other.id == id;
   }
 
   @override
-  int get hashCode => language.hashCode ^ releasedDate.hashCode ^ id.hashCode;
+  int get hashCode => language.hashCode ^ createdAt.hashCode ^ id.hashCode;
 }

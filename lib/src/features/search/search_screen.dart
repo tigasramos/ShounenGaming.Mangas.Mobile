@@ -121,11 +121,9 @@ class SearchScreen extends ConsumerWidget {
                   Expanded(
                       child: TextFormField(
                     controller: functions.searchController,
-                    style: const TextStyle(
-                      fontSize: 15,
-                    ),
+                    style: const TextStyle(fontSize: 15),
                     decoration: InputDecoration(
-                        isCollapsed: true,
+                        //isCollapsed: true,
                         contentPadding: const EdgeInsets.all(8),
                         isDense: true,
                         suffixIcon: IconButton(
