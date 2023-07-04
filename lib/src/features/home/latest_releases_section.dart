@@ -93,10 +93,12 @@ class ChapterReleaseCard extends StatelessWidget {
                 children: [
                   AutoSizeText(
                     chapterRelease.manga.name,
+                    overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleSmall,
                   ),
                   Text(
                     chapterRelease.manga.tags.join(", "),
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(color: Colors.grey),
                   ),
                   const Spacer(),

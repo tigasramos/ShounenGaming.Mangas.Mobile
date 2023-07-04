@@ -5,6 +5,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dash_flags/dash_flags.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
@@ -71,6 +72,11 @@ class MangaProfileController extends StateNotifier<MangaProfileState> {
     state = state.copyWith(isLoadingManga: true);
     var manga = await ref.watch(mangaRepositoryProvider).getMangaById(mangaId);
     state = state.copyWith(isLoadingManga: false, manga: manga);
+
+    if (!manga.chapters.any((c) =>
+        c.translations.any((t) => t.language == TranslationLanguageEnum.PT))) {
+      state = state.copyWith(selectedLanguage: TranslationLanguageEnum.EN);
+    }
   }
 
   Future fetchMangaUserData() async {
@@ -177,33 +183,56 @@ class MangaProfileScreen extends ConsumerWidget {
               icon: const Icon(Icons.edit))
         ], //TODO : If mod
       ),
-      floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            if (mangaState.isLoadingUserData) return;
+      floatingActionButtonLocation: ExpandableFab.location,
+      floatingActionButton: ExpandableFab(
+        children: [
+          FloatingActionButton.extended(
+            heroTag: null,
+            tooltip: 'Read Next Chapter',
+            label: const Icon(Icons.menu_book),
+            onPressed: () {},
+          ),
+          FloatingActionButton.extended(
+            tooltip: 'See All Chapters',
+            heroTag: null,
+            label: const Icon(Icons.remove_red_eye),
+            onPressed: () {},
+          ),
+          FloatingActionButton.extended(
+            heroTag: null,
+            tooltip: 'Make Private',
+            label: const Icon(Icons.lock),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      // floatingActionButton: FloatingActionButton(
+      //     onPressed: () async {
+      //       if (mangaState.isLoadingUserData) return;
 
-            //Calculate next Chapter to read
-            var nextChapterId = -1;
-            var chaptersNotRead = mangaState.manga!.chapters
-                .where((element) => element.translations
-                    .any((t) => t.language == mangaState.selectedLanguage))
-                .toList()
-              ..removeWhere((element) =>
-                  mangaState.userData!.chaptersRead.contains(element.id));
-            if (chaptersNotRead.isEmpty) {
-              nextChapterId = mangaState.manga!.chapters.first.id;
-            } else {
-              nextChapterId = chaptersNotRead.last.id;
-            }
+      //       //Calculate next Chapter to read
+      //       var nextChapterId = -1;
+      //       var chaptersNotRead = mangaState.manga!.chapters
+      //           .where((element) => element.translations
+      //               .any((t) => t.language == mangaState.selectedLanguage))
+      //           .toList()
+      //         ..removeWhere((element) =>
+      //             mangaState.userData!.chaptersRead.contains(element.id));
+      //       if (chaptersNotRead.isEmpty) {
+      //         nextChapterId = mangaState.manga!.chapters.first.id;
+      //       } else {
+      //         nextChapterId = chaptersNotRead.last.id;
+      //       }
 
-            if (nextChapterId == -1) return;
+      //       if (nextChapterId == -1) return;
 
-            await navigationKey.currentState?.push(MaterialPageRoute(
-                builder: (context) => ChapterScreen(mangaState.manga!.id,
-                    nextChapterId, mangaState.selectedLanguage)));
+      //       await navigationKey.currentState?.push(MaterialPageRoute(
+      //           builder: (context) => ChapterScreen(mangaState.manga!.id,
+      //               nextChapterId, mangaState.selectedLanguage)));
 
-            await functions.fetchMangaUserData();
-          },
-          child: const Icon(Icons.menu_book)),
+      //       await functions.fetchMangaUserData();
+      //     },
+      //     child: const Icon(Icons.menu_book)),
       body: SingleChildScrollView(
         child: Column(
           children: [

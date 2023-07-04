@@ -16,9 +16,13 @@ My main motivation developing this was not only to have a tool for me and my "We
 
 ## TODO
 
+Main Page Popular Mangas Design
+Library Ignored Design
 Login and Connection #1
 Settings Screen #1
 Add New Mangas #1
+Chapter Images that don't work
+
 History Screen #?
 Ignored Mangas Behaviour #?
 Search Filters #2

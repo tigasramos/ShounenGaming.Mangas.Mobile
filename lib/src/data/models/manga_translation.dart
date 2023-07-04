@@ -11,8 +11,8 @@ class MangaTranslation {
   int chapterId;
   double chapterNumber;
   String mangaName;
-  int? previousChapterTranslationId;
-  int? nextChapterTranslationId;
+  int? previousChapterId;
+  int? nextChapterId;
   String source;
   List<String> pages;
   Map<String, String>? pageHeaders;
@@ -23,8 +23,8 @@ class MangaTranslation {
     required this.chapterId,
     required this.chapterNumber,
     required this.mangaName,
-    this.previousChapterTranslationId,
-    this.nextChapterTranslationId,
+    this.previousChapterId,
+    this.nextChapterId,
     required this.source,
     required this.pages,
     this.pageHeaders,
@@ -36,8 +36,8 @@ class MangaTranslation {
     int? chapterId,
     double? chapterNumber,
     String? mangaName,
-    int? previousChapterTranslationId,
-    int? nextChapterTranslationId,
+    int? previousChapterId,
+    int? nextChapterId,
     List<String>? pages,
     String? source,
     Map<String, String>? pageHeaders,
@@ -48,10 +48,8 @@ class MangaTranslation {
         chapterId: chapterId ?? this.chapterId,
         chapterNumber: chapterNumber ?? this.chapterNumber,
         mangaName: mangaName ?? this.mangaName,
-        previousChapterTranslationId:
-            previousChapterTranslationId ?? this.previousChapterTranslationId,
-        nextChapterTranslationId:
-            nextChapterTranslationId ?? this.nextChapterTranslationId,
+        previousChapterId: previousChapterId ?? this.previousChapterId,
+        nextChapterId: nextChapterId ?? this.nextChapterId,
         pages: pages ?? this.pages,
         source: source ?? this.source,
         pageHeaders: pageHeaders ?? this.pageHeaders);
@@ -64,8 +62,8 @@ class MangaTranslation {
       'chapterId': chapterId,
       'chapterNumber': chapterNumber,
       'mangaName': mangaName,
-      'previousChapterTranslationId': previousChapterTranslationId,
-      'nextChapterTranslationId': nextChapterTranslationId,
+      'previousChapterId': previousChapterId,
+      'nextChapterId': nextChapterId,
       'source': source,
       'pages': pages,
     };
@@ -82,12 +80,11 @@ class MangaTranslation {
           ? double.parse(map['chapterNumber'])
           : map['chapterNumber'].toDouble(),
       mangaName: map['mangaName'] as String,
-      previousChapterTranslationId: map['previousChapterTranslationId'] != null
-          ? map['previousChapterTranslationId'] as int
+      previousChapterId: map['previousChapterId'] != null
+          ? map['previousChapterId'] as int
           : null,
-      nextChapterTranslationId: map['nextChapterTranslationId'] != null
-          ? map['nextChapterTranslationId'] as int
-          : null,
+      nextChapterId:
+          map['nextChapterId'] != null ? map['nextChapterId'] as int : null,
       pages: List<String>.from(map['pages']),
       source: map['source'] as String,
       pageHeaders: map['pageHeaders'] != null
@@ -103,7 +100,7 @@ class MangaTranslation {
 
   @override
   String toString() {
-    return 'MangaTranslation(language: $language, releasedDate: $releasedDate, source: $source, chapterId: $chapterId, chapterNumber: $chapterNumber, mangaName: $mangaName, previousChapterTranslationId: $previousChapterTranslationId, nextChapterTranslationId: $nextChapterTranslationId, pages: $pages)';
+    return 'MangaTranslation(language: $language, releasedDate: $releasedDate, source: $source, chapterId: $chapterId, chapterNumber: $chapterNumber, mangaName: $mangaName, previousChapterId: $previousChapterId, nextChapterId: $nextChapterId, pages: $pages)';
   }
 
   @override
@@ -117,8 +114,8 @@ class MangaTranslation {
         other.chapterNumber == chapterNumber &&
         other.source == source &&
         other.mangaName == mangaName &&
-        other.previousChapterTranslationId == previousChapterTranslationId &&
-        other.nextChapterTranslationId == nextChapterTranslationId &&
+        other.previousChapterId == previousChapterId &&
+        other.nextChapterId == nextChapterId &&
         listEquals(other.pages, pages);
   }
 
@@ -130,8 +127,8 @@ class MangaTranslation {
         chapterNumber.hashCode ^
         source.hashCode ^
         mangaName.hashCode ^
-        previousChapterTranslationId.hashCode ^
-        nextChapterTranslationId.hashCode ^
+        previousChapterId.hashCode ^
+        nextChapterId.hashCode ^
         pages.hashCode;
   }
 }
