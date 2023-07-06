@@ -23,7 +23,7 @@ final planningMangasProvider =
     FutureProvider.autoDispose<List<MangaUserData>>((ref) async {
   var mangaUsersRepo = ref.read(mangaUsersRepositoryProvider);
   return mangaUsersRepo.getMangaDataByStatusByUser(
-      1, MangaUserStatusEnum.PLANNED);
+      ref.watch(appStateProvider).loggedUser!.id, MangaUserStatusEnum.PLANNED);
 });
 
 final filteredPlanningMangasProvider =

@@ -9,7 +9,7 @@ class MangaTranslation {
   TranslationLanguageEnum language;
   DateTime? releasedDate;
   int chapterId;
-  double chapterNumber;
+  String chapterNumber;
   String mangaName;
   int? previousChapterId;
   int? nextChapterId;
@@ -34,7 +34,7 @@ class MangaTranslation {
     TranslationLanguageEnum? language,
     DateTime? releasedDate,
     int? chapterId,
-    double? chapterNumber,
+    String? chapterNumber,
     String? mangaName,
     int? previousChapterId,
     int? nextChapterId,
@@ -76,9 +76,7 @@ class MangaTranslation {
           ? DateTime.parse(map['releasedDate'])
           : null,
       chapterId: map['chapterId'] as int,
-      chapterNumber: map['chapterNumber'] is String
-          ? double.parse(map['chapterNumber'])
-          : map['chapterNumber'].toDouble(),
+      chapterNumber: map['chapterNumber'].toString(),
       mangaName: map['mangaName'] as String,
       previousChapterId: map['previousChapterId'] != null
           ? map['previousChapterId'] as int

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/translation_language_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_translation.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart';
@@ -114,7 +115,8 @@ class ChapterProfileController extends StateNotifier<ChapterProfileState> {
     state = state.copyWith(isLoadingUserData: true);
     var userData = await ref
         .watch(mangaUsersRepositoryProvider)
-        .getDataByMangaByUser(mangaId, 1);
+        .getDataByMangaByUser(
+            mangaId, ref.watch(appStateProvider).loggedUser!.id);
     state = state.copyWith(isLoadingUserData: false, userData: userData);
   }
 
@@ -128,7 +130,7 @@ class ChapterProfileController extends StateNotifier<ChapterProfileState> {
     state = state.copyWith(isLoadingUserData: true);
     var userData = await ref
         .watch(mangaUsersRepositoryProvider)
-        .markChapterRead(state.translation!.chapterId);
+        .markChaptersRead([state.translation!.chapterId]);
     state = state.copyWith(isLoadingUserData: false, userData: userData);
   }
 
@@ -138,7 +140,7 @@ class ChapterProfileController extends StateNotifier<ChapterProfileState> {
     state = state.copyWith(isLoadingUserData: true);
     var userData = await ref
         .watch(mangaUsersRepositoryProvider)
-        .unmarkChapterRead(state.translation!.chapterId);
+        .unmarkChaptersRead([state.translation!.chapterId]);
     state = state.copyWith(isLoadingUserData: false, userData: userData);
   }
 
@@ -214,7 +216,7 @@ class ChapterScreen extends ConsumerWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          'Chapter #${chapterState.translation!.chapterNumber % 1 == 0 ? chapterState.translation!.chapterNumber.toStringAsFixed(0) : chapterState.translation!.chapterNumber}',
+                          'Chapter #${chapterState.translation!.chapterNumber}',
                           style: const TextStyle(fontSize: 14),
                         )
                       ],
@@ -262,34 +264,8 @@ class ChapterScreen extends ConsumerWidget {
                   ),
                   SliverList.builder(
                       itemCount: chapterState.translation!.pages.length,
-                      itemBuilder: (context, index) => InteractiveViewer(
-                            maxScale: 1, //TODO: Remove
-                            child: VisibilityDetector(
-                              key: Key(chapterState.translation!.pages[index]),
-                              onVisibilityChanged: (info) async {
-                                if (functions.mounted) {
-                                  await functions.automaticReadChapter(
-                                      chapterState.translation!.pages[index],
-                                      info.visibleFraction);
-                                }
-                              },
-                              child: CachedNetworkImage(
-                                  errorWidget: (context, url, error) =>
-                                      const CircularProgressIndicator(),
-                                  imageUrl:
-                                      chapterState.translation!.pages[index],
-                                  width: double.infinity,
-                                  httpHeaders:
-                                      chapterState.translation!.pageHeaders,
-                                  filterQuality: FilterQuality.high,
-                                  fit: BoxFit.fitWidth,
-                                  placeholder: (context, url) => const SizedBox(
-                                      height: 150,
-                                      width: double.infinity,
-                                      child: Center(
-                                          child: CircularProgressIndicator()))),
-                            ),
-                          ))
+                      itemBuilder: (context, index) =>
+                          ChapterPageWidget(index, functions, chapterState))
                 ],
               ),
             ),
@@ -349,7 +325,7 @@ class ChapterScreen extends ConsumerWidget {
               overflow: TextOverflow.ellipsis,
             ),
             Text(
-              'Chapter #${chapterState.translation!.chapterNumber % 1 == 0 ? chapterState.translation!.chapterNumber.toStringAsFixed(0) : chapterState.translation!.chapterNumber}',
+              'Chapter #${chapterState.translation!.chapterNumber}',
               style: const TextStyle(fontSize: 14),
             )
           ],
@@ -508,4 +484,50 @@ class ChapterScreen extends ConsumerWidget {
           )),
     );
   }
+}
+
+class ChapterPageWidget extends StatefulWidget {
+  final int index;
+  final ChapterProfileController controller;
+  final ChapterProfileState state;
+  const ChapterPageWidget(this.index, this.controller, this.state, {super.key});
+
+  @override
+  State<StatefulWidget> createState() => _ChapterPageWidgetState();
+}
+
+class _ChapterPageWidgetState extends State<ChapterPageWidget>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  Widget build(BuildContext context) {
+    return InteractiveViewer(
+      key: ValueKey(widget.index),
+      maxScale: 1, //TODO: Remove
+      child: VisibilityDetector(
+        key: Key(widget.state.translation!.pages[widget.index]),
+        onVisibilityChanged: (info) async {
+          if (widget.controller.mounted) {
+            await widget.controller.automaticReadChapter(
+                widget.state.translation!.pages[widget.index],
+                info.visibleFraction);
+          }
+        },
+        child: CachedNetworkImage(
+            errorWidget: (context, url, error) =>
+                const CircularProgressIndicator(),
+            imageUrl: widget.state.translation!.pages[widget.index],
+            width: double.infinity,
+            httpHeaders: widget.state.translation!.pageHeaders,
+            filterQuality: FilterQuality.high,
+            fit: BoxFit.fitWidth,
+            placeholder: (context, url) => const SizedBox(
+                height: 400,
+                width: double.infinity,
+                child: Center(child: CircularProgressIndicator()))),
+      ),
+    );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }

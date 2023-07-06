@@ -5,12 +5,15 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dash_flags/dash_flags.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:focused_menu/focused_menu.dart';
+import 'package:focused_menu/modals.dart';
 import 'package:intl/intl.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_type_enum.dart';
 
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_status_enum.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/enums/roles_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/translation_language_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart';
@@ -83,7 +86,8 @@ class MangaProfileController extends StateNotifier<MangaProfileState> {
     state = state.copyWith(isLoadingUserData: true);
     var userData = await ref
         .watch(mangaUsersRepositoryProvider)
-        .getDataByMangaByUser(mangaId, 1);
+        .getDataByMangaByUser(
+            mangaId, ref.watch(appStateProvider).loggedUser!.id);
     state = state.copyWith(isLoadingUserData: false, userData: userData);
   }
 
@@ -99,29 +103,76 @@ class MangaProfileController extends StateNotifier<MangaProfileState> {
     state = state.copyWith(selectedLanguage: language);
   }
 
-  Future readAllChapters() async {
-    if (state.manga == null) return;
+  Future readChapter(int chapterId) async {
+    if (state.manga == null ||
+        (state.userData != null &&
+            state.userData!.chaptersRead.contains(chapterId))) return;
+
     state = state.copyWith(isLoadingUserData: true);
-    var repo = ref.watch(mangaUsersRepositoryProvider);
-    var userData = state.userData;
-    for (var chapter in state.manga!.chapters) {
-      userData = await repo.markChapterRead(chapter.id);
-    }
+    var userData = await ref
+        .watch(mangaUsersRepositoryProvider)
+        .markChaptersRead([chapterId]);
+
     state = state.copyWith(isLoadingUserData: false, userData: userData);
   }
 
-  Future unreadAllChapters() async {
+  Future readUntilChapter(int chapterId) async {
     if (state.manga == null) return;
     state = state.copyWith(isLoadingUserData: true);
-    var repo = ref.watch(mangaUsersRepositoryProvider);
+
     var userData = state.userData;
-    for (var chapter in state.manga!.chapters) {
-      userData = await repo.unmarkChapterRead(chapter.id);
+    var reversedList = state.manga!.chapters.toList().reversed;
+
+    var chaptersIds = <int>[];
+    for (var chapter in reversedList) {
+      if (!userData!.chaptersRead.contains(chapter.id)) {
+        chaptersIds.add(chapter.id);
+      }
+      if (chapterId == chapter.id) {
+        break;
+      }
     }
+    userData = await ref
+        .watch(mangaUsersRepositoryProvider)
+        .markChaptersRead(chaptersIds);
     state = state.copyWith(isLoadingUserData: false, userData: userData);
   }
 
-  Future updateChapters() async {
+  Future unreadChapter(int chapterId) async {
+    if (state.manga == null ||
+        (state.userData != null &&
+            !state.userData!.chaptersRead.contains(chapterId))) return;
+
+    state = state.copyWith(isLoadingUserData: true);
+    var userData = await ref
+        .watch(mangaUsersRepositoryProvider)
+        .unmarkChaptersRead([chapterId]);
+
+    state = state.copyWith(isLoadingUserData: false, userData: userData);
+  }
+
+  Future unreadUntilChapter(int chapterId) async {
+    if (state.manga == null || state.userData == null) return;
+    state = state.copyWith(isLoadingUserData: true);
+    var userData = state.userData;
+
+    var chaptersIds = <int>[];
+    for (var chapter in state.manga!.chapters) {
+      if (userData!.chaptersRead.contains(chapter.id)) {
+        chaptersIds.add(chapter.id);
+      }
+      if (chapterId == chapter.id) {
+        break;
+      }
+    }
+
+    userData = await ref
+        .watch(mangaUsersRepositoryProvider)
+        .unmarkChaptersRead(chaptersIds);
+    state = state.copyWith(isLoadingUserData: false, userData: userData);
+  }
+
+  Future fetchNewChapters() async {
     var repo = ref.watch(mangaRepositoryProvider);
     await repo.fetchChaptersForManga(mangaId);
   }
@@ -149,183 +200,198 @@ class MangaProfileScreen extends ConsumerWidget {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        actions: [
-          IconButton(
-              onPressed: () async {
-                try {
-                  await functions.updateChapters();
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: const Text(
-                      'Update for Chapters started!',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    backgroundColor: Colors.green[700],
-                    duration: const Duration(seconds: 2),
-                  ));
-                } on Exception catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(
-                      'Error: $e',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    backgroundColor: Colors.red[400],
-                    duration: const Duration(seconds: 3),
-                  ));
-                }
-              },
-              icon: const Icon(Icons.refresh)),
-          IconButton(
-              onPressed: () async {
-                await navigationKey.currentState?.push(MaterialPageRoute(
-                    builder: (context) =>
-                        MangaSourcesScreen(mangaState.manga!.id)));
-              },
-              icon: const Icon(Icons.edit))
-        ], //TODO : If mod
+        actions: ref.watch(appStateProvider).loggedUser!.role == RolesEnum.USER
+            ? []
+            : [
+                IconButton(
+                    onPressed: () async {
+                      try {
+                        await functions.fetchNewChapters();
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: const Text(
+                            'Update for Chapters started!',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          backgroundColor: Colors.green[700],
+                          duration: const Duration(seconds: 2),
+                        ));
+                      } on Exception catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                            'Error: $e',
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          backgroundColor: Colors.red[400],
+                          duration: const Duration(seconds: 3),
+                        ));
+                      }
+                    },
+                    icon: const Icon(Icons.refresh)),
+                IconButton(
+                    onPressed: () async {
+                      await navigationKey.currentState?.push(MaterialPageRoute(
+                          builder: (context) =>
+                              MangaSourcesScreen(mangaState.manga!.id)));
+                    },
+                    icon: const Icon(Icons.edit))
+              ],
       ),
-      floatingActionButtonLocation: ExpandableFab.location,
-      floatingActionButton: ExpandableFab(
-        children: [
-          FloatingActionButton.extended(
-            heroTag: null,
-            tooltip: 'Read Next Chapter',
-            label: const Icon(Icons.menu_book),
-            onPressed: () {},
-          ),
-          FloatingActionButton.extended(
-            tooltip: 'See All Chapters',
-            heroTag: null,
-            label: const Icon(Icons.remove_red_eye),
-            onPressed: () {},
-          ),
-          FloatingActionButton.extended(
-            heroTag: null,
-            tooltip: 'Make Private',
-            label: const Icon(Icons.lock),
-            onPressed: () {},
-          ),
-        ],
-      ),
-      // floatingActionButton: FloatingActionButton(
-      //     onPressed: () async {
-      //       if (mangaState.isLoadingUserData) return;
+      // floatingActionButtonLocation: ExpandableFab.location,
+      // floatingActionButton: ExpandableFab(
+      //   children: [
+      //     FloatingActionButton.extended(
+      //       heroTag: null,
+      //       tooltip: 'Read Next Chapter',
+      //       label: const Icon(Icons.menu_book),
+      //       onPressed: () {},
+      //     ),
+      //     FloatingActionButton.extended(
+      //       tooltip: 'See All Chapters',
+      //       heroTag: null,
+      //       label: const Icon(Icons.remove_red_eye),
+      //       onPressed: () {},
+      //     ),
+      //     FloatingActionButton.extended(
+      //       heroTag: null,
+      //       tooltip: 'Make Private',
+      //       label: const Icon(Icons.lock),
+      //       onPressed: () {},
+      //     ),
+      //   ],
+      // ),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            if (mangaState.isLoadingUserData) return;
 
-      //       //Calculate next Chapter to read
-      //       var nextChapterId = -1;
-      //       var chaptersNotRead = mangaState.manga!.chapters
-      //           .where((element) => element.translations
-      //               .any((t) => t.language == mangaState.selectedLanguage))
-      //           .toList()
-      //         ..removeWhere((element) =>
-      //             mangaState.userData!.chaptersRead.contains(element.id));
-      //       if (chaptersNotRead.isEmpty) {
-      //         nextChapterId = mangaState.manga!.chapters.first.id;
-      //       } else {
-      //         nextChapterId = chaptersNotRead.last.id;
-      //       }
+            //Calculate next Chapter to read
+            var nextChapterId = -1;
+            var chaptersNotRead = mangaState.manga!.chapters
+                .where((element) => element.translations
+                    .any((t) => t.language == mangaState.selectedLanguage))
+                .toList()
+              ..removeWhere((element) =>
+                  mangaState.userData!.chaptersRead.contains(element.id));
+            if (chaptersNotRead.isEmpty) {
+              nextChapterId = mangaState.manga!.chapters.first.id;
+            } else {
+              nextChapterId = chaptersNotRead.last.id;
+            }
 
-      //       if (nextChapterId == -1) return;
+            if (nextChapterId == -1) return;
 
-      //       await navigationKey.currentState?.push(MaterialPageRoute(
-      //           builder: (context) => ChapterScreen(mangaState.manga!.id,
-      //               nextChapterId, mangaState.selectedLanguage)));
+            await navigationKey.currentState?.push(MaterialPageRoute(
+                builder: (context) => ChapterScreen(mangaState.manga!.id,
+                    nextChapterId, mangaState.selectedLanguage)));
 
-      //       await functions.fetchMangaUserData();
-      //     },
-      //     child: const Icon(Icons.menu_book)),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Stack(
+            await functions.fetchMangaUserData();
+          },
+          child: const Icon(Icons.menu_book)),
+      body: ScrollConfiguration(
+        behavior: ScrollConfiguration.of(context).copyWith(
+          dragDevices: {
+            PointerDeviceKind.touch,
+            PointerDeviceKind.mouse,
+          },
+        ),
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await functions.fetchMangaInfo();
+            await functions.fetchMangaUserData();
+          },
+          child: SingleChildScrollView(
+            child: Column(
               children: [
-                ClipRRect(
-                  child: ImageFiltered(
-                    imageFilter: ImageFilter.blur(
-                        sigmaX: 10.0, sigmaY: 10.0, tileMode: TileMode.clamp),
-                    child: CachedNetworkImage(
-                        imageUrl: mangaState.manga!.imagesUrls[0],
-                        errorWidget: (context, url, error) =>
-                            const CircularProgressIndicator(),
-                        fit: BoxFit.fitWidth,
-                        height: 300,
-                        width: double.infinity,
-                        alignment: Alignment.center),
-                  ),
-                ),
-                Container(
-                  height: 300,
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          colors: [
-                        Theme.of(context).scaffoldBackgroundColor,
-                        Colors.transparent
-                      ],
-                          begin: Alignment.bottomCenter,
-                          //stops: [0.1, 0.7],
-                          end: Alignment.center)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 110,
+                Stack(
+                  children: [
+                    ClipRRect(
+                      child: ImageFiltered(
+                        imageFilter: ImageFilter.blur(
+                            sigmaX: 10.0,
+                            sigmaY: 10.0,
+                            tileMode: TileMode.clamp),
+                        child: CachedNetworkImage(
+                            imageUrl: mangaState.manga!.imagesUrls[0],
+                            errorWidget: (context, url, error) =>
+                                const CircularProgressIndicator(),
+                            fit: BoxFit.fitWidth,
+                            height: 300,
+                            width: double.infinity,
+                            alignment: Alignment.center),
                       ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(6),
-                                  bottomRight: Radius.circular(6)),
-                              child: CachedNetworkImage(
-                                imageUrl: mangaState.manga!.imagesUrls[0],
-                                filterQuality: FilterQuality.high,
-                                fit: BoxFit.fitWidth,
-                                height: 230,
-                                errorWidget: (context, url, error) =>
-                                    const CircularProgressIndicator(),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            MangaBasicInfoSection(mangaState.manga!)
+                    ),
+                    Container(
+                      height: 300,
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              colors: [
+                            Theme.of(context).scaffoldBackgroundColor,
+                            Colors.transparent
                           ],
-                        ),
-                      ),
-                      Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              //TODO: Check If has UserStatus or not
-                              !mangaState.isLoadingUserData
-                                  ? MangaUserStatusSection(
-                                      mangaState.manga!,
-                                      mangaState.userData,
-                                      functions.changeMangaUserStatus)
-                                  : const CircularProgressIndicator(),
-                              MangaDetailsSection(mangaState.manga!),
+                              begin: Alignment.bottomCenter,
+                              //stops: [0.1, 0.7],
+                              end: Alignment.center)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(
+                            height: 110,
+                          ),
+                          SizedBox(
+                            width: double.infinity,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(6),
+                                      bottomRight: Radius.circular(6)),
+                                  child: CachedNetworkImage(
+                                    imageUrl: mangaState.manga!.imagesUrls[0],
+                                    filterQuality: FilterQuality.high,
+                                    fit: BoxFit.fitWidth,
+                                    height: 230,
+                                    errorWidget: (context, url, error) =>
+                                        const CircularProgressIndicator(),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                MangaBasicInfoSection(mangaState.manga!)
+                              ],
+                            ),
+                          ),
+                          Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  //TODO: Check If has UserStatus or not
+                                  !mangaState.isLoadingUserData
+                                      ? MangaUserStatusSection(
+                                          mangaState.manga!,
+                                          mangaState.userData,
+                                          functions.changeMangaUserStatus)
+                                      : const SizedBox(
+                                          height: 130,
+                                          child: CircularProgressIndicator()),
+                                  MangaDetailsSection(mangaState.manga!),
 
-                              MangaChaptersSection(
-                                mangaState.manga!,
-                                mangaState.userData,
-                                mangaState.selectedLanguage,
-                                functions.changeSelectedLanguage,
-                                functions.fetchMangaUserData,
-                              )
-                            ],
-                          ))
-                    ],
-                  ),
+                                  MangaChaptersSection(mangaState, functions)
+                                ],
+                              ))
+                        ],
+                      ),
+                    )
+                  ],
                 )
               ],
-            )
-          ],
+            ),
+          ),
         ),
       ),
     );
@@ -515,6 +581,59 @@ class MangaDetailsSection extends StatelessWidget {
           height: 16,
         ),
         Text(
+          'Score',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Theme.of(context).primaryColor,
+          ),
+        ),
+        const SizedBox(
+          height: 4,
+        ),
+        Text(
+          "${manga.averageScore.toStringAsFixed(2)} / 10",
+        ),
+        const SizedBox(
+          height: 16,
+        ),
+        Text(
+          'Type',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Theme.of(context).primaryColor,
+          ),
+        ),
+        const SizedBox(
+          height: 4,
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(
+              width: 4,
+            ),
+            CountryFlag(
+                height: 13,
+                country: manga.type == MangaTypeEnum.MANGA
+                    ? Country.jp
+                    : (manga.type == MangaTypeEnum.MANHUA
+                        ? Country.cn
+                        : Country.kr)),
+            const SizedBox(
+              width: 10,
+            ),
+            Text(
+              manga.type.name,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        const SizedBox(
+          height: 16,
+        ),
+        Text(
           'Status',
           style: TextStyle(
             fontSize: 14,
@@ -574,15 +693,16 @@ class MangaDetailsSection extends StatelessWidget {
 }
 
 class MangaChaptersSection extends StatelessWidget {
-  final Manga manga;
-  final MangaUserData? userData;
-  final TranslationLanguageEnum selectedLanguage;
-  final void Function(TranslationLanguageEnum) changeSelectedLanguage;
-  final Future Function() updateMangaUserData;
+  // final Manga manga;
+  // final MangaUserData? userData;
+  // final TranslationLanguageEnum selectedLanguage;
+  // final void Function(TranslationLanguageEnum) changeSelectedLanguage;
+  // final Future Function() updateMangaUserData;
 
-  const MangaChaptersSection(this.manga, this.userData, this.selectedLanguage,
-      this.changeSelectedLanguage, this.updateMangaUserData,
-      {super.key});
+  final MangaProfileState mangaState;
+  final MangaProfileController controller;
+
+  const MangaChaptersSection(this.mangaState, this.controller, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -599,20 +719,21 @@ class MangaChaptersSection extends StatelessWidget {
               width: 5,
             ),
             Text(
-              '(${userData?.chaptersRead.length ?? 0}/${manga.chapters.where((c) => c.translations.any((t) => t.language == selectedLanguage)).length})',
+              '(${mangaState.userData?.chaptersRead.length ?? 0}/${mangaState.manga!.chapters.where((c) => c.translations.any((t) => t.language == mangaState.selectedLanguage)).length})',
               style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
             const Spacer(),
             InkWell(
               onTap: () {
-                changeSelectedLanguage(TranslationLanguageEnum.EN);
+                controller.changeSelectedLanguage(TranslationLanguageEnum.EN);
               },
               child: Container(
                 width: 30,
                 height: 20,
-                decoration: selectedLanguage == TranslationLanguageEnum.EN
-                    ? BoxDecoration(border: Border.all(color: Colors.white))
-                    : null,
+                decoration:
+                    mangaState.selectedLanguage == TranslationLanguageEnum.EN
+                        ? BoxDecoration(border: Border.all(color: Colors.white))
+                        : null,
                 child: CountryFlag(
                   country: Country.gb,
                 ),
@@ -623,14 +744,15 @@ class MangaChaptersSection extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
-                changeSelectedLanguage(TranslationLanguageEnum.PT);
+                controller.changeSelectedLanguage(TranslationLanguageEnum.PT);
               },
               child: Container(
                 width: 30,
                 height: 20,
-                decoration: selectedLanguage == TranslationLanguageEnum.PT
-                    ? BoxDecoration(border: Border.all(color: Colors.white))
-                    : null,
+                decoration:
+                    mangaState.selectedLanguage == TranslationLanguageEnum.PT
+                        ? BoxDecoration(border: Border.all(color: Colors.white))
+                        : null,
                 child: CountryFlag(
                   country: Country.pt,
                 ),
@@ -648,30 +770,70 @@ class MangaChaptersSection extends StatelessWidget {
           mainAxisSpacing: 8,
           crossAxisSpacing: 8,
           childAspectRatio: 55 / 35,
-          children: manga.chapters
-              .where((c) =>
-                  c.translations.any((t) => t.language == selectedLanguage))
+          children: mangaState.manga!.chapters
+              .where((c) => c.translations
+                  .any((t) => t.language == mangaState.selectedLanguage))
               .map(
-                (e) => InkWell(
-                  customBorder: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  onTap: () async {
-                    await navigationKey.currentState?.push(MaterialPageRoute(
-                        builder: (context) =>
-                            ChapterScreen(manga.id, e.id, selectedLanguage)));
+                (e) => FocusedMenuHolder(
+                  menuWidth: 140,
+                  menuOffset: 0,
+                  menuItemExtent: 50,
+                  menuBoxDecoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(20)),
+                  onPressed: () {},
+                  menuItems: [
+                    FocusedMenuItem(
+                        title: const Text('Read/Unread'),
+                        backgroundColor:
+                            Theme.of(context).scaffoldBackgroundColor,
+                        onPressed: () async {
+                          if (mangaState.userData != null &&
+                              mangaState.userData!.chaptersRead
+                                  .contains(e.id)) {
+                            await controller.unreadChapter(e.id);
+                          } else {
+                            await controller.readChapter(e.id);
+                          }
+                        }),
+                    FocusedMenuItem(
+                        title: const Text('Read Until This'),
+                        backgroundColor:
+                            Theme.of(context).scaffoldBackgroundColor,
+                        onPressed: () async {
+                          await controller.readUntilChapter(e.id);
+                        }),
+                    FocusedMenuItem(
+                        title: const Text('Unread Until This'),
+                        backgroundColor:
+                            Theme.of(context).scaffoldBackgroundColor,
+                        onPressed: () async {
+                          await controller.unreadUntilChapter(e.id);
+                        })
+                  ],
+                  child: InkWell(
+                    customBorder: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    onTap: () async {
+                      await navigationKey.currentState?.push(MaterialPageRoute(
+                          builder: (context) => ChapterScreen(
+                              mangaState.manga!.id,
+                              e.id,
+                              mangaState.selectedLanguage)));
 
-                    await updateMangaUserData();
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: userData != null &&
-                                userData!.chaptersRead.contains(e.id)
-                            ? Colors.green[700]
-                            : Colors.purple,
-                        border: Border.all(color: Colors.white54),
-                        borderRadius: BorderRadius.circular(8)),
-                    child: Center(child: Text(e.name)),
+                      await controller.fetchMangaUserData();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: mangaState.userData != null &&
+                                  mangaState.userData!.chaptersRead
+                                      .contains(e.id)
+                              ? Colors.green[700]
+                              : Colors.purple,
+                          border: Border.all(color: Colors.white54),
+                          borderRadius: BorderRadius.circular(8)),
+                      child: Center(child: Text(e.name.toString())),
+                    ),
                   ),
                 ),
               )

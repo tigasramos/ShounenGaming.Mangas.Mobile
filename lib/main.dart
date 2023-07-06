@@ -1,9 +1,16 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:shounengaming_mangas_mobile/src/data/models/user.dart';
+import 'package:shounengaming_mangas_mobile/src/data/repositories/auth_repository.dart';
+import 'package:shounengaming_mangas_mobile/src/data/repositories/user_repository.dart';
+import 'package:shounengaming_mangas_mobile/src/features/auth/login_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/home/featured_mangas_section.dart';
 import 'package:shounengaming_mangas_mobile/src/features/home/home_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/home/latest_releases_section.dart';
@@ -12,6 +19,7 @@ import 'package:shounengaming_mangas_mobile/src/features/library/library_screen.
 import 'package:shounengaming_mangas_mobile/src/features/library/library_status_screens/library_reading_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/search/search_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/settings/settings_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/others/auth_helper.dart';
 import 'package:shounengaming_mangas_mobile/src/others/menu_items.dart';
 import 'package:shounengaming_mangas_mobile/src/others/theme.dart';
 
@@ -37,17 +45,101 @@ final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
 
 final navigationKey = GlobalKey<NavigatorState>();
 
-class SGMangasApp extends StatelessWidget {
+final appStateProvider = StateNotifierProvider<AppStateController, AppState>(
+    (ref) => AppStateController(ref));
+
+class AppState {
+  User? loggedUser;
+
+  bool loadingAuth;
+
+  AppState({
+    this.loggedUser,
+    this.loadingAuth = false,
+  });
+
+  AppState copyWith({
+    User? loggedUser,
+    bool? loadingAuth,
+  }) {
+    return AppState(
+      loggedUser: loggedUser ?? this.loggedUser,
+      loadingAuth: loadingAuth ?? this.loadingAuth,
+    );
+  }
+
+  AppState resetUser({
+    bool? loadingAuth,
+  }) {
+    return AppState(
+      loggedUser: null,
+      loadingAuth: loadingAuth ?? this.loadingAuth,
+    );
+  }
+}
+
+class AppStateController extends StateNotifier<AppState> {
+  AppStateController(this.ref) : super(AppState()) {
+    getAuthState();
+  }
+
+  Ref ref;
+
+  Future getAuthState() async {
+    state = state.copyWith(loadingAuth: true);
+    // Get From Local Storage
+    var refreshToken = ref
+        .watch(sharedPreferencesProvider)
+        .getString("sg_mangas_refreshToken");
+    if (refreshToken == null) {
+      state = state.copyWith(loadingAuth: false);
+      return;
+    }
+
+    var authResponse =
+        await ref.read(authRepositoryProvider).refreshToken(refreshToken);
+    if (authResponse == null) {
+      state = state.copyWith(loadingAuth: false);
+      return;
+    }
+    await updateStoreAndState(ref, authResponse);
+    state = state.copyWith(loadingAuth: false);
+  }
+
+  Future updateUser() async {
+    var user = await ref.read(userRepositoryProvider).getLoggedUser();
+    state = state.copyWith(loggedUser: user);
+  }
+
+  Future logout() async {
+    var sharedPreferences = ref.watch(sharedPreferencesProvider);
+    await sharedPreferences.remove("sg_mangas_refreshToken");
+    await sharedPreferences.remove("sg_mangas_accessToken");
+
+    state = state.resetUser();
+  }
+}
+
+class SGMangasApp extends ConsumerWidget {
   const SGMangasApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    var appState = ref.watch(appStateProvider);
     return MaterialApp(
         title: 'SG Mangas',
         debugShowCheckedModeBanner: false,
         theme: theme,
         navigatorKey: navigationKey,
-        home: const MainLayoutScreen());
+        home: appState.loadingAuth
+            ? const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              )
+            : (appState.loggedUser != null
+                ? const MainLayoutScreen()
+                : const LoginScreen()));
   }
 }
 
@@ -71,6 +163,12 @@ class _MainLayoutScreenState extends ConsumerState<MainLayoutScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('SG Mangas'),
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.settings)),
+          const SizedBox(
+            width: 5,
+          ),
+        ],
       ),
       body: PersistentTabView(
         context,
@@ -140,5 +238,10 @@ class _MainLayoutScreenState extends ConsumerState<MainLayoutScreen> {
   }
 }
 
-final dioProvider = Provider<Dio>(
-    (ref) => Dio(BaseOptions(baseUrl: 'https://localhost:7252/api/')));
+final dioProvider = Provider<Dio>((ref) {
+  final dio = Dio(BaseOptions(baseUrl: 'https://localhost:7252/api/'));
+
+  ref.onDispose(dio.close);
+
+  return dio;
+});

@@ -2,18 +2,18 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/translation_language_enum.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/latest_release_manga.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_source.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_translation.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/search_manga_query.dart';
 
-import '../models/chapter_release.dart';
 import '../models/manga.dart';
 import '../models/manga_info.dart';
 import '../models/manga_writer.dart';
 import '../models/paginated_manga_response.dart';
 
 final mangaRepositoryProvider = Provider<MangaRepository>((ref) {
-  final dio = ref.read(dioProvider);
+  final dio = ref.watch(dioProvider);
   return MangaRepository(dio);
 });
 
@@ -42,8 +42,9 @@ class MangaRepository {
 
   Future<PaginatedMangaResponse> searchMangas(
       SearchMangaQuery query, int page) async {
-    var response = await _client.get('$_baseURL/search',
-        queryParameters: {'page': page}, data: query.toMap());
+    var response = await _client.get(
+      '$_baseURL/search?page=$page&name=${query.name}',
+    );
     return PaginatedMangaResponse.fromMap(response.data);
   }
 
@@ -62,10 +63,10 @@ class MangaRepository {
     return (response.data as List).map((m) => MangaInfo.fromMap(m)).toList();
   }
 
-  Future<List<ChapterRelease>> getRecentlyReleasedChapters() async {
+  Future<List<LatestReleaseManga>> getRecentlyReleasedChapters() async {
     var response = await _client.get('$_baseURL/recent/chapters');
     return (response.data as List)
-        .map((m) => ChapterRelease.fromMap(m))
+        .map((m) => LatestReleaseManga.fromMap(m))
         .toList();
   }
 
@@ -92,7 +93,8 @@ class MangaRepository {
   Future<List<MangaSource>> linkSourcesToManga(
       int mangaId, List<MangaSource> mangas) async {
     var body = mangas.map((e) => e.toMap()).toList();
-    var response = await _client.put('$_baseURL/$mangaId/links', data: body);
+    var response = await _client.put('$_baseURL/$mangaId/links',
+        data: body, options: Options(contentType: 'application/json'));
     return (response.data as List).map((m) => MangaSource.fromMap(m)).toList();
   }
 

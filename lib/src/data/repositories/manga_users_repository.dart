@@ -34,13 +34,15 @@ class MangaUsersRepository {
     return null;
   }
 
-  Future<MangaUserData> markChapterRead(int chapterId) async {
-    var response = await _client.put('$_baseURL/read/$chapterId');
+  Future<MangaUserData> markChaptersRead(List<int> chaptersIds) async {
+    var response = await _client
+        .put('$_baseURL/read', queryParameters: {'chaptersIds': chaptersIds});
     return MangaUserData.fromMap(response.data);
   }
 
-  Future<MangaUserData?> unmarkChapterRead(int chapterId) async {
-    var response = await _client.put('$_baseURL/unread/$chapterId');
+  Future<MangaUserData?> unmarkChaptersRead(List<int> chaptersIds) async {
+    var response = await _client
+        .put('$_baseURL/unread', queryParameters: {'chaptersIds': chaptersIds});
     if (response.data != null) {
       return MangaUserData.fromMap(response.data);
     }

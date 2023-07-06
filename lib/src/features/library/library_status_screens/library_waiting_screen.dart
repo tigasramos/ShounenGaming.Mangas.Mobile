@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_status_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
@@ -19,7 +20,7 @@ final waitingMangasProvider =
     FutureProvider.autoDispose<List<MangaUserData>>((ref) async {
   var mangaUsersRepo = ref.read(mangaUsersRepositoryProvider);
   return mangaUsersRepo.getMangaDataByStatusByUser(
-      1, MangaUserStatusEnum.READING);
+      ref.watch(appStateProvider).loggedUser!.id, MangaUserStatusEnum.READING);
 });
 
 final filteredWaitingMangasProvider =
@@ -34,6 +35,12 @@ final filteredWaitingMangasProvider =
               element.manga.chaptersCount == element.chaptersRead.length)
           .toList() ??
       [];
+
+  // Default Order be Last Updated Desc
+  if (orderFilter == null) {
+    orderFilter = ReadingOrderByEnum.lastUpdated;
+    orderASCFilter = false;
+  }
 
   switch (orderFilter) {
     case ReadingOrderByEnum.alphabetical:
@@ -192,10 +199,12 @@ class LibraryWaitingScreen extends ConsumerWidget {
         Expanded(
           child: SingleChildScrollView(
             child: Column(
-              children: ref
-                  .watch(filteredWaitingMangasProvider)
-                  .map((e) => LibraryReadingMangaTile(e))
-                  .toList(),
+              children: [
+                for (int i = 0;
+                    i < ref.watch(filteredWaitingMangasProvider).length;
+                    i++)
+                  LibraryReadingMangaTile(i, filteredWaitingMangasProvider)
+              ],
             ),
           ),
         ),

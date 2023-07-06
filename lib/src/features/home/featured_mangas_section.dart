@@ -26,18 +26,6 @@ class FeaturedMangasSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // return CarouselSlider(
-    //   options: CarouselOptions(
-    //       height: min(MediaQuery.of(context).size.width / 2.55, 260)),
-    //   items: [1, 2, 3, 4, 5].map((i) {
-    //     return Builder(
-    //       builder: (BuildContext context) {
-    //         return const FeaturedMangaBanner();
-    //       },
-    //     );
-    //   }).toList(),
-    // );
-
     return SizedBox(
       height: min(MediaQuery.of(context).size.width / 2, 260),
       child: ref.watch(featuredMangasProvider).when(

@@ -37,7 +37,7 @@ class MangaChapter {
   factory MangaChapter.fromMap(Map<String, dynamic> map) {
     return MangaChapter(
       id: map['id'] as int,
-      name: map['name'] as String,
+      name: map['name'].toString(),
       translations: List<MangaTranslationInfo>.from(
         (map['translations']).map<MangaTranslationInfo>(
           (x) => MangaTranslationInfo.fromMap(x as Map<String, dynamic>),

@@ -1,15 +1,17 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_status_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
+import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_profile_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/others/manga_image.dart';
 
 final ignoredMangasProvider =
     FutureProvider.autoDispose<List<MangaUserData>>((ref) async {
   var mangaUsersRepo = ref.read(mangaUsersRepositoryProvider);
   return mangaUsersRepo.getMangaDataByStatusByUser(
-      1, MangaUserStatusEnum.IGNORED);
+      ref.watch(appStateProvider).loggedUser!.id, MangaUserStatusEnum.IGNORED);
 });
 
 class LibraryIgnoredScreen extends ConsumerWidget {
@@ -66,9 +68,7 @@ class LibraryIgnoredScreen extends ConsumerWidget {
               )
             ],
           ),
-          error: (error, stackTrace) => Container(
-            child: Text(error.toString()),
-          ),
+          error: (error, stackTrace) => Text(error.toString()),
           loading: () => const Center(child: CircularProgressIndicator()),
         );
   }
@@ -80,16 +80,24 @@ class LibraryIgnoredMangaTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      child: Column(
-        children: [
-          Expanded(
-              child: CachedNetworkImage(
-                  errorWidget: (context, url, error) =>
-                      const CircularProgressIndicator(),
-                  imageUrl: manga.manga.imagesUrls[0])),
-          Text(manga.manga.name)
-        ],
+    return InkWell(
+      onTap: () {
+        navigationKey.currentState?.push(
+          MaterialPageRoute(
+              builder: (context) => MangaProfileScreen(manga.manga.id)),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          children: [
+            Expanded(child: MangaImage(manga.manga.imagesUrls[0])),
+            Text(
+              manga.manga.name,
+              overflow: TextOverflow.ellipsis,
+            )
+          ],
+        ),
       ),
     );
   }

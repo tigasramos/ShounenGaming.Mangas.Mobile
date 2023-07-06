@@ -27,7 +27,7 @@ final readingMangasProvider =
     FutureProvider.autoDispose<List<MangaUserData>>((ref) async {
   var mangaUsersRepo = ref.read(mangaUsersRepositoryProvider);
   return mangaUsersRepo.getMangaDataByStatusByUser(
-      1, MangaUserStatusEnum.READING);
+      ref.watch(appStateProvider).loggedUser!.id, MangaUserStatusEnum.READING);
 });
 
 final filteredReadingMangasProvider =
@@ -42,6 +42,12 @@ final filteredReadingMangasProvider =
               element.chaptersRead.length < element.manga.chaptersCount)
           .toList() ??
       [];
+
+  // Default Order be Last Updated Desc
+  if (orderFilter == null) {
+    orderFilter = ReadingOrderByEnum.lastUpdated;
+    orderASCFilter = false;
+  }
 
   switch (orderFilter) {
     case ReadingOrderByEnum.alphabetical:
@@ -223,10 +229,12 @@ class LibraryReadingScreen extends ConsumerWidget {
         Expanded(
           child: SingleChildScrollView(
             child: Column(
-              children: ref
-                  .watch(filteredReadingMangasProvider)
-                  .map((e) => LibraryReadingMangaTile(e))
-                  .toList(),
+              children: [
+                for (int i = 0;
+                    i < ref.watch(filteredReadingMangasProvider).length;
+                    i++)
+                  LibraryReadingMangaTile(i, filteredReadingMangasProvider)
+              ],
             ),
           ),
         ),
@@ -235,18 +243,21 @@ class LibraryReadingScreen extends ConsumerWidget {
   }
 }
 
-class LibraryReadingMangaTile extends StatelessWidget {
-  final MangaUserData mangaUserData;
-  const LibraryReadingMangaTile(this.mangaUserData, {super.key});
+class LibraryReadingMangaTile extends ConsumerWidget {
+  final int index;
+  final AutoDisposeProvider<List<MangaUserData>> provider;
+  const LibraryReadingMangaTile(this.index, this.provider, {super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    var mangaUserData = ref.watch(provider)[index];
     return InkWell(
-      onTap: () {
-        navigationKey.currentState?.push(
+      onTap: () async {
+        await navigationKey.currentState?.push(
           MaterialPageRoute(
               builder: (context) => MangaProfileScreen(mangaUserData.manga.id)),
         );
+        ref.invalidate(readingMangasProvider);
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),

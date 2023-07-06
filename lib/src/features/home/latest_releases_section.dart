@@ -1,14 +1,14 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dash_flags/dash_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
-import 'package:shounengaming_mangas_mobile/src/data/models/chapter_release.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/translation_language_enum.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/latest_release_manga.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_profile_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/others/manga_image.dart';
 
 final newChaptersProvider = FutureProvider.autoDispose((ref) async {
   var mangasRepo = ref.watch(mangaRepositoryProvider);
@@ -47,7 +47,7 @@ class LatestReleasesSection extends ConsumerWidget {
           ),
           Column(
             children: ref.watch(newChaptersProvider).when(
-                data: (data) => data.map((e) => ChapterReleaseCard(e)).toList(),
+                data: (data) => data.map((e) => MangaReleaseCard(e)).toList(),
                 error: (error, stacktrace) => [Container()],
                 loading: () => [const CircularProgressIndicator()]),
           )
@@ -55,9 +55,9 @@ class LatestReleasesSection extends ConsumerWidget {
   }
 }
 
-class ChapterReleaseCard extends StatelessWidget {
-  final ChapterRelease chapterRelease;
-  const ChapterReleaseCard(this.chapterRelease, {super.key});
+class MangaReleaseCard extends StatelessWidget {
+  final LatestReleaseManga mangaRelease;
+  const MangaReleaseCard(this.mangaRelease, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +65,7 @@ class ChapterReleaseCard extends StatelessWidget {
       onTap: () {
         navigationKey.currentState?.push(
           MaterialPageRoute(
-              builder: (context) =>
-                  MangaProfileScreen(chapterRelease.manga.id)),
+              builder: (context) => MangaProfileScreen(mangaRelease.manga.id)),
         );
       },
       child: Container(
@@ -75,15 +74,7 @@ class ChapterReleaseCard extends StatelessWidget {
         height: 100,
         child: Row(
           children: [
-            AspectRatio(
-                aspectRatio: 0.66,
-                child: CachedNetworkImage(
-                  errorWidget: (context, url, error) =>
-                      const CircularProgressIndicator(),
-                  fit: BoxFit.fitHeight,
-                  filterQuality: FilterQuality.high,
-                  imageUrl: chapterRelease.manga.imagesUrls[0],
-                )),
+            MangaImage(mangaRelease.manga.imagesUrls[0]),
             const SizedBox(
               width: 10,
             ),
@@ -92,33 +83,33 @@ class ChapterReleaseCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AutoSizeText(
-                    chapterRelease.manga.name,
+                    mangaRelease.manga.name,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleSmall,
                   ),
                   Text(
-                    chapterRelease.manga.tags.join(", "),
+                    mangaRelease.manga.tags.join(", "),
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(color: Colors.grey),
                   ),
                   const Spacer(),
-                  ...chapterRelease.translations.take(2).map(
+                  ...mangaRelease.releasedChapters.values.take(2).map(
                         (e) => Row(
                           children: [
                             SizedBox(
                               height: 13,
                               width: 18,
                               child: CountryFlag(
-                                  country:
-                                      e.language == TranslationLanguageEnum.PT
-                                          ? Country.pt
-                                          : Country.gb),
+                                  country: e.translation ==
+                                          TranslationLanguageEnum.PT
+                                      ? Country.pt
+                                      : Country.gb),
                             ),
                             const SizedBox(
                               width: 5,
                             ),
                             Text(
-                              "#${chapterRelease.name}",
+                              "#${e.name}",
                             ),
                             const Spacer(),
                             Text(

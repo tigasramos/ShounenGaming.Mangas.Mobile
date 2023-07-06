@@ -22,7 +22,8 @@ final completedMangasProvider =
     FutureProvider.autoDispose<List<MangaUserData>>((ref) async {
   var mangaUsersRepo = ref.read(mangaUsersRepositoryProvider);
   return mangaUsersRepo.getMangaDataByStatusByUser(
-      1, MangaUserStatusEnum.COMPLETED);
+      ref.watch(appStateProvider).loggedUser!.id,
+      MangaUserStatusEnum.COMPLETED);
 });
 
 final filteredCompletedMangasProvider =
@@ -31,6 +32,11 @@ final filteredCompletedMangasProvider =
   var orderASCFilter = ref.watch(orderASCReadingProvider);
   var completedMangas = ref.watch(completedMangasProvider).asData?.value ?? [];
 
+  // Default Order be Last Completed Desc
+  if (orderFilter == null) {
+    orderFilter = CompletedOrderByEnum.completedDate;
+    orderASCFilter = false;
+  }
   switch (orderFilter) {
     case CompletedOrderByEnum.alphabetical:
       return completedMangas
@@ -39,12 +45,11 @@ final filteredCompletedMangasProvider =
     case CompletedOrderByEnum.completedDate:
       return completedMangas
         ..sort((a, b) =>
-            (a.finishedReadingDate == null
+            (a.addedToStatusDate == null
                 ? 0
-                : b.finishedReadingDate == null
+                : b.addedToStatusDate == null
                     ? 1
-                    : a.finishedReadingDate!
-                        .compareTo(b.finishedReadingDate!)) *
+                    : a.addedToStatusDate!.compareTo(b.addedToStatusDate!)) *
             (orderASCFilter ? 1 : -1));
 
     default:
@@ -137,10 +142,12 @@ class LibraryCompletedScreen extends ConsumerWidget {
         Expanded(
           child: SingleChildScrollView(
             child: Column(
-              children: ref
-                  .watch(filteredCompletedMangasProvider)
-                  .map((e) => LibraryCompletedMangaTile(e))
-                  .toList(),
+              children: [
+                for (int i = 0;
+                    i < ref.watch(filteredCompletedMangasProvider).length;
+                    i++)
+                  LibraryCompletedMangaTile(i)
+              ],
             ),
           ),
         ),
@@ -149,18 +156,20 @@ class LibraryCompletedScreen extends ConsumerWidget {
   }
 }
 
-class LibraryCompletedMangaTile extends StatelessWidget {
-  final MangaUserData mangaUserData;
-  const LibraryCompletedMangaTile(this.mangaUserData, {super.key});
+class LibraryCompletedMangaTile extends ConsumerWidget {
+  final int index;
+  const LibraryCompletedMangaTile(this.index, {super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    var mangaUserData = ref.watch(filteredCompletedMangasProvider)[index];
     return InkWell(
-      onTap: () {
-        navigationKey.currentState?.push(
+      onTap: () async {
+        await navigationKey.currentState?.push(
           MaterialPageRoute(
               builder: (context) => MangaProfileScreen(mangaUserData.manga.id)),
         );
+        ref.invalidate(completedMangasProvider);
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),

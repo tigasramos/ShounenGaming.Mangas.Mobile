@@ -19,6 +19,7 @@ class Manga {
   List<MangaChapter> chapters;
   List<String> imagesUrls;
   MangaWriter writer;
+  double averageScore;
   int? mangaMyAnimeListId;
   DateTime? startedAt;
   DateTime? finishedAt;
@@ -30,6 +31,7 @@ class Manga {
     required this.description,
     required this.isReleasing,
     required this.type,
+    required this.averageScore,
     required this.tags,
     required this.chapters,
     required this.imagesUrls,
@@ -51,6 +53,7 @@ class Manga {
     List<MangaChapter>? chapters,
     List<String>? imagesUrls,
     MangaWriter? writer,
+    double? averageScore,
     int? mangaMyAnimeListId,
     DateTime? startedAt,
     DateTime? finishedAt,
@@ -66,6 +69,7 @@ class Manga {
       tags: tags ?? this.tags,
       chapters: chapters ?? this.chapters,
       imagesUrls: imagesUrls ?? this.imagesUrls,
+      averageScore: averageScore ?? this.averageScore,
       writer: writer ?? this.writer,
       mangaMyAnimeListId: mangaMyAnimeListId ?? this.mangaMyAnimeListId,
       startedAt: startedAt ?? this.startedAt,
@@ -85,6 +89,7 @@ class Manga {
       'tags': tags,
       'chapters': chapters.map((x) => x.toMap()).toList(),
       'imagesUrls': imagesUrls,
+      'averageScore': averageScore,
       'writer': writer,
       'mangaMyAnimeListId': mangaMyAnimeListId,
       'startedAt': startedAt?.toString(),
@@ -113,6 +118,7 @@ class Manga {
       ),
       imagesUrls: List<String>.from(map['imagesUrls']),
       writer: MangaWriter.fromMap(map['writer']),
+      averageScore: double.parse(map["averageScore"].toString()),
       mangaMyAnimeListId: map['mangaMyAnimeListId'] != null
           ? map['mangaMyAnimeListId'] as int
           : null,
@@ -130,7 +136,7 @@ class Manga {
 
   @override
   String toString() {
-    return 'Manga(id: $id, name: $name, alternativeNames: $alternativeNames, description: $description, isReleasing: $isReleasing, tags: $tags, chapters: $chapters, imagesUrls: $imagesUrls, writer: $writer, mangaMyAnimeListId: $mangaMyAnimeListId, startedAt: $startedAt, finishedAt: $finishedAt)';
+    return 'Manga(id: $id, name: $name, alternativeNames: $alternativeNames, averageScore: $averageScore description: $description, isReleasing: $isReleasing, tags: $tags, chapters: $chapters, imagesUrls: $imagesUrls, writer: $writer, mangaMyAnimeListId: $mangaMyAnimeListId, startedAt: $startedAt, finishedAt: $finishedAt)';
   }
 
   @override
@@ -142,6 +148,7 @@ class Manga {
         listEquals(other.alternativeNames, alternativeNames) &&
         other.description == description &&
         other.isReleasing == isReleasing &&
+        other.averageScore == averageScore &&
         listEquals(other.synonyms, synonyms) &&
         listEquals(other.tags, tags) &&
         listEquals(other.chapters, chapters) &&
@@ -161,6 +168,7 @@ class Manga {
         description.hashCode ^
         synonyms.hashCode ^
         isReleasing.hashCode ^
+        averageScore.hashCode ^
         tags.hashCode ^
         type.hashCode ^
         chapters.hashCode ^
