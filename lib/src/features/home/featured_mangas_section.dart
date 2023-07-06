@@ -15,6 +15,7 @@ import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_info.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_profile_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/others/theme.dart';
 
 final featuredMangasProvider = FutureProvider.autoDispose((ref) async {
   var mangasRepo = ref.watch(mangaRepositoryProvider);
@@ -43,7 +44,7 @@ class FeaturedMangasSection extends ConsumerWidget {
                   indicatorRadius: 5,
                   itemSpacing: 15,
                   currentIndicatorColor: Theme.of(context).primaryColor,
-                  indicatorBorderColor: Theme.of(context).primaryColor,
+                  indicatorBorderColor: palette[0],
                   indicatorBackgroundColor: Colors.white,
                 ),
                 itemCount: data.length),
@@ -103,19 +104,15 @@ class FeaturedMangaBanner extends StatelessWidget {
                     children: [
                       AutoSizeText(
                         manga.name,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium!
-                            .copyWith(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500),
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                            color: Colors.black, fontWeight: FontWeight.w500),
                       ),
                       Text(
                         manga.tags.take(3).join(", "),
                         style: Theme.of(context)
                             .textTheme
                             .labelMedium!
-                            .copyWith(color: Theme.of(context).primaryColor),
+                            .copyWith(color: palette[0]),
                       )
                     ],
                   ),
@@ -133,7 +130,7 @@ class FeaturedMangaBanner extends StatelessWidget {
                         minWidth: 80,
                         height: 34,
                         elevation: 5,
-                        color: Theme.of(context).primaryColor,
+                        color: palette[0],
                         child: const Text(
                           'Read Now',
                           style: TextStyle(color: Colors.white, fontSize: 12),

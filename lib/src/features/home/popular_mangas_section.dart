@@ -1,11 +1,12 @@
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/material.dart';
+import 'package:badges/badges.dart';
+import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_info.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_profile_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/others/manga_image.dart';
+import 'package:shounengaming_mangas_mobile/src/others/theme.dart';
 
 final popularMangasProvider = FutureProvider.autoDispose((ref) async {
   var mangasRepo = ref.watch(mangaRepositoryProvider);
@@ -41,7 +42,7 @@ class PopularMangasSection extends ConsumerWidget {
             ],
           ),
           SizedBox(
-              height: 135,
+              height: 140,
               child: ref.watch(popularMangasProvider).when(
                   data: (data) => ListView.separated(
                         separatorBuilder: (context, index) => const SizedBox(
@@ -77,22 +78,39 @@ class PopularMangaCard extends StatelessWidget {
         padding: const EdgeInsets.only(
           top: 10,
           bottom: 5,
+          left: 2,
+          right: 2,
         ),
         child: SizedBox(
           width: 100,
           child: Column(
             children: [
-              Expanded(child: MangaImage(manga.imagesUrls[0])),
+              Expanded(
+                  child: Badge(
+                      badgeContent: Text(
+                        '#$index',
+                        style: const TextStyle(fontSize: 13),
+                      ),
+                      badgeAnimation: const BadgeAnimation.fade(),
+                      position: BadgePosition.topStart(),
+                      badgeStyle: BadgeStyle(
+                          shape: BadgeShape.circle,
+                          padding: const EdgeInsets.all(3),
+                          badgeColor: palette[0]),
+                      child: MangaImage(manga.imagesUrls[0]))),
               const SizedBox(
                 height: 3,
               ),
               SizedBox(
-                height: 16,
-                child: AutoSizeText(
-                  "${"#$index"} ${manga.name}",
+                height: 20,
+                child: Text(
+                  manga.name,
                   maxLines: 1,
-                  minFontSize: 10,
                   overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium
+                      ?.copyWith(fontSize: 12, fontWeight: FontWeight.normal),
                 ),
               ),
             ],

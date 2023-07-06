@@ -8,6 +8,7 @@ import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_profile_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/others/manga_image.dart';
+import 'package:shounengaming_mangas_mobile/src/others/theme.dart';
 
 /*
 Each Filter and Sort is a StateProvider
@@ -149,7 +150,9 @@ class LibraryReadingScreen extends ConsumerWidget {
                           .watch(filteredReadingMangasProvider)
                           .length
                           .toString(),
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const Text(' Mangas')
                   ],
@@ -310,6 +313,7 @@ class LibraryReadingMangaTile extends ConsumerWidget {
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                     child: LinearProgressIndicator(
                       minHeight: 9,
+                      color: palette[1],
                       value: mangaUserData.manga.chaptersCount == 0
                           ? 0
                           : mangaUserData.chaptersRead.length /
@@ -318,13 +322,25 @@ class LibraryReadingMangaTile extends ConsumerWidget {
                   ),
                   const Spacer(),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Spacer(),
                       Text(
-                        'Last Chapter: ${mangaUserData.manga.lastChapterDate != null ? DateFormat("dd MMM yyyy").format(mangaUserData.manga.lastChapterDate!) : "Not Found"}',
-                        style: const TextStyle(
-                            color: Color.fromARGB(255, 150, 79, 194),
-                            fontSize: 11),
+                        'Last Chapter: ',
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium
+                            ?.copyWith(fontSize: 9, color: Colors.white70),
+                      ),
+                      Text(
+                        mangaUserData.manga.lastChapterDate != null
+                            ? DateFormat("dd MMM yyyy")
+                                .format(mangaUserData.manga.lastChapterDate!)
+                            : "Not Found",
+                        style:
+                            Theme.of(context).textTheme.labelMedium?.copyWith(
+                                  fontSize: 11,
+                                ),
                       ),
                     ],
                   )

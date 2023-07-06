@@ -171,7 +171,14 @@ class _MainLayoutScreenState extends ConsumerState<MainLayoutScreen> {
       appBar: AppBar(
         title: const Text('SG Mangas'),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.settings)),
+          IconButton(
+              onPressed: () {
+                navigationKey.currentState?.push(
+                  MaterialPageRoute(
+                      builder: (context) => const SettingsScreen()),
+                );
+              },
+              icon: const Icon(Icons.settings)),
           const SizedBox(
             width: 5,
           ),
@@ -209,7 +216,10 @@ class _MainLayoutScreenState extends ConsumerState<MainLayoutScreen> {
               body: Center(
             child: Text('In Construction'),
           )),
-          SettingsScreen()
+          Scaffold(
+              body: Center(
+            child: Text('In Construction'),
+          )),
         ],
         items: menuItems
             .map(

@@ -21,6 +21,7 @@ import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_reposito
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/features/chapter/chapter_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_sources_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/others/theme.dart';
 
 final mangaProfileProvider = StateNotifierProvider.family
     .autoDispose<MangaProfileController, MangaProfileState, int>(
@@ -236,29 +237,6 @@ class MangaProfileScreen extends ConsumerWidget {
                     icon: const Icon(Icons.edit))
               ],
       ),
-      // floatingActionButtonLocation: ExpandableFab.location,
-      // floatingActionButton: ExpandableFab(
-      //   children: [
-      //     FloatingActionButton.extended(
-      //       heroTag: null,
-      //       tooltip: 'Read Next Chapter',
-      //       label: const Icon(Icons.menu_book),
-      //       onPressed: () {},
-      //     ),
-      //     FloatingActionButton.extended(
-      //       tooltip: 'See All Chapters',
-      //       heroTag: null,
-      //       label: const Icon(Icons.remove_red_eye),
-      //       onPressed: () {},
-      //     ),
-      //     FloatingActionButton.extended(
-      //       heroTag: null,
-      //       tooltip: 'Make Private',
-      //       label: const Icon(Icons.lock),
-      //       onPressed: () {},
-      //     ),
-      //   ],
-      // ),
       floatingActionButton: FloatingActionButton(
           onPressed: () async {
             if (mangaState.isLoadingUserData) return;
@@ -412,11 +390,10 @@ class MangaUserStatusSection extends StatelessWidget {
       children: [
         Text(
           'Status',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Theme.of(context).primaryColor,
-          ),
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
         ),
         const SizedBox(
           height: 8,
@@ -473,7 +450,7 @@ class MangaUserStatusSection extends StatelessWidget {
                 minHeight: 8,
                 value: (userData?.chaptersRead.length ?? 0) /
                     manga.chapters.length,
-                color: Theme.of(context).primaryColor,
+                color: palette[1],
                 backgroundColor: Colors.white),
           ),
           const SizedBox(
@@ -502,7 +479,10 @@ class MangaBasicInfoSection extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.visible,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w600),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontSize: 26, fontWeight: FontWeight.w600),
             ),
           ),
           AutoSizeText(
@@ -513,7 +493,8 @@ class MangaBasicInfoSection extends StatelessWidget {
                 .join(", "),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: Colors.grey, fontSize: 16),
+            style:
+                Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 16),
           ),
           const SizedBox(
             height: 10,
@@ -527,7 +508,7 @@ class MangaBasicInfoSection extends StatelessWidget {
                             vertical: 4, horizontal: 12),
                         margin: const EdgeInsets.symmetric(horizontal: 5),
                         decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor,
+                            color: palette[0],
                             borderRadius: BorderRadius.circular(8)),
                         child: InkWell(
                           onTap: () {},
@@ -555,17 +536,14 @@ class MangaDetailsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var titleStyle = Theme.of(context)
+        .textTheme
+        .titleSmall
+        ?.copyWith(fontSize: 14, fontWeight: FontWeight.w500);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Synopsis',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Theme.of(context).primaryColor,
-          ),
-        ),
+        Text('Synopsis', style: titleStyle),
         const SizedBox(
           height: 4,
         ),
@@ -580,14 +558,7 @@ class MangaDetailsSection extends StatelessWidget {
         const SizedBox(
           height: 16,
         ),
-        Text(
-          'Score',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Theme.of(context).primaryColor,
-          ),
-        ),
+        Text('Score', style: titleStyle),
         const SizedBox(
           height: 4,
         ),
@@ -597,14 +568,7 @@ class MangaDetailsSection extends StatelessWidget {
         const SizedBox(
           height: 16,
         ),
-        Text(
-          'Type',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Theme.of(context).primaryColor,
-          ),
-        ),
+        Text('Type', style: titleStyle),
         const SizedBox(
           height: 4,
         ),
@@ -633,14 +597,7 @@ class MangaDetailsSection extends StatelessWidget {
         const SizedBox(
           height: 16,
         ),
-        Text(
-          'Status',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Theme.of(context).primaryColor,
-          ),
-        ),
+        Text('Status', style: titleStyle),
         const SizedBox(
           height: 4,
         ),
@@ -650,14 +607,7 @@ class MangaDetailsSection extends StatelessWidget {
         const SizedBox(
           height: 16,
         ),
-        Text(
-          'Published',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Theme.of(context).primaryColor,
-          ),
-        ),
+        Text('Published', style: titleStyle),
         const SizedBox(
           height: 4,
         ),
@@ -667,14 +617,7 @@ class MangaDetailsSection extends StatelessWidget {
         const SizedBox(
           height: 16,
         ),
-        Text(
-          'Writer',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Theme.of(context).primaryColor,
-          ),
-        ),
+        Text('Writer', style: titleStyle),
         const SizedBox(
           height: 4,
         ),
@@ -828,9 +771,9 @@ class MangaChaptersSection extends StatelessWidget {
                           color: mangaState.userData != null &&
                                   mangaState.userData!.chaptersRead
                                       .contains(e.id)
-                              ? Colors.green[700]
-                              : Colors.purple,
-                          border: Border.all(color: Colors.white54),
+                              ? Colors.green[800]
+                              : palette[1],
+                          border: Border.all(color: palette[2]),
                           borderRadius: BorderRadius.circular(8)),
                       child: Center(child: Text(e.name.toString())),
                     ),

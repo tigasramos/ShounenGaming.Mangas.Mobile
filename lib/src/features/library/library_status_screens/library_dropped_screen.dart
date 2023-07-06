@@ -8,6 +8,7 @@ import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_profile_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/others/manga_image.dart';
+import 'package:shounengaming_mangas_mobile/src/others/theme.dart';
 
 enum DroppedOrderByEnum { alphabetical, droppedDate }
 
@@ -163,6 +164,7 @@ class LibraryDroppedMangaTile extends StatelessWidget {
                           ? 0
                           : mangaUserData.chaptersRead.length /
                               mangaUserData.manga.chaptersCount,
+                      color: palette[1],
                     ),
                   ),
                   const Spacer(),

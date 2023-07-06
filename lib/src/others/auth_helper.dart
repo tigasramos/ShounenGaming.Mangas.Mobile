@@ -59,7 +59,8 @@ Future updateStoreAndState(Ref ref, AuthResponse authResponse) async {
               return handler.resolve(response);
             }
           } on Exception {
-            ref.watch(appStateProvider.notifier).logout();
+            await ref.watch(appStateProvider.notifier).logout();
+            navigationKey.currentState?.popUntil((route) => route.isFirst);
           }
         }
       }

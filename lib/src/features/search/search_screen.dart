@@ -143,7 +143,8 @@ class SearchScreen extends ConsumerWidget {
                     await functions.search();
                   },
                   minWidth: double.infinity,
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).buttonTheme.colorScheme?.primary ??
+                      Theme.of(context).primaryColor,
                   child: const Text('Search')),
               const SizedBox(
                 height: 10,
@@ -205,7 +206,9 @@ class MangaSearchedTile extends StatelessWidget {
                 ),
                 badgeAnimation: const BadgeAnimation.fade(),
                 badgeStyle: BadgeStyle(
-                    badgeColor: Theme.of(context).primaryColor,
+                    badgeColor:
+                        Theme.of(context).buttonTheme.colorScheme?.primary ??
+                            Theme.of(context).primaryColor,
                     borderRadius: BorderRadius.circular(10),
                     padding:
                         const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
@@ -243,8 +246,10 @@ class MangaSearchedTile extends StatelessWidget {
                   RichText(
                       text: TextSpan(
                           text: 'Status: ',
-                          style: TextStyle(
-                              color: Colors.purple[300], fontSize: 10),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleSmall
+                              ?.copyWith(fontSize: 10),
                           children: [
                         TextSpan(
                             text: manga.isReleasing ? 'Releasing' : 'Finished',
@@ -253,8 +258,10 @@ class MangaSearchedTile extends StatelessWidget {
                   RichText(
                       text: TextSpan(
                           text: 'Type: ',
-                          style: TextStyle(
-                              color: Colors.purple[300], fontSize: 10),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleSmall
+                              ?.copyWith(fontSize: 10),
                           children: [
                         TextSpan(
                             text: manga.type.name,
@@ -263,12 +270,16 @@ class MangaSearchedTile extends StatelessWidget {
                   RichText(
                       text: TextSpan(
                           text: 'Last Update: ',
-                          style: TextStyle(
-                              color: Colors.purple[300], fontSize: 10),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleSmall
+                              ?.copyWith(fontSize: 10),
                           children: [
                         TextSpan(
-                            text:
-                                ' ${manga.lastChapterDate != null ? DateFormat("dd MMM yyyy").format(manga.lastChapterDate!) : "Not Found"}',
+                            text: manga.lastChapterDate != null
+                                ? DateFormat("dd MMM yyyy")
+                                    .format(manga.lastChapterDate!)
+                                : "Not Found",
                             style: const TextStyle(color: Colors.white)),
                       ])),
                 ],

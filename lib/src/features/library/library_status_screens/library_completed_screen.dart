@@ -202,7 +202,7 @@ class LibraryCompletedMangaTile extends ConsumerWidget {
                   ),
                   const Spacer(),
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       if (mangaUserData.manga.myAnimeListId != null) ...[
                         GestureDetector(
@@ -226,9 +226,21 @@ class LibraryCompletedMangaTile extends ConsumerWidget {
                         ),
                       const Spacer(),
                       Text(
-                        'Completed at: ${mangaUserData.addedToStatusDate != null ? DateFormat("dd MMM yyyy").format(mangaUserData.addedToStatusDate!) : "Not Found"}',
+                        'Last Chapter: ',
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium
+                            ?.copyWith(fontSize: 9, color: Colors.white70),
+                      ),
+                      Text(
+                        mangaUserData.addedToStatusDate != null
+                            ? DateFormat("dd MMM yyyy")
+                                .format(mangaUserData.addedToStatusDate!)
+                            : "Not Found",
                         style:
-                            const TextStyle(color: Colors.white, fontSize: 11),
+                            Theme.of(context).textTheme.labelMedium?.copyWith(
+                                  fontSize: 11,
+                                ),
                       ),
                     ],
                   ),

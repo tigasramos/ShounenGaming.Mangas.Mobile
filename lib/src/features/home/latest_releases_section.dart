@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dash_flags/dash_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -82,19 +81,26 @@ class MangaReleaseCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AutoSizeText(
+                  Text(
                     mangaRelease.manga.name,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleSmall,
+                    //minFontSize: 12,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontSize: 15, height: 1.2, fontWeight: FontWeight.w500),
                   ),
                   Text(
                     mangaRelease.manga.tags.join(", "),
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: Colors.grey),
+                    softWrap: false,
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelSmall
+                        ?.copyWith(fontSize: 12),
                   ),
                   const Spacer(),
                   ...mangaRelease.releasedChapters.values.take(2).map(
                         (e) => Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             SizedBox(
                               height: 13,
@@ -108,14 +114,17 @@ class MangaReleaseCard extends StatelessWidget {
                             const SizedBox(
                               width: 5,
                             ),
-                            Text(
-                              "#${e.name}",
-                            ),
+                            Text("#${e.name}",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(fontSize: 14)),
                             const Spacer(),
-                            Text(
-                              DateFormat("dd MMM yyyy").format(e.createdAt),
-                              style: const TextStyle(color: Colors.grey),
-                            ),
+                            Text(DateFormat("dd MMM yyyy").format(e.createdAt),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelSmall
+                                    ?.copyWith(fontSize: 14)),
                           ],
                         ),
                       ),
