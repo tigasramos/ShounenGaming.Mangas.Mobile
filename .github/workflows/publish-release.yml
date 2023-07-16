@@ -29,6 +29,8 @@ jobs:
         id: next_version
         run: |
           last_tag=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//') || true
+          echo $last_tag
+          echo $(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//')
           if [ -z "$last_tag" ]; then
             last_version="1.0.0"
           else
@@ -36,8 +38,6 @@ jobs:
           fi
           echo "Last Version: $last_version"
           echo "NEW_VERSION=$last_version" >> $GITHUB_ENV
-      
-      - run: echo $NEW_VERSION
         
       - name: Build APK
         run: flutter build apk --release --build-name=$NEW_VERSION
