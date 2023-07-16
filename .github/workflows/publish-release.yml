@@ -25,26 +25,18 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Fetch last version
-        id: fetch_last_version
+      - name: Fetch Next Version
+        id: next_version
         run: |
           last_tag=$(git describe --tags --abbrev=0 2>/dev/null) || true
           if [ -z "$last_tag" ]; then
-            echo "{last_version}={1.0.0}" >> $GITHUB_OUTPUT
-            echo "Last Version: 1.0.0"
+            last_version="1.0.0"
           else
-            echo "{last_version}={$last_tag}" >> $GITHUB_OUTPUT
-            echo "Last Version: $last_version"
+            last_version=$(echo "$last_tag" | awk -F. -v OFS=. '{print $1,$2,$3+1}')
           fi
-          
-          
-      - name: Get next version
-        id: next_version
-        run: |
-          next_version=$(echo ${{ steps.fetch_last_version.outputs.last_version }} | awk -F. 'BEGIN{OFS="."}{$NF+=1;print}')
-          echo "{next_version}={$next_version}" >> $GITHUB_OUTPUT
-          echo "Next  Version: $next_version"
-          
+          echo "Last Version: $last_version"
+          echo "{last_version}={$last_tag}" >> $GITHUB_OUTPUT
+                  
       #- name: Build APK
       #  run: flutter build apk --release
 
