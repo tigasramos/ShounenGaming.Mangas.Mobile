@@ -30,8 +30,8 @@ jobs:
         run: |
           last_tag=$(git describe --tags --abbrev=0 2>/dev/null) || true
           if [ -z "$last_tag" ]; then
-            echo "{last_version}={1.0.0+1}" >> $GITHUB_OUTPUT
-            echo "Last Version: 1.0.0+1"
+            echo "{last_version}={1.0.0}" >> $GITHUB_OUTPUT
+            echo "Last Version: 1.0.0"
           else
             echo "{last_version}={$last_tag}" >> $GITHUB_OUTPUT
             echo "Last Version: $last_version"
