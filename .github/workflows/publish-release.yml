@@ -1,0 +1,82 @@
+name: Publish Release
+
+on:
+  #pull_request:
+    #types:
+    #  - closed
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: 'Get Previous tag'
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        with:
+          fallback: 1.0.0 
+          
+      - name: 'Get next minor version'
+        id: semvers
+        uses: "WyriHaximus/github-action-next-semvers@v1"
+        with:
+          version: ${{ steps.previoustag.outputs.tag }}
+          
+      - name: 'Set ENV Variable'
+        run: |
+          echo "NEW_VERSION=${{ steps.semvers.outputs.patch }}" >> $GITHUB_ENV
+          
+      - run: echo $NEW_VERSION
+          
+      - name: Fetch Next Version
+        id: next_version
+        run: |
+          last_tag=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//') || true
+          echo "Last Tag: $last_tag"
+          echo $(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//')
+          if [ -z "$last_tag" ]; then
+            last_version="1.0.0"
+          else
+            last_version=$(echo "$last_tag" | awk -F. -v OFS=. '{print $1,$2,$3+1}')
+          fi
+          echo "Next Version: $last_version"
+          echo "NEW_VERSION=$last_version" >> $GITHUB_ENV
+          
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - run: flutter --version
+
+      - name: Update Flutter version
+        run: flutter upgrade
+
+      - name: Install dependencies
+        run: flutter pub get
+        
+      - name: Build APK
+        run: flutter build apk --release --build-name=$NEW_VERSION
+        
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            build/app/outputs/apk/release/app-release.apk
+          tag_name: v${{ env.NEW_VERSION }}
+          name: Release v${{ env.NEW_VERSION }}
+          body: |
+            Release v${{ env.NEW_VERSION }}
+          draft: false
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_SG_Mangas_Release }}
+
+      #- name: Upload APK
+      #  uses: actions/upload-artifact@v2
+      #  with:
+      #    name: release-apk
+      #    path: build/app/outputs/apk/release/app-release.apk
