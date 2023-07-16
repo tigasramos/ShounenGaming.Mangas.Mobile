@@ -51,8 +51,8 @@ jobs:
             Release v${{ env.NEW_VERSION }}
           draft: false
           prerelease: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        #env:
+          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       #- name: Create Release
       #  id: create_release
