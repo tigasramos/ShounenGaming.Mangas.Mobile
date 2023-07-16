@@ -1,16 +1,38 @@
-# shounengaming_mangas_mobile
+# Shounen Gaming Mangas (Mobile Version)
 
-A new Flutter project.
+Shounen Gaming's Mobile App to Read Mangas.
 
-## Getting Started
+## How It Works?
 
-This project is a starting point for a Flutter application.
+It connects to our Main Server and let's you login if you belong to our community. It has several mangas and keeps track of your progress in both Portuguese and English
 
-A few resources to get you started if this is your first Flutter project:
+## Who Can Use It?
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Anyone who is in our Shounen Gaming's Discord Server is able to login and use our applications.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Motivation
+
+My main motivation developing this was not only to have a tool for me and my "Weeb" friends but to learn Riverpod and develop my Flutter skills at the same time.
+
+## TODO
+
+Main Page Popular Mangas Design
+Library Ignored Design
+Login and Connection #1
+Settings Screen #1
+Add New Mangas #1
+Chapter Images that don't work
+
+History Screen #?
+Ignored Mangas Behaviour #?
+Search Filters #2
+Library Filters #2
+Tags Screens #2
+Writers Screens #2
+Refactor Library Code #2
+Library MAL Launch #2
+Mark Seen and Unseen Chapters #2
+
+See Later:
+https://docs.consumet.org/
+Shiny Images for Popular??
