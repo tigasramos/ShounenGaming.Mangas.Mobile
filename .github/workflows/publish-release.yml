@@ -28,18 +28,35 @@ jobs:
       - name: Fetch Next Version
         id: next_version
         run: |
-          last_tag=$(git describe --tags --abbrev=0 2>/dev/null) || true
-          last_tag=$(echo "v1.0.0" | sed 's/^v//')
+          last_tag=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//') || true
           if [ -z "$last_tag" ]; then
-            last_version="1.0.0"
+            last_version="1.0.-1"
           else
             last_version=$(echo "$last_tag" | awk -F. -v OFS=. '{print $1,$2,$3+1}')
           fi
           echo "Last Version: $last_version"
           echo "{last_version}={$last_tag}" >> $GITHUB_OUTPUT
                   
-      #- name: Build APK
-      #  run: flutter build apk --release
+      - name: Set environment variable
+        run: |
+          echo "BUILD_NAME=${{ steps.next_version.outputs.last_version }}" >> $GITHUB_ENV
+
+      - name: Build APK
+        run: flutter build apk --release --build-name=$BUILD_NAME
+        
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            build/app/outputs/apk/release/app-release.apk
+          tag_name: v${{ steps.next_version.outputs.last_version }}
+          release_name: Release v${{ steps.next_version.outputs.last_version }}
+          body: |
+            Release v${{ steps.next_version.outputs.last_version }}
+          draft: false
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       #- name: Create Release
       #  id: create_release
