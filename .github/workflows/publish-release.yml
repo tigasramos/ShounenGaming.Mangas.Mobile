@@ -28,13 +28,23 @@ jobs:
       - name: Fetch last version
         id: fetch_last_version
         run: |
-          echo "{last_version}={$(git describe --tags $(git rev-list --tags --max-count=1))}" >> $GITHUB_OUTPUT
+          last_tag=$(git describe --tags --abbrev=0 2>/dev/null)
+          if [ -z "$last_tag" ]; then
+            echo "{last_version}={1.0.0+1}" >> $GITHUB_OUTPUT
+            echo "Last Version: 1.0.0+1"
+          else
+            echo "{last_version}={$last_tag}" >> $GITHUB_OUTPUT
+            echo "Last Version: $last_version"
+          fi
+          
           
       - name: Get next version
         id: next_version
         run: |
-          echo "{next_version}={$(echo ${{ steps.fetch_last_version.outputs.last_version }} | awk -F. 'BEGIN{OFS="."}{$NF+=1;print}')}" >> $GITHUB_OUTPUT
-
+          next_version = $(echo ${{ steps.fetch_last_version.outputs.last_version }} | awk -F. 'BEGIN{OFS="."}{$NF+=1;print}')
+          echo "{next_version}={$next_version}" >> $GITHUB_OUTPUT
+          echo "Next  Version: $next_version"
+          
       #- name: Build APK
       #  run: flutter build apk --release
 
