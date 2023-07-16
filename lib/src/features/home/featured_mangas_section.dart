@@ -105,7 +105,7 @@ class FeaturedMangaBanner extends StatelessWidget {
                       AutoSizeText(
                         manga.name,
                         style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                            color: Colors.black, fontWeight: FontWeight.w500),
+                            color: Colors.black, fontWeight: FontWeight.w600),
                       ),
                       Text(
                         manga.tags.take(3).join(", "),

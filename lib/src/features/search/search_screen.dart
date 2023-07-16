@@ -11,6 +11,7 @@ import 'package:shounengaming_mangas_mobile/src/data/models/search_manga_query.d
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_profile_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/others/manga_image.dart';
+import 'package:shounengaming_mangas_mobile/src/others/theme.dart';
 
 //TODO: Search from synopsys aswell, not only name
 
@@ -143,8 +144,7 @@ class SearchScreen extends ConsumerWidget {
                     await functions.search();
                   },
                   minWidth: double.infinity,
-                  color: Theme.of(context).buttonTheme.colorScheme?.primary ??
-                      Theme.of(context).primaryColor,
+                  color: palette[0],
                   child: const Text('Search')),
               const SizedBox(
                 height: 10,
@@ -206,9 +206,7 @@ class MangaSearchedTile extends StatelessWidget {
                 ),
                 badgeAnimation: const BadgeAnimation.fade(),
                 badgeStyle: BadgeStyle(
-                    badgeColor:
-                        Theme.of(context).buttonTheme.colorScheme?.primary ??
-                            Theme.of(context).primaryColor,
+                    badgeColor: palette[0],
                     borderRadius: BorderRadius.circular(10),
                     padding:
                         const EdgeInsets.symmetric(vertical: 2, horizontal: 6),

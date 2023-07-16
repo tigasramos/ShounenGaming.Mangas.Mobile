@@ -23,6 +23,7 @@ import 'package:shounengaming_mangas_mobile/src/features/library/library_status_
 import 'package:shounengaming_mangas_mobile/src/features/search/search_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/settings/settings_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/others/auth_helper.dart';
+import 'package:shounengaming_mangas_mobile/src/others/constants.dart';
 import 'package:shounengaming_mangas_mobile/src/others/menu_items.dart';
 import 'package:shounengaming_mangas_mobile/src/others/theme.dart';
 
@@ -120,9 +121,10 @@ class AppStateController extends StateNotifier<AppState> {
 
   Future logout() async {
     var sharedPreferences = ref.watch(sharedPreferencesProvider);
-    await sharedPreferences.remove("sg_mangas_refreshToken");
-    await sharedPreferences.remove("sg_mangas_accessToken");
+    await sharedPreferences.remove(localStorageAccessTokenKey);
+    await sharedPreferences.remove(localStorageRefreshTokenKey);
 
+    navigationKey.currentState?.popUntil((route) => route.isFirst);
     state = state.resetUser();
   }
 }

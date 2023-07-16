@@ -89,13 +89,13 @@ class PopularMangaCard extends StatelessWidget {
                   child: Badge(
                       badgeContent: Text(
                         '#$index',
-                        style: const TextStyle(fontSize: 13),
+                        style: const TextStyle(fontSize: 12),
                       ),
                       badgeAnimation: const BadgeAnimation.fade(),
                       position: BadgePosition.topStart(),
                       badgeStyle: BadgeStyle(
                           shape: BadgeShape.circle,
-                          padding: const EdgeInsets.all(3),
+                          padding: const EdgeInsets.all(4),
                           badgeColor: palette[0]),
                       child: MangaImage(manga.imagesUrls[0]))),
               const SizedBox(

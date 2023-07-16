@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
 import 'package:intl/intl.dart';
+import 'package:readmore/readmore.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_type_enum.dart';
 
@@ -547,10 +548,11 @@ class MangaDetailsSection extends StatelessWidget {
         const SizedBox(
           height: 4,
         ),
-        Text(
+        ReadMoreText(
           manga.description,
-          maxLines: 10,
-          overflow: TextOverflow.ellipsis,
+          trimLength: 500,
+          trimCollapsedText: ' Show More',
+          trimExpandedText: ' Show Less',
           style: const TextStyle(
             fontSize: 12,
           ),
@@ -636,12 +638,6 @@ class MangaDetailsSection extends StatelessWidget {
 }
 
 class MangaChaptersSection extends StatelessWidget {
-  // final Manga manga;
-  // final MangaUserData? userData;
-  // final TranslationLanguageEnum selectedLanguage;
-  // final void Function(TranslationLanguageEnum) changeSelectedLanguage;
-  // final Future Function() updateMangaUserData;
-
   final MangaProfileState mangaState;
   final MangaProfileController controller;
 

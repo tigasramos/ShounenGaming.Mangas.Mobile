@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 var theme = ThemeData(
   useMaterial3: true,
   brightness: Brightness.dark,
   primaryColor: palette[2],
-  textTheme: TextTheme(
+  textTheme: GoogleFonts.robotoTextTheme(TextTheme(
     titleLarge: const TextStyle(color: Colors.white),
     titleMedium: const TextStyle(color: Colors.white),
     titleSmall: TextStyle(color: palette[2]),
@@ -14,7 +15,7 @@ var theme = ThemeData(
     /**/ labelLarge: TextStyle(color: palette[2]),
     /**/ labelMedium: TextStyle(color: palette[3]),
     labelSmall: const TextStyle(color: Colors.grey),
-  ),
+  )),
   buttonTheme: ButtonThemeData(
     colorScheme: ColorScheme.dark(
       primary: palette[1],
@@ -28,7 +29,8 @@ var theme = ThemeData(
 );
 
 var palette = <Color>[
-  const Color.fromARGB(255, 111, 51, 206),
+  //const Color.fromARGB(255, 111, 51, 206),
+  Colors.purple[700]!,
   const Color(0xFF845EC2),
   const Color(0xFFA178DF),
   const Color(0xFFBE93FD),

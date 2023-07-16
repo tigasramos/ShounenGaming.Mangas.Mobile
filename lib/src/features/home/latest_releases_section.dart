@@ -99,33 +99,37 @@ class MangaReleaseCard extends StatelessWidget {
                   ),
                   const Spacer(),
                   ...mangaRelease.releasedChapters.values.take(2).map(
-                        (e) => Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: 13,
-                              width: 18,
-                              child: CountryFlag(
-                                  country: e.translation ==
-                                          TranslationLanguageEnum.PT
-                                      ? Country.pt
-                                      : Country.gb),
-                            ),
-                            const SizedBox(
-                              width: 5,
-                            ),
-                            Text("#${e.name}",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(fontSize: 14)),
-                            const Spacer(),
-                            Text(DateFormat("dd MMM yyyy").format(e.createdAt),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelSmall
-                                    ?.copyWith(fontSize: 14)),
-                          ],
+                        (e) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 1),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                height: 13,
+                                width: 18,
+                                child: CountryFlag(
+                                    country: e.translation ==
+                                            TranslationLanguageEnum.PT
+                                        ? Country.pt
+                                        : Country.gb),
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text("#${e.name}",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(fontSize: 13)),
+                              const Spacer(),
+                              Text(
+                                  DateFormat("dd MMM yyyy").format(e.createdAt),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelSmall
+                                      ?.copyWith(fontSize: 13)),
+                            ],
+                          ),
                         ),
                       ),
                   const Spacer(
