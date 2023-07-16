@@ -30,12 +30,12 @@ jobs:
         run: |
           last_tag=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//') || true
           if [ -z "$last_tag" ]; then
-            last_version="1.0.-1"
+            last_version="1.0.0"
           else
             last_version=$(echo "$last_tag" | awk -F. -v OFS=. '{print $1,$2,$3+1}')
           fi
           echo "Last Version: $last_version"
-          echo "{last_version}={$last_tag}" >> $GITHUB_OUTPUT
+          echo "{last_version}={$last_version}" >> $GITHUB_OUTPUT
                   
       - name: Set environment variable
         run: |
