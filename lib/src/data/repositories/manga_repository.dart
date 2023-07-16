@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_metadata_source_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/translation_language_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/latest_release_manga.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/manga_metadata.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_source.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_translation.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/search_manga_query.dart';
@@ -19,7 +21,7 @@ final mangaRepositoryProvider = Provider<MangaRepository>((ref) {
 
 class MangaRepository {
   final Dio _client;
-  static const String _baseURL = "mangas";
+  static const String _baseURL = "api/mangas";
 
   MangaRepository(this._client);
 
@@ -108,5 +110,21 @@ class MangaRepository {
     if (response.statusCode != 200) {
       throw Exception("Status Code: ${response.statusCode}");
     }
+  }
+
+  Future<Manga> addManga(int mangaId, MangaMetadataSourceEnum source) async {
+    var response = await _client.post(
+      '$_baseURL/${source.name}/$mangaId',
+    );
+    return Manga.fromMap(response.data);
+  }
+
+  Future<List<MangaMetadata>> searchMangaMetadata(
+      String name, MangaMetadataSourceEnum source) async {
+    var response =
+        await _client.get('$_baseURL/search/${source.name}?name=$name');
+    return (response.data as List)
+        .map((m) => MangaMetadata.fromMap(m))
+        .toList();
   }
 }

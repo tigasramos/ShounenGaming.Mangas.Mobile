@@ -11,7 +11,7 @@ final userRepositoryProvider = Provider<UserRepository>((ref) {
 
 class UserRepository {
   final Dio _client;
-  static const String _baseURL = "users";
+  static const String _baseURL = "api/users";
 
   UserRepository(this._client);
 

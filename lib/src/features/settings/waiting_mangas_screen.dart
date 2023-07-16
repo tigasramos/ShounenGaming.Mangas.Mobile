@@ -18,7 +18,7 @@ class WaitingMangasScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Mangas Waiting for Source'),
+          title: const Text('Waiting for Source'),
         ),
         body: ref.watch(waitingMangasProvider).when(
               data: (data) => ListView.builder(

@@ -12,7 +12,7 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
 class AuthRepository {
   final Dio _client;
   final Ref ref;
-  static const String _baseURL = "auth";
+  static const String _baseURL = "api/auth";
 
   AuthRepository(this._client, this.ref);
 

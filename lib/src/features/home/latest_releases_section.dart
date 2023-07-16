@@ -68,7 +68,7 @@ class MangaReleaseCard extends StatelessWidget {
         );
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 10),
+        margin: const EdgeInsets.only(bottom: 5, top: 5, left: 5, right: 5),
         width: double.infinity,
         height: 100,
         child: Row(

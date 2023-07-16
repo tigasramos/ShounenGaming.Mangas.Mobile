@@ -281,7 +281,7 @@ class ChapterScreen extends ConsumerWidget {
                 )),
             if (chapterState.currentPage == 1 ||
                 (chapterState.translation != null &&
-                    chapterState.translation!.pages.length ==
+                    chapterState.translation!.pages.length - 1 <=
                         chapterState.currentPage)) ...[
               if (chapterState.translation!.previousChapterId != null)
                 Positioned(
@@ -292,7 +292,20 @@ class ChapterScreen extends ConsumerWidget {
                     transform: Matrix4.rotationY(3.14),
                     child: FloatingActionButton(
                         heroTag: "back",
-                        onPressed: () {},
+                        onPressed: () {
+                          navigationKey.currentState?.pushReplacement(
+                              PageRouteBuilder(
+                                  transitionDuration: Duration.zero,
+                                  reverseTransitionDuration: Duration.zero,
+                                  pageBuilder:
+                                      (context, animation1, animation2) =>
+                                          ChapterScreen(
+                                              mangaId,
+                                              chapterState.translation!
+                                                  .previousChapterId!,
+                                              chapterState.translation!
+                                                  .defaultLanguage)));
+                        },
                         child: const Icon(Icons.double_arrow)),
                   ),
                 ),
@@ -302,7 +315,20 @@ class ChapterScreen extends ConsumerWidget {
                   bottom: 25,
                   child: FloatingActionButton(
                       heroTag: "next",
-                      onPressed: () {},
+                      onPressed: () {
+                        navigationKey.currentState?.pushReplacement(
+                            PageRouteBuilder(
+                                transitionDuration: Duration.zero,
+                                reverseTransitionDuration: Duration.zero,
+                                pageBuilder:
+                                    (context, animation1, animation2) =>
+                                        ChapterScreen(
+                                            mangaId,
+                                            chapterState
+                                                .translation!.nextChapterId!,
+                                            chapterState.translation!
+                                                .defaultLanguage)));
+                      },
                       child: const Icon(
                         Icons.double_arrow,
                       )),
@@ -313,6 +339,7 @@ class ChapterScreen extends ConsumerWidget {
       );
     }
 
+    // TODO : Refactor this
     //Horizontal Reading
     return Scaffold(
       appBar: AppBar(
@@ -381,65 +408,27 @@ class ChapterScreen extends ConsumerWidget {
             ),
             child: Stack(
               children: [
-                //Vertical Rotation
-                chapterState.verticalReading
-                    ? SingleChildScrollView(
-                        controller: functions.scrollController,
-                        child: Column(
-                            children: chapterState.translation!.pages
-                                .map((e) => InteractiveViewer(
-                                      maxScale: 1, //TODO: Remove
-                                      child: VisibilityDetector(
-                                        key: Key(e),
-                                        onVisibilityChanged: (info) async {
-                                          if (functions.mounted) {
-                                            await functions
-                                                .automaticReadChapter(
-                                                    e, info.visibleFraction);
-                                          }
-                                        },
-                                        child: CachedNetworkImage(
-                                            errorWidget: (context, url,
-                                                    error) =>
-                                                const CircularProgressIndicator(),
-                                            imageUrl: e,
-                                            width: double.infinity,
-                                            httpHeaders: chapterState
-                                                .translation!.pageHeaders,
-                                            filterQuality: FilterQuality.high,
-                                            fit: BoxFit.fitWidth,
-                                            placeholder: (context, url) =>
-                                                const SizedBox(
-                                                    height: 150,
-                                                    width: double.infinity,
-                                                    child: Center(
-                                                        child:
-                                                            CircularProgressIndicator()))),
-                                      ),
-                                    ))
-                                .toList()),
-                      )
-                    : PhotoViewGallery.builder(
-                        allowImplicitScrolling: false,
-                        onPageChanged: (index) async {
-                          if (functions.mounted) {
-                            await functions.automaticReadChapter(
-                                chapterState.translation!.pages[index], 1);
-                          }
-                        },
-                        itemCount: chapterState.translation!.pages.length,
-                        builder: (ctx, index) {
-                          return PhotoViewGalleryPageOptions(
-                            filterQuality: FilterQuality.high,
-                            basePosition: Alignment.center,
-                            imageProvider: CachedNetworkImageProvider(
-                                chapterState.translation!.pages[index],
-                                headers: chapterState.translation!.pageHeaders),
-                            initialScale: PhotoViewComputedScale.contained,
-                            minScale: PhotoViewComputedScale.contained,
-                          );
-                        },
-                      ),
+                PhotoViewGallery.builder(
+                  allowImplicitScrolling: false,
+                  onPageChanged: (index) async {
+                    if (functions.mounted) {
+                      await functions.automaticReadChapter(
+                          chapterState.translation!.pages[index], 1);
+                    }
+                  },
+                  itemCount: chapterState.translation!.pages.length,
+                  builder: (ctx, index) {
+                    return PhotoViewGalleryPageOptions(
+                      filterQuality: FilterQuality.high,
+                      basePosition: Alignment.center,
+                      imageProvider: CachedNetworkImageProvider(
+                          chapterState.translation!.pages[index],
+                          headers: chapterState.translation!.pageHeaders),
+                      initialScale: PhotoViewComputedScale.contained,
+                      minScale: PhotoViewComputedScale.contained,
+                    );
+                  },
+                ),
                 Positioned(
                     bottom: 0,
                     left: 0,
@@ -463,7 +452,20 @@ class ChapterScreen extends ConsumerWidget {
                         transform: Matrix4.rotationY(3.14),
                         child: FloatingActionButton(
                             heroTag: "back",
-                            onPressed: () {},
+                            onPressed: () {
+                              navigationKey.currentState?.pushReplacement(
+                                  PageRouteBuilder(
+                                      transitionDuration: Duration.zero,
+                                      reverseTransitionDuration: Duration.zero,
+                                      pageBuilder:
+                                          (context, animation1, animation2) =>
+                                              ChapterScreen(
+                                                  mangaId,
+                                                  chapterState.translation!
+                                                      .previousChapterId!,
+                                                  chapterState.translation!
+                                                      .defaultLanguage)));
+                            },
                             child: const Icon(Icons.double_arrow)),
                       ),
                     ),
@@ -473,7 +475,20 @@ class ChapterScreen extends ConsumerWidget {
                       bottom: 25,
                       child: FloatingActionButton(
                           heroTag: "next",
-                          onPressed: () {},
+                          onPressed: () {
+                            navigationKey.currentState?.pushReplacement(
+                                PageRouteBuilder(
+                                    transitionDuration: Duration.zero,
+                                    reverseTransitionDuration: Duration.zero,
+                                    pageBuilder:
+                                        (context, animation1, animation2) =>
+                                            ChapterScreen(
+                                                mangaId,
+                                                chapterState.translation!
+                                                    .nextChapterId!,
+                                                chapterState.translation!
+                                                    .defaultLanguage)));
+                          },
                           child: const Icon(
                             Icons.double_arrow,
                           )),
@@ -501,8 +516,9 @@ class _ChapterPageWidgetState extends State<ChapterPageWidget>
   @override
   Widget build(BuildContext context) {
     return InteractiveViewer(
+      minScale: 1,
+      maxScale: 4,
       key: ValueKey(widget.index),
-      maxScale: 1, //TODO: Remove
       child: VisibilityDetector(
         key: Key(widget.state.translation!.pages[widget.index]),
         onVisibilityChanged: (info) async {

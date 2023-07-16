@@ -273,6 +273,7 @@ class MangaSourcesScreen extends ConsumerWidget {
                   child: Center(child: CircularProgressIndicator()))
               : ListView(
                   shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   children: mangaSourceState.existingSources
                       .map((e) => CheckboxListTile(
                             secondary: e.imageURL != null && e.imageURL != ""
@@ -307,6 +308,7 @@ class MangaSourcesScreen extends ConsumerWidget {
                   width: double.infinity,
                   child: Center(child: CircularProgressIndicator()))
               : ListView(
+                  physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   children: mangaSourceState.scrappedList
                       .where((element) =>

@@ -12,7 +12,7 @@ final mangaUsersRepositoryProvider = Provider<MangaUsersRepository>((ref) {
 
 class MangaUsersRepository {
   final Dio _client;
-  static const String _baseURL = "mangas";
+  static const String _baseURL = "api/mangas";
 
   MangaUsersRepository(this._client);
 
@@ -35,14 +35,14 @@ class MangaUsersRepository {
   }
 
   Future<MangaUserData> markChaptersRead(List<int> chaptersIds) async {
-    var response = await _client
-        .put('$_baseURL/read', queryParameters: {'chaptersIds': chaptersIds});
+    var response = await _client.put('$_baseURL/read',
+        data: chaptersIds, options: Options(contentType: 'application/json'));
     return MangaUserData.fromMap(response.data);
   }
 
   Future<MangaUserData?> unmarkChaptersRead(List<int> chaptersIds) async {
-    var response = await _client
-        .put('$_baseURL/unread', queryParameters: {'chaptersIds': chaptersIds});
+    var response = await _client.put('$_baseURL/unread',
+        data: chaptersIds, options: Options(contentType: 'application/json'));
     if (response.data != null) {
       return MangaUserData.fromMap(response.data);
     }

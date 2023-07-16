@@ -11,7 +11,6 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:shounengaming_mangas_mobile/src/data/models/user.dart';
-import 'package:shounengaming_mangas_mobile/src/data/repositories/auth_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/user_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/features/auth/login_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/home/featured_mangas_section.dart';
@@ -52,6 +51,7 @@ final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
 });
 
 final navigationKey = GlobalKey<NavigatorState>();
+final snackbarKey = GlobalKey<ScaffoldMessengerState>();
 
 final appStateProvider = StateNotifierProvider<AppStateController, AppState>(
     (ref) => AppStateController(ref));
@@ -95,28 +95,15 @@ class AppStateController extends StateNotifier<AppState> {
 
   Future getAuthState() async {
     state = state.copyWith(loadingAuth: true);
-    // Get From Local Storage
-    var refreshToken = ref
-        .watch(sharedPreferencesProvider)
-        .getString("sg_mangas_refreshToken");
-    if (refreshToken == null) {
-      state = state.copyWith(loadingAuth: false);
-      return;
-    }
-
-    var authResponse =
-        await ref.read(authRepositoryProvider).refreshToken(refreshToken);
-    if (authResponse == null) {
-      state = state.copyWith(loadingAuth: false);
-      return;
-    }
-    await updateStoreAndState(ref, authResponse);
+    await updateStoreAndState(ref);
     state = state.copyWith(loadingAuth: false);
   }
 
   Future updateUser() async {
-    var user = await ref.read(userRepositoryProvider).getLoggedUser();
-    state = state.copyWith(loggedUser: user);
+    try {
+      var user = await ref.read(userRepositoryProvider).getLoggedUser();
+      state = state.copyWith(loggedUser: user);
+    } catch (e) {}
   }
 
   Future logout() async {
@@ -137,6 +124,7 @@ class SGMangasApp extends ConsumerWidget {
     var appState = ref.watch(appStateProvider);
     return MaterialApp(
         title: 'SG Mangas',
+        scaffoldMessengerKey: snackbarKey,
         debugShowCheckedModeBanner: false,
         theme: theme,
         navigatorKey: navigationKey,
@@ -171,7 +159,15 @@ class _MainLayoutScreenState extends ConsumerState<MainLayoutScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SG Mangas'),
+        title: Row(
+          children: [
+            Image.asset('assets/images/logo-bg.png', height: 35),
+            const SizedBox(
+              width: 10,
+            ),
+            const Text('SG Mangas'),
+          ],
+        ),
         actions: [
           IconButton(
               onPressed: () {
@@ -258,7 +254,7 @@ class _MainLayoutScreenState extends ConsumerState<MainLayoutScreen> {
 }
 
 final dioProvider = Provider<Dio>((ref) {
-  final dio = Dio(BaseOptions(baseUrl: 'https://localhost:7252/api/'));
+  final dio = Dio(BaseOptions(baseUrl: 'https://localhost:7252/'));
 
   ref.onDispose(dio.close);
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/roles_enum.dart';
+import 'package:shounengaming_mangas_mobile/src/features/settings/add_manga_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/settings/waiting_mangas_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -26,7 +27,7 @@ class SettingsScreen extends ConsumerWidget {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 3),
+                            horizontal: 15, vertical: 8),
                         decoration: BoxDecoration(
                             color: Colors.black54,
                             borderRadius: BorderRadius.circular(10)),
@@ -40,7 +41,7 @@ class SettingsScreen extends ConsumerWidget {
                                   ? CachedNetworkImageProvider(
                                       appState.loggedUser?.discordImage ?? "")
                                   : null,
-                              radius: 26,
+                              radius: 23,
                             ),
                             const SizedBox(
                               width: 10,
@@ -68,7 +69,11 @@ class SettingsScreen extends ConsumerWidget {
                       ListTile(
                         leading: const Icon(Icons.post_add),
                         title: const Text('Add New Manga'),
-                        onTap: () {},
+                        onTap: () {
+                          navigationKey.currentState?.push(MaterialPageRoute(
+                            builder: (context) => const AddMangaScreen(),
+                          ));
+                        },
                       ),
                       if (appState.loggedUser?.role != RolesEnum.USER)
                         ListTile(

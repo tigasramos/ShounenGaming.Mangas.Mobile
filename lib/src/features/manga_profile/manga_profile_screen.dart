@@ -357,7 +357,10 @@ class MangaProfileScreen extends ConsumerWidget {
                                           functions.changeMangaUserStatus)
                                       : const SizedBox(
                                           height: 130,
-                                          child: CircularProgressIndicator()),
+                                          width: double.infinity,
+                                          child: Center(
+                                              child:
+                                                  CircularProgressIndicator())),
                                   MangaDetailsSection(mangaState.manga!),
 
                                   MangaChaptersSection(mangaState, functions)
@@ -703,6 +706,7 @@ class MangaChaptersSection extends StatelessWidget {
           height: 10,
         ),
         GridView.count(
+          physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           padding: EdgeInsets.zero,
           crossAxisCount: MediaQuery.of(context).size.width ~/ 70,

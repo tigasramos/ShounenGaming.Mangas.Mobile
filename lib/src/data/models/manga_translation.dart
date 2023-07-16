@@ -7,7 +7,9 @@ import 'package:shounengaming_mangas_mobile/src/data/models/enums/translation_la
 
 class MangaTranslation {
   TranslationLanguageEnum language;
-  DateTime? releasedDate;
+  DateTime? releasedAt;
+  DateTime createdAt;
+  TranslationLanguageEnum defaultLanguage;
   int chapterId;
   String chapterNumber;
   String mangaName;
@@ -19,7 +21,9 @@ class MangaTranslation {
 
   MangaTranslation({
     required this.language,
-    this.releasedDate,
+    this.releasedAt,
+    required this.createdAt,
+    required this.defaultLanguage,
     required this.chapterId,
     required this.chapterNumber,
     required this.mangaName,
@@ -32,7 +36,9 @@ class MangaTranslation {
 
   MangaTranslation copyWith({
     TranslationLanguageEnum? language,
-    DateTime? releasedDate,
+    DateTime? releasedAt,
+    DateTime? createdAt,
+    TranslationLanguageEnum? defaultLanguage,
     int? chapterId,
     String? chapterNumber,
     String? mangaName,
@@ -44,7 +50,9 @@ class MangaTranslation {
   }) {
     return MangaTranslation(
         language: language ?? this.language,
-        releasedDate: releasedDate ?? this.releasedDate,
+        releasedAt: releasedAt ?? this.releasedAt,
+        defaultLanguage: defaultLanguage ?? this.defaultLanguage,
+        createdAt: createdAt ?? this.createdAt,
         chapterId: chapterId ?? this.chapterId,
         chapterNumber: chapterNumber ?? this.chapterNumber,
         mangaName: mangaName ?? this.mangaName,
@@ -58,7 +66,9 @@ class MangaTranslation {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'language': language.name,
-      'releasedDate': releasedDate?.toString(),
+      'defaultLanguage': defaultLanguage.name,
+      'createdAt': createdAt.toString(),
+      'releasedAt': releasedAt?.toString(),
       'chapterId': chapterId,
       'chapterNumber': chapterNumber,
       'mangaName': mangaName,
@@ -72,9 +82,12 @@ class MangaTranslation {
   factory MangaTranslation.fromMap(Map<String, dynamic> map) {
     return MangaTranslation(
       language: TranslationLanguageEnum.values.byName(map['language']),
-      releasedDate: map['releasedDate'] != null
+      releasedAt: map['releasedDate'] != null
           ? DateTime.parse(map['releasedDate'])
           : null,
+      createdAt: DateTime.parse(map['createdAt']),
+      defaultLanguage:
+          TranslationLanguageEnum.values.byName(map['defaultLanguage']),
       chapterId: map['chapterId'] as int,
       chapterNumber: map['chapterNumber'].toString(),
       mangaName: map['mangaName'] as String,
@@ -98,7 +111,7 @@ class MangaTranslation {
 
   @override
   String toString() {
-    return 'MangaTranslation(language: $language, releasedDate: $releasedDate, source: $source, chapterId: $chapterId, chapterNumber: $chapterNumber, mangaName: $mangaName, previousChapterId: $previousChapterId, nextChapterId: $nextChapterId, pages: $pages)';
+    return 'MangaTranslation(language: $language, releasedAt: $releasedAt, createdAt: $createdAt, defaultLanguage: $defaultLanguage source: $source, chapterId: $chapterId, chapterNumber: $chapterNumber, mangaName: $mangaName, previousChapterId: $previousChapterId, nextChapterId: $nextChapterId, pages: $pages)';
   }
 
   @override
@@ -107,8 +120,10 @@ class MangaTranslation {
     final listEquals = const DeepCollectionEquality().equals;
 
     return other.language == language &&
-        other.releasedDate == releasedDate &&
+        other.releasedAt == releasedAt &&
         other.chapterId == chapterId &&
+        other.defaultLanguage == defaultLanguage &&
+        other.createdAt == createdAt &&
         other.chapterNumber == chapterNumber &&
         other.source == source &&
         other.mangaName == mangaName &&
@@ -120,9 +135,11 @@ class MangaTranslation {
   @override
   int get hashCode {
     return language.hashCode ^
-        releasedDate.hashCode ^
+        releasedAt.hashCode ^
         chapterId.hashCode ^
         chapterNumber.hashCode ^
+        createdAt.hashCode ^
+        defaultLanguage.hashCode ^
         source.hashCode ^
         mangaName.hashCode ^
         previousChapterId.hashCode ^

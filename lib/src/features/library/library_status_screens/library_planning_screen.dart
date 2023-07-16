@@ -141,8 +141,8 @@ class LibraryPlanningMangTile extends StatelessWidget {
                 children: [
                   AutoSizeText(
                     mangaUserData.manga.name,
-                    minFontSize: 16,
-                    maxLines: 2,
+                    minFontSize: 15,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                         fontSize: 21, fontWeight: FontWeight.w500, height: 1.2),
@@ -153,6 +153,7 @@ class LibraryPlanningMangTile extends StatelessWidget {
                   ),
                   Text(
                     mangaUserData.manga.tags.join(', '),
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(color: Colors.grey, fontSize: 10),
                   ),
                   const Spacer(),

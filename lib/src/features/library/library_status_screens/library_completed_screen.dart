@@ -226,7 +226,7 @@ class LibraryCompletedMangaTile extends ConsumerWidget {
                         ),
                       const Spacer(),
                       Text(
-                        'Last Chapter: ',
+                        'Completed At: ',
                         style: Theme.of(context)
                             .textTheme
                             .labelMedium
