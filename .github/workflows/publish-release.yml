@@ -28,12 +28,12 @@ jobs:
       - name: Fetch last version
         id: fetch_last_version
         run: |
-          echo "::set-output name=last_version::$(git describe --tags $(git rev-list --tags --max-count=1))"
-
+          echo "{last_version}={$(git describe --tags $(git rev-list --tags --max-count=1))}" >> $GITHUB_OUTPUT
+          
       - name: Get next version
         id: next_version
         run: |
-          echo "::set-output name=next_version::$(echo ${{ steps.fetch_last_version.outputs.last_version }} | awk -F. 'BEGIN{OFS="."}{$NF+=1;print}')"
+          echo "{next_version}={$(echo ${{ steps.fetch_last_version.outputs.last_version }} | awk -F. 'BEGIN{OFS="."}{$NF+=1;print}')}" >> $GITHUB_OUTPUT
 
       #- name: Build APK
       #  run: flutter build apk --release
