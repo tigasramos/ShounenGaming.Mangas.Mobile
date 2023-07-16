@@ -37,6 +37,8 @@ jobs:
           echo "Last Version: $last_version"
           echo "NEW_VERSION=$last_version" >> $GITHUB_ENV
       
+      - run: echo $NEW_VERSION
+        
       - name: Build APK
         run: flutter build apk --release --build-name=$NEW_VERSION
         
