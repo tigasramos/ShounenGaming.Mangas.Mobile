@@ -1,0 +1,57 @@
+name: Publish Release
+
+on:
+  pull_request:
+    #types:
+    #  - closed
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+
+      - name: Update Flutter version
+        run: flutter upgrade
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Fetch last version
+        id: fetch_last_version
+        run: |
+          echo "::set-output name=last_version::$(git describe --tags $(git rev-list --tags --max-count=1))"
+
+      - name: Get next version
+        id: next_version
+        run: |
+          echo "::set-output name=next_version::$(echo ${{ steps.fetch_last_version.outputs.last_version }} | awk -F. 'BEGIN{OFS="."}{$NF+=1;print}')"
+
+      #- name: Build APK
+      #  run: flutter build apk --release
+
+      #- name: Create Release
+      #  id: create_release
+      #  uses: actions/create-release@v1
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #  with:
+      #    tag_name: v${{ steps.next_version.outputs.next_version }}
+      #    release_name: Release v${{ steps.next_version.outputs.next_version }}
+      #    body: |
+      #      Release v${{ steps.next_version.outputs.next_version }}
+      #    draft: false
+      #    prerelease: false
+
+      #- name: Upload APK
+      #  uses: actions/upload-artifact@v2
+      #  with:
+      #    name: release-apk
+      #    path: build/app/outputs/apk/release/app-release.apk
