@@ -13,6 +13,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Fetch Next Version
+        id: next_version
+        run: |
+          last_tag=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//') || true
+          echo "Last Tag: $last_tag"
+          echo $(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//')
+          if [ -z "$last_tag" ]; then
+            last_version="1.0.0"
+          else
+            last_version=$(echo "$last_tag" | awk -F. -v OFS=. '{print $1,$2,$3+1}')
+          fi
+          echo "Next Version: $last_version"
+          echo "NEW_VERSION=$last_version" >> $GITHUB_ENV
+          
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -24,20 +38,6 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
-
-      - name: Fetch Next Version
-        id: next_version
-        run: |
-          last_tag=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//') || true
-          echo $last_tag
-          echo $(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//')
-          if [ -z "$last_tag" ]; then
-            last_version="1.0.0"
-          else
-            last_version=$(echo "$last_tag" | awk -F. -v OFS=. '{print $1,$2,$3+1}')
-          fi
-          echo "Last Version: $last_version"
-          echo "NEW_VERSION=$last_version" >> $GITHUB_ENV
         
       - name: Build APK
         run: flutter build apk --release --build-name=$NEW_VERSION
