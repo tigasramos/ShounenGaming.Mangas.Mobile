@@ -51,21 +51,8 @@ jobs:
             Release v${{ env.NEW_VERSION }}
           draft: false
           prerelease: true
-        #env:
-          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      #- name: Create Release
-      #  id: create_release
-      #  uses: actions/create-release@v1
-      #  env:
-      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #  with:
-      #    tag_name: v${{ steps.next_version.outputs.next_version }}
-      #    release_name: Release v${{ steps.next_version.outputs.next_version }}
-      #    body: |
-      #      Release v${{ steps.next_version.outputs.next_version }}
-      #    draft: false
-      #    prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_SG_Mangas_Release }}
 
       #- name: Upload APK
       #  uses: actions/upload-artifact@v2
