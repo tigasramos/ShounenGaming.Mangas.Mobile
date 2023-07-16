@@ -41,7 +41,7 @@ jobs:
       - name: Get next version
         id: next_version
         run: |
-          next_version = $(echo ${{ steps.fetch_last_version.outputs.last_version }} | awk -F. 'BEGIN{OFS="."}{$NF+=1;print}')
+          next_version=$(echo ${{ steps.fetch_last_version.outputs.last_version }} | awk -F. 'BEGIN{OFS="."}{$NF+=1;print}')
           echo "{next_version}={$next_version}" >> $GITHUB_OUTPUT
           echo "Next  Version: $next_version"
           
