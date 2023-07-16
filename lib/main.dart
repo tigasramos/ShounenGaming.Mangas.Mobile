@@ -254,7 +254,15 @@ class _MainLayoutScreenState extends ConsumerState<MainLayoutScreen> {
 }
 
 final dioProvider = Provider<Dio>((ref) {
-  final dio = Dio(BaseOptions(baseUrl: 'https://localhost:7252/'));
+  // LOCAL
+  //final dio = Dio(BaseOptions(baseUrl: 'https://localhost:7252/'));
+
+  // DEV
+  //final dio =
+  //    Dio(BaseOptions(baseUrl: 'https://server-dev.shounengaming.xyz/'));
+
+  // PROD
+  final dio = Dio(BaseOptions(baseUrl: 'https://server.shounengaming.xyz/'));
 
   ref.onDispose(dio.close);
 

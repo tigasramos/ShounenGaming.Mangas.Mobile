@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
@@ -82,10 +83,11 @@ class LoginStateController extends StateNotifier<LoginState> {
           .read(authRepositoryProvider)
           .createLoginToken(usernameController.text.trim());
       state = state.copyWith(isTokenGenerated: true);
-    } on Exception catch (e) {
+    } on DioError catch (e) {
+      var message = e.response?.data['Message'];
       snackbarKey.currentState?.showSnackBar(SnackBar(
         content: Text(
-          'Error: $e',
+          'Error: $message',
           style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.red[400],
@@ -117,10 +119,11 @@ class LoginStateController extends StateNotifier<LoginState> {
       await ref
           .read(sharedPreferencesProvider)
           .setString(localStorageUsername, usernameController.text.trim());
-    } on Exception catch (e) {
+    } on DioError catch (e) {
+      var message = e.response?.data['Message'];
       snackbarKey.currentState?.showSnackBar(SnackBar(
         content: Text(
-          'Error: $e',
+          'Error: $message',
           style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.red[400],
