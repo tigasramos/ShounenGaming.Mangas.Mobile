@@ -122,7 +122,11 @@ class SGMangasApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var appState = ref.watch(appStateProvider);
-    return MaterialApp(
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: MaterialApp(
         title: 'SG Mangas',
         scaffoldMessengerKey: snackbarKey,
         debugShowCheckedModeBanner: false,
@@ -136,7 +140,8 @@ class SGMangasApp extends ConsumerWidget {
               )
             : (appState.loggedUser != null
                 ? const MainLayoutScreen()
-                : const LoginScreen()));
+                  : const LoginScreen())),
+    );
   }
 }
 

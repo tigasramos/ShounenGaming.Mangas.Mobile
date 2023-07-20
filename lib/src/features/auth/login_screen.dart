@@ -224,6 +224,7 @@ class LoginScreen extends ConsumerWidget {
                       prefixIcon: const Icon(Icons.person),
                       suffixIcon: InkWell(
                         onTap: () async {
+                          FocusManager.instance.primaryFocus?.unfocus();
                           await functions.createToken();
                         },
                         child: loginState.isCreatingToken
@@ -279,6 +280,7 @@ class LoginScreen extends ConsumerWidget {
                     height: 35,
                     child: MaterialButton(
                         onPressed: () async {
+                          FocusManager.instance.primaryFocus?.unfocus();
                           await functions.login();
                         },
                         minWidth: double.infinity,
