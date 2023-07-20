@@ -53,12 +53,8 @@ final serverRunningProvider = FutureProvider<bool>((ref) async {
   );
   ref.onDispose(timer.cancel);
 
-  try {
-    var response = await ref.watch(dioProvider).get('healthz');
-    return response.statusCode == 200 && response.data.toString() == "Healthy";
-  } catch (e) {
-    return false;
-  }
+  var response = await ref.watch(dioProvider).get('healthz');
+  return response.statusCode == 200 && response.data.toString() == "Healthy";
 });
 
 class LoginStateController extends StateNotifier<LoginState> {
@@ -150,7 +146,7 @@ class LoginScreen extends ConsumerWidget {
           Tooltip(
             message: ref.watch(serverRunningProvider).when(
                   data: (data) => data ? 'Online' : 'Offline',
-                  error: (error, stackTrace) => 'Error',
+                  error: (error, stackTrace) => 'Error: $error $stackTrace',
                   loading: () => 'Validating',
                 ),
             child: Container(
