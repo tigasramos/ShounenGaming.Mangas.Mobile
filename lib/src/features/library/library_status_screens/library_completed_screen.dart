@@ -8,6 +8,7 @@ import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_profile_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/others/manga_image.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 enum CompletedOrderByEnum { alphabetical, completedDate }
 
@@ -206,7 +207,12 @@ class LibraryCompletedMangaTile extends ConsumerWidget {
                     children: [
                       if (mangaUserData.manga.myAnimeListId != null) ...[
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () async {
+                            await launchUrl(
+                                Uri.parse(
+                                    'https://myanimelist.net/manga/${mangaUserData.manga.myAnimeListId}'),
+                                mode: LaunchMode.inAppWebView);
+                          },
                           child: Image.asset(
                             "assets/images/sources/mal_icon.png",
                             height: 25,
@@ -218,7 +224,12 @@ class LibraryCompletedMangaTile extends ConsumerWidget {
                       ],
                       if (mangaUserData.manga.anilistId != null)
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () async {
+                            await launchUrl(
+                                Uri.parse(
+                                    'https://anilist.co/manga/${mangaUserData.manga.anilistId}'),
+                                mode: LaunchMode.inAppWebView);
+                          },
                           child: Image.asset(
                             "assets/images/sources/al_icon.png",
                             height: 25,

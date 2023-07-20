@@ -27,6 +27,7 @@ dependencies:
   focused_menu: ^1.0.5
   readmore: ^2.2.0
   jwt_decoder: ^2.0.1
+  url_launcher: ^6.1.12
 
 dev_dependencies:
   flutter_test:
