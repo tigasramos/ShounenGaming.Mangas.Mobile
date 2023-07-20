@@ -34,12 +34,15 @@ class MangaProfileState {
 
   TranslationLanguageEnum selectedLanguage;
 
+  bool listInverted;
+
   bool isLoadingManga;
   bool isLoadingUserData;
   bool isLoading() => isLoadingManga || isLoadingUserData;
   MangaProfileState({
     this.manga,
     this.userData,
+    this.listInverted = false,
     this.selectedLanguage = TranslationLanguageEnum.PT,
     this.isLoadingManga = true,
     this.isLoadingUserData = true,
@@ -49,6 +52,7 @@ class MangaProfileState {
     Manga? manga,
     MangaUserData? userData,
     TranslationLanguageEnum? selectedLanguage,
+    bool? listInverted,
     bool? isLoadingManga,
     bool? isLoadingUserData,
   }) {
@@ -57,6 +61,7 @@ class MangaProfileState {
       userData: isLoadingUserData != null && !isLoadingUserData
           ? userData
           : (userData ?? this.userData),
+      listInverted: listInverted ?? this.listInverted,
       selectedLanguage: selectedLanguage ?? this.selectedLanguage,
       isLoadingManga: isLoadingManga ?? this.isLoadingManga,
       isLoadingUserData: isLoadingUserData ?? this.isLoadingUserData,
@@ -103,6 +108,13 @@ class MangaProfileController extends StateNotifier<MangaProfileState> {
 
   void changeSelectedLanguage(TranslationLanguageEnum language) async {
     state = state.copyWith(selectedLanguage: language);
+  }
+
+  void revertChaptersList() {
+    var stateManga = state.manga;
+    stateManga?.chapters = stateManga.chapters.reversed.toList();
+    state =
+        state.copyWith(manga: stateManga, listInverted: !state.listInverted);
   }
 
   Future readChapter(int chapterId) async {
@@ -663,6 +675,17 @@ class MangaChaptersSection extends StatelessWidget {
             Text(
               '(${mangaState.userData?.chaptersRead.length ?? 0}/${mangaState.manga!.chapters.where((c) => c.translations.any((t) => t.language == mangaState.selectedLanguage)).length})',
               style: const TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            GestureDetector(
+              onTap: () {
+                controller.revertChaptersList();
+              },
+              child: Icon(mangaState.listInverted
+                  ? Icons.keyboard_arrow_down
+                  : Icons.keyboard_arrow_up),
             ),
             const Spacer(),
             InkWell(
