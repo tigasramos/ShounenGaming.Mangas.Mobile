@@ -7,47 +7,46 @@ import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_re
 
 import 'library_reading_screen.dart';
 
-enum ReadingOrderByEnum { alphabetical, lastRead, lastUpdated }
+enum OnHoldOrderByEnum { alphabetical, lastRead, lastUpdated }
 
-final orderReadingProvider = StateProvider.autoDispose<ReadingOrderByEnum?>(
+final orderOnHoldProvider = StateProvider.autoDispose<OnHoldOrderByEnum?>(
   (ref) => null,
 );
-final orderASCReadingProvider = StateProvider.autoDispose<bool>(
+final orderASCOnHoldProvider = StateProvider.autoDispose<bool>(
   (ref) => true,
 );
-
-final waitingMangasProvider =
+final onHoldMangasProvider =
     FutureProvider.autoDispose<List<MangaUserData>>((ref) async {
   var mangaUsersRepo = ref.read(mangaUsersRepositoryProvider);
   return mangaUsersRepo.getMangaDataByStatusByUser(
-      ref.watch(appStateProvider).loggedUser!.id, MangaUserStatusEnum.READING);
+      ref.watch(appStateProvider).loggedUser!.id, MangaUserStatusEnum.ON_HOLD);
 });
 
-final filteredWaitingMangasProvider =
+final filteredOnHoldMangasProvider =
     Provider.autoDispose<List<MangaUserData>>((ref) {
-  var orderFilter = ref.watch(orderReadingProvider);
-  var orderASCFilter = ref.watch(orderASCReadingProvider);
+  var orderFilter = ref.watch(orderOnHoldProvider);
+  var orderASCFilter = ref.watch(orderASCOnHoldProvider);
   var readingMangas = ref
-          .watch(waitingMangasProvider)
+          .watch(onHoldMangasProvider)
           .asData
           ?.value
           .where((element) =>
-              element.manga.chaptersCount == element.chaptersRead.length)
+              element.chaptersRead.length < element.manga.chaptersCount)
           .toList() ??
       [];
 
   // Default Order be Last Updated Desc
   if (orderFilter == null) {
-    orderFilter = ReadingOrderByEnum.lastUpdated;
+    orderFilter = OnHoldOrderByEnum.alphabetical;
     orderASCFilter = false;
   }
 
   switch (orderFilter) {
-    case ReadingOrderByEnum.alphabetical:
+    case OnHoldOrderByEnum.alphabetical:
       return readingMangas
         ..sort((a, b) =>
             a.manga.name.compareTo(b.manga.name) * (orderASCFilter ? 1 : -1));
-    case ReadingOrderByEnum.lastRead:
+    case OnHoldOrderByEnum.lastRead:
       return readingMangas
         ..sort((a, b) =>
             (a.finishedReadingDate == null
@@ -57,7 +56,7 @@ final filteredWaitingMangasProvider =
                     : a.finishedReadingDate!
                         .compareTo(b.finishedReadingDate!)) *
             (orderASCFilter ? 1 : -1));
-    case ReadingOrderByEnum.lastUpdated:
+    case OnHoldOrderByEnum.lastUpdated:
       return readingMangas
         ..sort((a, b) =>
             (a.manga.lastChapterDate == null
@@ -72,8 +71,8 @@ final filteredWaitingMangasProvider =
   }
 });
 
-class LibraryWaitingScreen extends ConsumerWidget {
-  const LibraryWaitingScreen({super.key});
+class LibraryOnHoldScreen extends ConsumerWidget {
+  const LibraryOnHoldScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -90,89 +89,85 @@ class LibraryWaitingScreen extends ConsumerWidget {
           child: Row(children: [
             Expanded(
                 child: IconButton(
-                    onPressed: () {
-                      showModalBottomSheet<void>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return SizedBox(
-                            height: 300,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  const Text('Modal BottomSheet'),
-                                  ElevatedButton(
-                                    child: const Text('Close BottomSheet'),
-                                    onPressed: () => Navigator.pop(context),
-                                  ),
-                                  const Text('Show Only with New Chapters'),
-                                  const Text('Manga Type'),
-                                  const Text('Show Only with New Chapters'),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    icon: const Icon(Icons.filter_alt))),
+                    tooltip: 'Grid View',
+                    onPressed: () {},
+                    icon: const Icon(Icons.grid_view))),
             Expanded(
                 flex: 4,
                 child: Center(
-                    child: Text(
-                        '${ref.watch(filteredWaitingMangasProvider).length.toString()} Mangas'))),
+                    child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      ref.watch(filteredOnHoldMangasProvider).length.toString(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const Text(' Mangas')
+                  ],
+                ))),
             Expanded(
               child: PopupMenuButton(
                 tooltip: 'Order By',
-                initialValue: ref.watch(orderReadingProvider),
+                initialValue: ref.watch(orderOnHoldProvider),
                 onSelected: (selected) {
-                  if (ref.read(orderReadingProvider) == selected) {
-                    ref.watch(orderASCReadingProvider.notifier).state =
-                        !ref.watch(orderASCReadingProvider);
-                  } else {
-                    ref.watch(orderReadingProvider.notifier).state = selected;
-                    ref.watch(orderASCReadingProvider.notifier).state = true;
+                  if (ref.read(orderOnHoldProvider) == selected) {
+                    //If selects the same and is Desc, clears order by
+                    if (!ref.watch(orderASCOnHoldProvider)) {
+                      ref.watch(orderOnHoldProvider.notifier).state = null;
+                      ref.watch(orderASCOnHoldProvider.notifier).state = true;
+                    }
+                    // If select the same and its asc, goes desc
+                    else {
+                      ref.watch(orderASCOnHoldProvider.notifier).state =
+                          !ref.watch(orderASCOnHoldProvider);
+                    }
+                  }
+                  // If not the same changes and goes asc
+                  else {
+                    ref.watch(orderOnHoldProvider.notifier).state = selected;
+                    ref.watch(orderASCOnHoldProvider.notifier).state = true;
                   }
                 },
                 itemBuilder: (context) => [
                   PopupMenuItem(
-                    value: ReadingOrderByEnum.alphabetical,
+                    value: OnHoldOrderByEnum.alphabetical,
                     child: Row(
                       children: [
                         const Text('Alphabetical'),
                         const Spacer(),
-                        if (ref.watch(orderReadingProvider) ==
-                            ReadingOrderByEnum.alphabetical)
-                          Icon(ref.watch(orderASCReadingProvider)
+                        if (ref.watch(orderOnHoldProvider) ==
+                            OnHoldOrderByEnum.alphabetical)
+                          Icon(ref.watch(orderASCOnHoldProvider)
                               ? Icons.arrow_upward
                               : Icons.arrow_downward)
                       ],
                     ),
                   ),
                   PopupMenuItem(
-                    value: ReadingOrderByEnum.lastRead,
+                    value: OnHoldOrderByEnum.lastRead,
                     child: Row(
                       children: [
                         const Text('Last Read'),
                         const Spacer(),
-                        if (ref.watch(orderReadingProvider) ==
-                            ReadingOrderByEnum.lastRead)
-                          Icon(ref.watch(orderASCReadingProvider)
+                        if (ref.watch(orderOnHoldProvider) ==
+                            OnHoldOrderByEnum.lastRead)
+                          Icon(ref.watch(orderASCOnHoldProvider)
                               ? Icons.arrow_upward
                               : Icons.arrow_downward)
                       ],
                     ),
                   ),
                   PopupMenuItem(
-                    value: ReadingOrderByEnum.lastUpdated,
+                    value: OnHoldOrderByEnum.lastUpdated,
                     child: Row(
                       children: [
                         const Text('Last Updated'),
                         const Spacer(),
-                        if (ref.watch(orderReadingProvider) ==
-                            ReadingOrderByEnum.lastUpdated)
-                          Icon(ref.watch(orderASCReadingProvider)
+                        if (ref.watch(orderOnHoldProvider) ==
+                            OnHoldOrderByEnum.lastUpdated)
+                          Icon(ref.watch(orderASCOnHoldProvider)
                               ? Icons.arrow_upward
                               : Icons.arrow_downward)
                       ],
@@ -189,9 +184,9 @@ class LibraryWaitingScreen extends ConsumerWidget {
             child: Column(
               children: [
                 for (int i = 0;
-                    i < ref.watch(filteredWaitingMangasProvider).length;
+                    i < ref.watch(filteredOnHoldMangasProvider).length;
                     i++)
-                  LibraryReadingMangaTile(i, filteredWaitingMangasProvider)
+                  LibraryReadingMangaTile(i, filteredOnHoldMangasProvider)
               ],
             ),
           ),

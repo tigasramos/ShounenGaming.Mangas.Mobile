@@ -46,7 +46,7 @@ final filteredReadingMangasProvider =
 
   // Default Order be Last Updated Desc
   if (orderFilter == null) {
-    orderFilter = ReadingOrderByEnum.lastUpdated;
+    orderFilter = ReadingOrderByEnum.lastRead;
     orderASCFilter = false;
   }
 
@@ -80,18 +80,6 @@ final filteredReadingMangasProvider =
   }
 });
 
-/*
-final filteredReadingMangasProvider =
-    Provider.autoDispose<List<MangaUserData>>((ref) {
-  var orderFilter = ref.watch(orderReadingProvider);
-  var readingMangas = ref.watch(readingMangasProvider);
-
-  return readingMangas.when(
-      data: (data) => data, error: (_, __) => [], loading: () => []);
-});
-
-
-*/
 class LibraryReadingScreen extends ConsumerWidget {
   const LibraryReadingScreen({super.key});
 

@@ -5,6 +5,7 @@ import 'package:shounengaming_mangas_mobile/src/features/library/library_status_
 
 import 'library_status_screens/library_dropped_screen.dart';
 import 'library_status_screens/library_ignored_screen.dart';
+import 'library_status_screens/library_onhold_screen.dart';
 import 'library_status_screens/library_planning_screen.dart';
 
 class LibraryScreen extends StatelessWidget {
@@ -13,7 +14,7 @@ class LibraryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 6,
+        length: 7,
         child: Column(
           children: [
             TabBar(
@@ -21,6 +22,7 @@ class LibraryScreen extends StatelessWidget {
               tabs: [
                 'Reading',
                 'Waiting',
+                'Paused',
                 'Completed',
                 'Planning',
                 'Dropped',
@@ -31,6 +33,7 @@ class LibraryScreen extends StatelessWidget {
               child: TabBarView(children: [
                 LibraryReadingScreen(),
                 LibraryWaitingScreen(),
+                LibraryOnHoldScreen(),
                 LibraryCompletedScreen(),
                 LibraryPlanningScreen(),
                 LibraryDroppedScreen(),
