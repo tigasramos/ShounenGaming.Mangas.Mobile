@@ -71,6 +71,9 @@ class MangaProfileState {
 
 class MangaProfileController extends StateNotifier<MangaProfileState> {
   MangaProfileController(this.ref, this.mangaId) : super(MangaProfileState()) {
+    state = state.copyWith(
+        selectedLanguage:
+            ref.watch(appStateProvider).userConfigs?.translationLanguage);
     fetchMangaInfo();
     fetchMangaUserData();
   }
