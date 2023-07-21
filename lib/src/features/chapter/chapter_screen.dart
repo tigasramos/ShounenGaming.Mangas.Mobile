@@ -193,105 +193,135 @@ class ChapterScreen extends ConsumerWidget {
 
     //Vertical Reading
     if (chapterState.verticalReading) {
-      return Scaffold(
-        body: Stack(
-          children: [
-            ScrollConfiguration(
-              behavior: ScrollConfiguration.of(context).copyWith(
-                dragDevices: {
-                  PointerDeviceKind.touch,
-                  PointerDeviceKind.mouse,
-                },
-              ),
-              child: CustomScrollView(
-                slivers: [
-                  SliverAppBar(
-                    floating: true,
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          chapterState.translation!.mangaName,
-                          style: const TextStyle(fontSize: 17),
-                          overflow: TextOverflow.ellipsis,
+      return RefreshIndicator(
+        onRefresh: () async {
+          ref.invalidate(chapterProfileProvider(ChapterScreenParameters(
+              mangaId: mangaId, chapterId: chapterId, language: language)));
+          await Future.value();
+        },
+        child: Scaffold(
+          body: Stack(
+            children: [
+              ScrollConfiguration(
+                behavior: ScrollConfiguration.of(context).copyWith(
+                  physics: const BouncingScrollPhysics(),
+                  dragDevices: {
+                    PointerDeviceKind.touch,
+                    PointerDeviceKind.mouse,
+                  },
+                ),
+                child: CustomScrollView(
+                  slivers: [
+                    SliverAppBar(
+                      floating: true,
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            chapterState.translation!.mangaName,
+                            style: const TextStyle(fontSize: 17),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            'Chapter #${chapterState.translation!.chapterNumber}',
+                            style: const TextStyle(fontSize: 14),
+                          )
+                        ],
+                      ),
+                      actions: [
+                        if (MediaQuery.of(context).size.width > 350)
+                          SizedBox(
+                            width: 22,
+                            height: 16,
+                            child: CountryFlag(
+                              country: chapterState.translation!.language ==
+                                      TranslationLanguageEnum.PT
+                                  ? Country.pt
+                                  : Country.gb,
+                            ),
+                          ),
+                        const SizedBox(
+                          width: 8,
                         ),
-                        Text(
-                          'Chapter #${chapterState.translation!.chapterNumber}',
-                          style: const TextStyle(fontSize: 14),
+                        chapterState.userData == null ||
+                                !chapterState.userData!.chaptersRead
+                                    .contains(chapterId)
+                            ? IconButton(
+                                onPressed: () {
+                                  functions.readChapter();
+                                },
+                                tooltip: 'Not Watched',
+                                icon: const Icon(Icons.visibility))
+                            : IconButton(
+                                onPressed: () {
+                                  functions.unreadChapter();
+                                },
+                                tooltip: 'Already Seen',
+                                icon: const Icon(Icons.done)),
+                        IconButton(
+                            onPressed: () {
+                              functions.rotateReading();
+                            },
+                            tooltip: 'Rotate',
+                            icon: const Icon(Icons.screen_rotation_alt)),
+                        const SizedBox(
+                          width: 10,
                         )
                       ],
                     ),
-                    actions: [
-                      if (MediaQuery.of(context).size.width > 350)
-                        SizedBox(
-                          width: 22,
-                          height: 16,
-                          child: CountryFlag(
-                            country: chapterState.translation!.language ==
-                                    TranslationLanguageEnum.PT
-                                ? Country.pt
-                                : Country.gb,
-                          ),
-                        ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      chapterState.userData == null ||
-                              !chapterState.userData!.chaptersRead
-                                  .contains(chapterId)
-                          ? IconButton(
-                              onPressed: () {
-                                functions.readChapter();
-                              },
-                              tooltip: 'Not Watched',
-                              icon: const Icon(Icons.visibility))
-                          : IconButton(
-                              onPressed: () {
-                                functions.unreadChapter();
-                              },
-                              tooltip: 'Already Seen',
-                              icon: const Icon(Icons.done)),
-                      IconButton(
-                          onPressed: () {
-                            functions.rotateReading();
-                          },
-                          tooltip: 'Rotate',
-                          icon: const Icon(Icons.screen_rotation_alt)),
-                      const SizedBox(
-                        width: 10,
-                      )
-                    ],
-                  ),
-                  SliverList.builder(
-                      itemCount: chapterState.translation!.pages.length,
-                      itemBuilder: (context, index) =>
-                          ChapterPageWidget(index, functions, chapterState))
-                ],
+                    SliverList.builder(
+                        itemCount: chapterState.translation!.pages.length,
+                        itemBuilder: (context, index) =>
+                            ChapterPageWidget(index, functions, chapterState))
+                  ],
+                ),
               ),
-            ),
-            Positioned(
-                bottom: 0,
-                left: 0,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                  decoration: const BoxDecoration(color: Colors.black45),
-                  child: Text(
-                      "${chapterState.currentPage}/${chapterState.translation!.pages.length}"),
-                )),
-            if (chapterState.currentPage == 1 ||
-                (chapterState.translation != null &&
-                    chapterState.translation!.pages.length - 1 <=
-                        chapterState.currentPage)) ...[
-              if (chapterState.translation!.previousChapterId != null)
-                Positioned(
-                  left: 20,
-                  bottom: 25,
-                  child: Transform(
-                    alignment: Alignment.center,
-                    transform: Matrix4.rotationY(3.14),
+              Positioned(
+                  bottom: 0,
+                  left: 0,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    decoration: const BoxDecoration(color: Colors.black45),
+                    child: Text(
+                        "${chapterState.currentPage}/${chapterState.translation!.pages.length}"),
+                  )),
+              if (chapterState.currentPage == 1 ||
+                  (chapterState.translation != null &&
+                      chapterState.translation!.pages.length - 1 <=
+                          chapterState.currentPage)) ...[
+                if (chapterState.translation!.previousChapterId != null)
+                  Positioned(
+                    left: 20,
+                    bottom: 25,
+                    child: Transform(
+                      alignment: Alignment.center,
+                      transform: Matrix4.rotationY(3.14),
+                      child: FloatingActionButton(
+                          heroTag: "back",
+                          onPressed: () {
+                            navigationKey.currentState?.pushReplacement(
+                                PageRouteBuilder(
+                                    transitionDuration: Duration.zero,
+                                    reverseTransitionDuration: Duration.zero,
+                                    pageBuilder:
+                                        (context, animation1, animation2) =>
+                                            ChapterScreen(
+                                                mangaId,
+                                                chapterState.translation!
+                                                    .previousChapterId!,
+                                                chapterState.translation!
+                                                    .defaultLanguage)));
+                          },
+                          child: const Icon(Icons.double_arrow)),
+                    ),
+                  ),
+                if (chapterState.translation!.nextChapterId != null)
+                  Positioned(
+                    right: 20,
+                    bottom: 25,
                     child: FloatingActionButton(
-                        heroTag: "back",
+                        heroTag: "next",
                         onPressed: () {
                           navigationKey.currentState?.pushReplacement(
                               PageRouteBuilder(
@@ -301,40 +331,18 @@ class ChapterScreen extends ConsumerWidget {
                                       (context, animation1, animation2) =>
                                           ChapterScreen(
                                               mangaId,
-                                              chapterState.translation!
-                                                  .previousChapterId!,
+                                              chapterState
+                                                  .translation!.nextChapterId!,
                                               chapterState.translation!
                                                   .defaultLanguage)));
                         },
-                        child: const Icon(Icons.double_arrow)),
-                  ),
-                ),
-              if (chapterState.translation!.nextChapterId != null)
-                Positioned(
-                  right: 20,
-                  bottom: 25,
-                  child: FloatingActionButton(
-                      heroTag: "next",
-                      onPressed: () {
-                        navigationKey.currentState?.pushReplacement(
-                            PageRouteBuilder(
-                                transitionDuration: Duration.zero,
-                                reverseTransitionDuration: Duration.zero,
-                                pageBuilder:
-                                    (context, animation1, animation2) =>
-                                        ChapterScreen(
-                                            mangaId,
-                                            chapterState
-                                                .translation!.nextChapterId!,
-                                            chapterState.translation!
-                                                .defaultLanguage)));
-                      },
-                      child: const Icon(
-                        Icons.double_arrow,
-                      )),
-                )
-            ]
-          ],
+                        child: const Icon(
+                          Icons.double_arrow,
+                        )),
+                  )
+              ]
+            ],
+          ),
         ),
       );
     }
