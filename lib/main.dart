@@ -11,6 +11,7 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:shounengaming_mangas_mobile/src/data/models/user.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/user_mangas_configs.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/user_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/features/auth/login_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/home/featured_mangas_section.dart';
@@ -58,30 +59,33 @@ final appStateProvider = StateNotifierProvider<AppStateController, AppState>(
 
 class AppState {
   User? loggedUser;
+  UserMangasConfigs? userConfigs;
 
   bool loadingAuth;
 
   AppState({
     this.loggedUser,
+    this.userConfigs,
     this.loadingAuth = false,
   });
 
   AppState copyWith({
     User? loggedUser,
+    UserMangasConfigs? userConfigs,
     bool? loadingAuth,
   }) {
     return AppState(
       loggedUser: loggedUser ?? this.loggedUser,
+      userConfigs: userConfigs ?? this.userConfigs,
       loadingAuth: loadingAuth ?? this.loadingAuth,
     );
   }
 
-  AppState resetUser({
-    bool? loadingAuth,
-  }) {
+  AppState resetUser() {
     return AppState(
       loggedUser: null,
-      loadingAuth: loadingAuth ?? this.loadingAuth,
+      userConfigs: null,
+      loadingAuth: false,
     );
   }
 }
@@ -101,9 +105,13 @@ class AppStateController extends StateNotifier<AppState> {
 
   Future updateUser() async {
     try {
-      var user = await ref.read(userRepositoryProvider).getLoggedUser();
-      state = state.copyWith(loggedUser: user);
-    } catch (e) {}
+      var usersRepo = ref.read(userRepositoryProvider);
+      var user = await usersRepo.getLoggedUser();
+      var userConfigs = await usersRepo.getUserConfigsForMangas();
+      state = state.copyWith(loggedUser: user, userConfigs: userConfigs);
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future logout() async {

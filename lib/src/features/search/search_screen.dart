@@ -237,7 +237,7 @@ class MangaSearchedTile extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
                     shape: BadgeShape.square),
-                child: MangaImage(manga.imagesUrls[0])),
+                child: MangaImage(manga.imagesUrls[0], isNSFW: manga.isNSFW)),
             const SizedBox(
               width: 15,
             ),

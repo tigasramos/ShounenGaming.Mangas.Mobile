@@ -130,7 +130,8 @@ class LibraryPlanningMangTile extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
                   borderRadius: BorderRadius.circular(2)),
-              child: MangaImage(mangaUserData.manga.imagesUrls[0]),
+              child: MangaImage(mangaUserData.manga.imagesUrls[0],
+                  isNSFW: mangaUserData.manga.isNSFW),
             ),
             const SizedBox(
               width: 15,

@@ -97,7 +97,8 @@ class PopularMangaCard extends StatelessWidget {
                           shape: BadgeShape.circle,
                           padding: const EdgeInsets.all(4),
                           badgeColor: palette[0]),
-                      child: MangaImage(manga.imagesUrls[0]))),
+                      child: MangaImage(manga.imagesUrls[0],
+                          isNSFW: manga.isNSFW))),
               const SizedBox(
                 height: 3,
               ),

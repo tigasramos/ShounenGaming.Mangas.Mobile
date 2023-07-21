@@ -73,7 +73,8 @@ class MangaReleaseCard extends StatelessWidget {
         height: 100,
         child: Row(
           children: [
-            MangaImage(mangaRelease.manga.imagesUrls[0]),
+            MangaImage(mangaRelease.manga.imagesUrls[0],
+                isNSFW: mangaRelease.manga.isNSFW),
             const SizedBox(
               width: 10,
             ),

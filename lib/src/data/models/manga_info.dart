@@ -9,6 +9,7 @@ class MangaInfo {
   int id;
   String name;
   bool isReleasing;
+  bool isNSFW;
   MangaTypeEnum type;
   List<String> tags;
   int chaptersCount;
@@ -22,6 +23,7 @@ class MangaInfo {
     required this.id,
     required this.name,
     required this.isReleasing,
+    required this.isNSFW,
     required this.type,
     required this.tags,
     required this.chaptersCount,
@@ -38,6 +40,7 @@ class MangaInfo {
     String? name,
     bool? isReleasing,
     MangaTypeEnum? type,
+    bool? isNSFW,
     List<String>? tags,
     int? chaptersCount,
     List<String>? imagesUrls,
@@ -52,6 +55,7 @@ class MangaInfo {
       name: name ?? this.name,
       isReleasing: isReleasing ?? this.isReleasing,
       type: type ?? this.type,
+      isNSFW: isNSFW ?? this.isNSFW,
       tags: tags ?? this.tags,
       chaptersCount: chaptersCount ?? this.chaptersCount,
       imagesUrls: imagesUrls ?? this.imagesUrls,
@@ -70,6 +74,7 @@ class MangaInfo {
       'isReleasing': isReleasing,
       'type': type.name,
       'tags': tags,
+      'isNSFW': isNSFW,
       'chaptersCount': chaptersCount,
       'imagesUrls': imagesUrls,
       'myAnimeListId': myAnimeListId,
@@ -85,6 +90,7 @@ class MangaInfo {
       id: map['id'] as int,
       name: map['name'] as String,
       isReleasing: map['isReleasing'] as bool,
+      isNSFW: map['isNSFW'] as bool,
       type: MangaTypeEnum.values.byName(map['type']),
       tags: List<String>.from(map['tags']),
       chaptersCount: map['chaptersCount'] as int,
@@ -119,6 +125,7 @@ class MangaInfo {
     return other.id == id &&
         other.name == name &&
         other.isReleasing == isReleasing &&
+        other.isNSFW == isNSFW &&
         other.type == type &&
         listEquals(other.tags, tags) &&
         other.chaptersCount == chaptersCount &&
@@ -134,6 +141,7 @@ class MangaInfo {
   int get hashCode {
     return id.hashCode ^
         name.hashCode ^
+        isNSFW.hashCode ^
         isReleasing.hashCode ^
         type.hashCode ^
         tags.hashCode ^

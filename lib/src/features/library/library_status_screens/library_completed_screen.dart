@@ -181,7 +181,8 @@ class LibraryCompletedMangaTile extends ConsumerWidget {
             const SizedBox(
               width: 10,
             ),
-            MangaImage(mangaUserData.manga.imagesUrls[0]),
+            MangaImage(mangaUserData.manga.imagesUrls[0],
+                isNSFW: mangaUserData.manga.isNSFW),
             const SizedBox(
               width: 15,
             ),
