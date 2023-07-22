@@ -87,6 +87,11 @@ class MangaRepository {
     return (response.data as List).map((m) => MangaWriter.fromMap(m)).toList();
   }
 
+  Future<List<MangaInfo>> getMangasFromTag(String tag) async {
+    var response = await _client.get('$_baseURL/tags/$tag');
+    return (response.data as List).map((m) => MangaInfo.fromMap(m)).toList();
+  }
+
   Future<List<String>> getMangaTags() async {
     var response = await _client.get('$_baseURL/tags');
     return (response.data as List).map((m) => m.toString()).toList();

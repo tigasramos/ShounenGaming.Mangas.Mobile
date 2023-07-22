@@ -22,6 +22,7 @@ import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_reposito
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/features/chapter/chapter_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_sources_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/features/tags/tag_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/others/enums_translation.dart';
 import 'package:shounengaming_mangas_mobile/src/others/theme.dart';
 
@@ -592,7 +593,12 @@ class MangaBasicInfoSection extends StatelessWidget {
                             color: palette[0],
                             borderRadius: BorderRadius.circular(8)),
                         child: InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            navigationKey.currentState?.push(
+                              MaterialPageRoute(
+                                  builder: (context) => TagScreen(e)),
+                            );
+                          },
                           child: Text(
                             e,
                             style: const TextStyle(fontSize: 12),
