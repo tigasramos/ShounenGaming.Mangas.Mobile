@@ -22,6 +22,7 @@ import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_reposito
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/features/chapter/chapter_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_sources_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/others/enums_translation.dart';
 import 'package:shounengaming_mangas_mobile/src/others/theme.dart';
 
 final mangaProfileProvider = StateNotifierProvider.family
@@ -34,6 +35,7 @@ class MangaProfileState {
 
   TranslationLanguageEnum selectedLanguage;
 
+  int nextChapterId;
   bool listInverted;
 
   bool isLoadingManga;
@@ -43,6 +45,7 @@ class MangaProfileState {
     this.manga,
     this.userData,
     this.listInverted = false,
+    this.nextChapterId = -1,
     this.selectedLanguage = TranslationLanguageEnum.PT,
     this.isLoadingManga = true,
     this.isLoadingUserData = true,
@@ -52,6 +55,7 @@ class MangaProfileState {
     Manga? manga,
     MangaUserData? userData,
     TranslationLanguageEnum? selectedLanguage,
+    int? nextChapterId,
     bool? listInverted,
     bool? isLoadingManga,
     bool? isLoadingUserData,
@@ -61,6 +65,7 @@ class MangaProfileState {
       userData: isLoadingUserData != null && !isLoadingUserData
           ? userData
           : (userData ?? this.userData),
+      nextChapterId: nextChapterId ?? this.nextChapterId,
       listInverted: listInverted ?? this.listInverted,
       selectedLanguage: selectedLanguage ?? this.selectedLanguage,
       isLoadingManga: isLoadingManga ?? this.isLoadingManga,
@@ -81,6 +86,38 @@ class MangaProfileController extends StateNotifier<MangaProfileState> {
   Ref ref;
   int mangaId;
 
+  void calculateNextChapter() {
+    if (state.manga == null) return;
+
+    if (state.manga!.chapters.isEmpty) {
+      state = state.copyWith(nextChapterId: -1);
+      return;
+    }
+
+    // First Time Reading
+    if (state.userData == null) {
+      state = state.copyWith(
+          nextChapterId:
+              state.manga!.chapters[state.manga!.chapters.length - 1].id);
+      return;
+    }
+
+    // Calculate
+    var chaptersNotRead = state.manga!.chapters
+        .where((chapter) => chapter.translations.any(
+            (translation) => translation.language == state.selectedLanguage))
+        .toList()
+      ..removeWhere(
+          (chapter) => state.userData!.chaptersRead.contains(chapter.id));
+
+    state = state.copyWith(
+        nextChapterId: chaptersNotRead.isEmpty
+            ? -1
+            : state.listInverted
+                ? chaptersNotRead.first.id
+                : chaptersNotRead.last.id);
+  }
+
   Future fetchMangaInfo() async {
     state = state.copyWith(isLoadingManga: true);
     var manga = await ref.watch(mangaRepositoryProvider).getMangaById(mangaId);
@@ -90,6 +127,7 @@ class MangaProfileController extends StateNotifier<MangaProfileState> {
         c.translations.any((t) => t.language == TranslationLanguageEnum.PT))) {
       state = state.copyWith(selectedLanguage: TranslationLanguageEnum.EN);
     }
+    calculateNextChapter();
   }
 
   Future fetchMangaUserData() async {
@@ -99,6 +137,7 @@ class MangaProfileController extends StateNotifier<MangaProfileState> {
         .getDataByMangaByUser(
             mangaId, ref.watch(appStateProvider).loggedUser!.id);
     state = state.copyWith(isLoadingUserData: false, userData: userData);
+    calculateNextChapter();
   }
 
   Future changeMangaUserStatus(MangaUserStatusEnum? newStatus) async {
@@ -111,6 +150,7 @@ class MangaProfileController extends StateNotifier<MangaProfileState> {
 
   void changeSelectedLanguage(TranslationLanguageEnum language) async {
     state = state.copyWith(selectedLanguage: language);
+    calculateNextChapter();
   }
 
   void revertChaptersList() {
@@ -131,6 +171,7 @@ class MangaProfileController extends StateNotifier<MangaProfileState> {
         .markChaptersRead([chapterId]);
 
     state = state.copyWith(isLoadingUserData: false, userData: userData);
+    calculateNextChapter();
   }
 
   Future readUntilChapter(int chapterId) async {
@@ -142,7 +183,7 @@ class MangaProfileController extends StateNotifier<MangaProfileState> {
 
     var chaptersIds = <int>[];
     for (var chapter in reversedList) {
-      if (!userData!.chaptersRead.contains(chapter.id)) {
+      if (userData == null || !userData.chaptersRead.contains(chapter.id)) {
         chaptersIds.add(chapter.id);
       }
       if (chapterId == chapter.id) {
@@ -153,6 +194,7 @@ class MangaProfileController extends StateNotifier<MangaProfileState> {
         .watch(mangaUsersRepositoryProvider)
         .markChaptersRead(chaptersIds);
     state = state.copyWith(isLoadingUserData: false, userData: userData);
+    calculateNextChapter();
   }
 
   Future unreadChapter(int chapterId) async {
@@ -166,6 +208,7 @@ class MangaProfileController extends StateNotifier<MangaProfileState> {
         .unmarkChaptersRead([chapterId]);
 
     state = state.copyWith(isLoadingUserData: false, userData: userData);
+    calculateNextChapter();
   }
 
   Future unreadUntilChapter(int chapterId) async {
@@ -175,7 +218,7 @@ class MangaProfileController extends StateNotifier<MangaProfileState> {
 
     var chaptersIds = <int>[];
     for (var chapter in state.manga!.chapters) {
-      if (userData!.chaptersRead.contains(chapter.id)) {
+      if (userData != null && userData.chaptersRead.contains(chapter.id)) {
         chaptersIds.add(chapter.id);
       }
       if (chapterId == chapter.id) {
@@ -187,6 +230,7 @@ class MangaProfileController extends StateNotifier<MangaProfileState> {
         .watch(mangaUsersRepositoryProvider)
         .unmarkChaptersRead(chaptersIds);
     state = state.copyWith(isLoadingUserData: false, userData: userData);
+    calculateNextChapter();
   }
 
   Future fetchNewChapters() async {
@@ -253,33 +297,54 @@ class MangaProfileScreen extends ConsumerWidget {
                     icon: const Icon(Icons.edit))
               ],
       ),
-      floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            if (mangaState.isLoadingUserData) return;
+      floatingActionButton:
+          mangaState.nextChapterId != -1 && !mangaState.isLoadingUserData
+              ? RawMaterialButton(
+                  onPressed: () async {
+                    await navigationKey.currentState?.push(MaterialPageRoute(
+                        builder: (context) => ChapterScreen(
+                            mangaState.manga!.id,
+                            mangaState.nextChapterId,
+                            mangaState.selectedLanguage)));
 
-            //Calculate next Chapter to read
-            var nextChapterId = -1;
-            var chaptersNotRead = mangaState.manga!.chapters
-                .where((element) => element.translations
-                    .any((t) => t.language == mangaState.selectedLanguage))
-                .toList()
-              ..removeWhere((element) =>
-                  mangaState.userData!.chaptersRead.contains(element.id));
-            if (chaptersNotRead.isEmpty) {
-              nextChapterId = mangaState.manga!.chapters.first.id;
-            } else {
-              nextChapterId = chaptersNotRead.last.id;
-            }
-
-            if (nextChapterId == -1) return;
-
-            await navigationKey.currentState?.push(MaterialPageRoute(
-                builder: (context) => ChapterScreen(mangaState.manga!.id,
-                    nextChapterId, mangaState.selectedLanguage)));
-
-            await functions.fetchMangaUserData();
-          },
-          child: const Icon(Icons.menu_book)),
+                    await functions.fetchMangaUserData();
+                  },
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: BorderSide(color: palette[3])),
+                  elevation: 4,
+                  fillColor: palette[0],
+                  hoverColor: palette[1],
+                  splashColor: palette[2],
+                  constraints: const BoxConstraints(
+                    minHeight: 50,
+                    minWidth: 150,
+                    maxHeight: 50,
+                    maxWidth: 150,
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      const Icon(Icons.menu_book),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Next Chapter',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          Text(
+                            'Chapter #${mangaState.manga!.chapters.firstWhere((element) => element.id == mangaState.nextChapterId).name}',
+                            style: const TextStyle(fontSize: 11),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              : null,
       body: ScrollConfiguration(
         behavior: ScrollConfiguration.of(context).copyWith(
           dragDevices: {
@@ -417,8 +482,8 @@ class MangaUserStatusSection extends StatelessWidget {
         const SizedBox(
           height: 8,
         ),
-        DropdownButtonFormField<String>(
-            value: userData?.status.name ?? "",
+        DropdownButtonFormField<MangaUserStatusEnum?>(
+            value: userData?.status,
             isExpanded: true,
             decoration: const InputDecoration(
               isDense: true,
@@ -428,13 +493,13 @@ class MangaUserStatusSection extends StatelessWidget {
                   borderRadius: BorderRadius.all(Radius.zero)),
             ),
             items: [
-              if (userData?.chaptersRead.isEmpty ?? true) "",
-              ...MangaUserStatusEnum.values.map((e) => e.name)
+              if (userData?.chaptersRead.isEmpty ?? true) null,
+              ...MangaUserStatusEnum.values
             ]
                 .map((e) => DropdownMenuItem(
                       value: e,
                       child: Text(
-                        e,
+                        translateMangaStatus(e),
                         style: const TextStyle(fontSize: 14),
                       ),
                     ))
@@ -443,10 +508,7 @@ class MangaUserStatusSection extends StatelessWidget {
               FocusScope.of(context).requestFocus(FocusNode());
             },
             onChanged: (value) async {
-              if (value == null) return;
-              await changeStatus(value != ""
-                  ? MangaUserStatusEnum.values.byName(value)
-                  : null);
+              await changeStatus(value);
             }),
         const SizedBox(
           height: 10,
@@ -676,7 +738,7 @@ class MangaChaptersSection extends StatelessWidget {
               width: 5,
             ),
             Text(
-              '(${mangaState.userData?.chaptersRead.length ?? 0}/${mangaState.manga!.chapters.where((c) => c.translations.any((t) => t.language == mangaState.selectedLanguage)).length})',
+              '(${mangaState.manga?.chapters.where((c) => c.translations.any((t) => t.language == mangaState.selectedLanguage)).where((element) => mangaState.userData?.chaptersRead.contains(element.id) ?? false).length ?? 0}/${mangaState.manga!.chapters.where((c) => c.translations.any((t) => t.language == mangaState.selectedLanguage)).length})',
               style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
             const SizedBox(
