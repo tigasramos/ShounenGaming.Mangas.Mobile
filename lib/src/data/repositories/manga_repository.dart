@@ -7,6 +7,7 @@ import 'package:shounengaming_mangas_mobile/src/data/models/latest_release_manga
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_metadata.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_source.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_translation.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/queued_manga.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/search_manga_query.dart';
 
 import '../models/manga.dart';
@@ -131,5 +132,10 @@ class MangaRepository {
     return (response.data as List)
         .map((m) => MangaMetadata.fromMap(m))
         .toList();
+  }
+
+  Future<List<QueuedManga>> getQueueStatus() async {
+    var response = await _client.get('$_baseURL/queue');
+    return (response.data as List).map((m) => QueuedManga.fromMap(m)).toList();
   }
 }

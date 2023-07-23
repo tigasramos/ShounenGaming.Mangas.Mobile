@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/roles_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/features/settings/add_manga_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/features/settings/mangas_queue_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/settings/waiting_mangas_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -72,6 +73,15 @@ class SettingsScreen extends ConsumerWidget {
                         onTap: () {
                           navigationKey.currentState?.push(MaterialPageRoute(
                             builder: (context) => const AddMangaScreen(),
+                          ));
+                        },
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.post_add),
+                        title: const Text('Mangas Queue'),
+                        onTap: () {
+                          navigationKey.currentState?.push(MaterialPageRoute(
+                            builder: (context) => const MangasQueueScreen(),
                           ));
                         },
                       ),

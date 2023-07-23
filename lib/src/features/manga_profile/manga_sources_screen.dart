@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_source_enum.dart';
 
 import 'package:shounengaming_mangas_mobile/src/data/models/manga.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_source.dart';
@@ -95,7 +96,8 @@ class MangaSourcesController extends StateNotifier<MangaSourcesState> {
     var scrappedList = await ref
         .watch(mangaRepositoryProvider)
         .searchMangaSource(searchController.text);
-    scrappedList.sort((a, b) => a.name.compareTo(b.name));
+    scrappedList
+        .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
     state = state.copyWith(
         isLoadingNewScrappers: false, scrappedList: scrappedList);
   }
@@ -279,6 +281,13 @@ class MangaSourcesScreen extends ConsumerWidget {
                             secondary: e.imageURL != null && e.imageURL != ""
                                 ? CachedNetworkImage(
                                     imageUrl: e.imageURL!,
+                                    httpHeaders: e.source ==
+                                            MangaSourceEnum.YES_MANGAS
+                                        ? {
+                                            'Host': 'img-yes.filestatic3.xyz',
+                                            'User-Agent': 'Mozilla/5.0'
+                                          }
+                                        : null,
                                     width: 40,
                                     errorWidget: (context, url, error) =>
                                         const CircularProgressIndicator(),
@@ -317,6 +326,13 @@ class MangaSourcesScreen extends ConsumerWidget {
                             secondary: e.imageURL != null && e.imageURL != ""
                                 ? CachedNetworkImage(
                                     imageUrl: e.imageURL!,
+                                    httpHeaders: e.source ==
+                                            MangaSourceEnum.YES_MANGAS
+                                        ? {
+                                            'Host': 'img-yes.filestatic3.xyz',
+                                            'User-Agent': 'Mozilla/5.0'
+                                          }
+                                        : null,
                                     width: 40,
                                     errorWidget: (context, url, error) =>
                                         const CircularProgressIndicator(),

@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,6 +37,7 @@ class TagScreen extends ConsumerWidget {
                     height: 4,
                   ),
                   GridView.count(
+                    physics: const NeverScrollableScrollPhysics(),
                     crossAxisCount: MediaQuery.of(context).size.width ~/ 110,
                     shrinkWrap: true,
                     childAspectRatio: 0.70,
@@ -92,8 +94,9 @@ class TagMangaCard extends ConsumerWidget {
             ),
             SizedBox(
               height: 35,
-              child: Text(
+              child: AutoSizeText(
                 manga.name,
+                minFontSize: 10,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
                 maxLines: 2,
