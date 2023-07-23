@@ -8,6 +8,8 @@ class MangaUserData {
   int userId;
   MangaInfo manga;
   MangaUserStatusEnum status;
+  int filteredReadChapters;
+  int filteredTotalChapters;
   DateTime? addedToStatusDate;
   DateTime? startedReadingDate;
   DateTime? finishedReadingDate;
@@ -16,6 +18,8 @@ class MangaUserData {
     required this.userId,
     required this.manga,
     required this.status,
+    required this.filteredReadChapters,
+    required this.filteredTotalChapters,
     this.addedToStatusDate,
     this.startedReadingDate,
     this.finishedReadingDate,
@@ -26,6 +30,8 @@ class MangaUserData {
     int? userId,
     MangaInfo? manga,
     MangaUserStatusEnum? status,
+    int? filteredReadChapters,
+    int? filteredTotalChapters,
     DateTime? addedToStatusDate,
     DateTime? startedReadingDate,
     DateTime? finishedReadingDate,
@@ -35,6 +41,9 @@ class MangaUserData {
       userId: userId ?? this.userId,
       manga: manga ?? this.manga,
       status: status ?? this.status,
+      filteredReadChapters: filteredReadChapters ?? this.filteredReadChapters,
+      filteredTotalChapters:
+          filteredTotalChapters ?? this.filteredTotalChapters,
       addedToStatusDate: addedToStatusDate ?? this.addedToStatusDate,
       startedReadingDate: startedReadingDate ?? this.startedReadingDate,
       finishedReadingDate: finishedReadingDate ?? this.finishedReadingDate,
@@ -47,6 +56,8 @@ class MangaUserData {
       'userId': userId,
       'manga': manga.toMap(),
       'status': status.name,
+      'filteredReadChapters': filteredReadChapters,
+      'filteredTotalChapters': filteredTotalChapters,
       'addedToStatusDate': addedToStatusDate?.toString(),
       'startedReadingDate': startedReadingDate?.toString(),
       'finishedReadingDate': finishedReadingDate?.toString(),
@@ -59,6 +70,8 @@ class MangaUserData {
       userId: map['userId'] as int,
       manga: MangaInfo.fromMap(map['manga'] as Map<String, dynamic>),
       status: MangaUserStatusEnum.values.byName(map['status']),
+      filteredReadChapters: map['filteredReadChapters'] as int,
+      filteredTotalChapters: map['filteredTotalChapters'] as int,
       addedToStatusDate: map['addedToStatusDate'] != null
           ? DateTime.parse(map['addedToStatusDate'])
           : null,
@@ -79,7 +92,7 @@ class MangaUserData {
 
   @override
   String toString() {
-    return 'MangaUserData(userId: $userId, manga: $manga, status: $status, addedToStatusDate: $addedToStatusDate, startedReadingDate: $startedReadingDate, finishedReadingDate: $finishedReadingDate, chaptersRead: $chaptersRead)';
+    return 'MangaUserData(userId: $userId, manga: $manga, filteredReadChapters: $filteredReadChapters, filteredTotalChapters: $filteredTotalChapters, status: $status, addedToStatusDate: $addedToStatusDate, startedReadingDate: $startedReadingDate, finishedReadingDate: $finishedReadingDate, chaptersRead: $chaptersRead)';
   }
 
   @override
@@ -88,6 +101,8 @@ class MangaUserData {
 
     return other.userId == userId &&
         other.manga == manga &&
+        other.filteredReadChapters == filteredReadChapters &&
+        other.filteredTotalChapters == filteredTotalChapters &&
         other.status == status &&
         other.addedToStatusDate == addedToStatusDate &&
         other.startedReadingDate == startedReadingDate &&
@@ -99,6 +114,8 @@ class MangaUserData {
   int get hashCode {
     return userId.hashCode ^
         manga.hashCode ^
+        filteredReadChapters.hashCode ^
+        filteredTotalChapters.hashCode ^
         status.hashCode ^
         addedToStatusDate.hashCode ^
         startedReadingDate.hashCode ^

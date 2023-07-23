@@ -115,6 +115,7 @@ class SearchScreen extends ConsumerWidget {
               return true;
             },
             child: SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -136,8 +137,10 @@ class SearchScreen extends ConsumerWidget {
                         ),
                         Expanded(
                             child: TextFormField(
-                          onEditingComplete: () async =>
-                              await functions.search(),
+                          onEditingComplete: () async {
+                            FocusScope.of(context).requestFocus(FocusNode());
+                            await functions.search();
+                          },
                           controller: functions.searchController,
                           style: const TextStyle(fontSize: 15),
                           decoration: InputDecoration(
@@ -158,6 +161,7 @@ class SearchScreen extends ConsumerWidget {
                     ),
                     MaterialButton(
                         onPressed: () async {
+                          FocusScope.of(context).requestFocus(FocusNode());
                           await functions.search();
                         },
                         minWidth: double.infinity,
@@ -210,6 +214,7 @@ class MangaSearchedTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
         navigationKey.currentState?.push(
           MaterialPageRoute(builder: (context) => MangaProfileScreen(manga.id)),
         );
@@ -232,7 +237,7 @@ class MangaSearchedTile extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
                     shape: BadgeShape.square),
-                child: MangaImage(manga.imagesUrls[0])),
+                child: MangaImage(manga.imagesUrls[0], isNSFW: manga.isNSFW)),
             const SizedBox(
               width: 15,
             ),

@@ -53,12 +53,8 @@ final serverRunningProvider = FutureProvider<bool>((ref) async {
   );
   ref.onDispose(timer.cancel);
 
-  try {
-    var response = await ref.watch(dioProvider).get('healthz');
-    return response.statusCode == 200 && response.data.toString() == "Healthy";
-  } catch (e) {
-    return false;
-  }
+  var response = await ref.watch(dioProvider).get('healthz');
+  return response.statusCode == 200 && response.data.toString() == "Healthy";
 });
 
 class LoginStateController extends StateNotifier<LoginState> {
@@ -150,7 +146,7 @@ class LoginScreen extends ConsumerWidget {
           Tooltip(
             message: ref.watch(serverRunningProvider).when(
                   data: (data) => data ? 'Online' : 'Offline',
-                  error: (error, stackTrace) => 'Error',
+                  error: (error, stackTrace) => 'Error: $error $stackTrace',
                   loading: () => 'Validating',
                 ),
             child: Container(
@@ -228,6 +224,7 @@ class LoginScreen extends ConsumerWidget {
                       prefixIcon: const Icon(Icons.person),
                       suffixIcon: InkWell(
                         onTap: () async {
+                          FocusManager.instance.primaryFocus?.unfocus();
                           await functions.createToken();
                         },
                         child: loginState.isCreatingToken
@@ -261,7 +258,7 @@ class LoginScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(
-                    height: 16,
+                    height: 8,
                   ),
                   Row(
                     children: [
@@ -270,19 +267,20 @@ class LoginScreen extends ConsumerWidget {
                         onChanged: functions.changeRememberUsername,
                       ),
                       const SizedBox(
-                        width: 15,
+                        width: 4,
                       ),
                       const Text('Remember Username'),
                     ],
                   ),
                   const SizedBox(
-                    height: 16,
+                    height: 6,
                   ),
                   SizedBox(
                     width: double.infinity,
                     height: 35,
                     child: MaterialButton(
                         onPressed: () async {
+                          FocusManager.instance.primaryFocus?.unfocus();
                           await functions.login();
                         },
                         minWidth: double.infinity,

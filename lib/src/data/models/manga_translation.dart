@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_type_enum.dart';
 
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/translation_language_enum.dart';
 
@@ -9,10 +10,10 @@ class MangaTranslation {
   TranslationLanguageEnum language;
   DateTime? releasedAt;
   DateTime createdAt;
-  TranslationLanguageEnum defaultLanguage;
   int chapterId;
   String chapterNumber;
   String mangaName;
+  MangaTypeEnum mangaType;
   int? previousChapterId;
   int? nextChapterId;
   String source;
@@ -23,10 +24,10 @@ class MangaTranslation {
     required this.language,
     this.releasedAt,
     required this.createdAt,
-    required this.defaultLanguage,
     required this.chapterId,
     required this.chapterNumber,
     required this.mangaName,
+    required this.mangaType,
     this.previousChapterId,
     this.nextChapterId,
     required this.source,
@@ -38,10 +39,10 @@ class MangaTranslation {
     TranslationLanguageEnum? language,
     DateTime? releasedAt,
     DateTime? createdAt,
-    TranslationLanguageEnum? defaultLanguage,
     int? chapterId,
     String? chapterNumber,
     String? mangaName,
+    MangaTypeEnum? mangaType,
     int? previousChapterId,
     int? nextChapterId,
     List<String>? pages,
@@ -51,11 +52,11 @@ class MangaTranslation {
     return MangaTranslation(
         language: language ?? this.language,
         releasedAt: releasedAt ?? this.releasedAt,
-        defaultLanguage: defaultLanguage ?? this.defaultLanguage,
         createdAt: createdAt ?? this.createdAt,
         chapterId: chapterId ?? this.chapterId,
         chapterNumber: chapterNumber ?? this.chapterNumber,
         mangaName: mangaName ?? this.mangaName,
+        mangaType: mangaType ?? this.mangaType,
         previousChapterId: previousChapterId ?? this.previousChapterId,
         nextChapterId: nextChapterId ?? this.nextChapterId,
         pages: pages ?? this.pages,
@@ -66,12 +67,12 @@ class MangaTranslation {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'language': language.name,
-      'defaultLanguage': defaultLanguage.name,
       'createdAt': createdAt.toString(),
       'releasedAt': releasedAt?.toString(),
       'chapterId': chapterId,
       'chapterNumber': chapterNumber,
       'mangaName': mangaName,
+      'mangaType': mangaType,
       'previousChapterId': previousChapterId,
       'nextChapterId': nextChapterId,
       'source': source,
@@ -86,11 +87,10 @@ class MangaTranslation {
           ? DateTime.parse(map['releasedDate'])
           : null,
       createdAt: DateTime.parse(map['createdAt']),
-      defaultLanguage:
-          TranslationLanguageEnum.values.byName(map['defaultLanguage']),
       chapterId: map['chapterId'] as int,
       chapterNumber: map['chapterNumber'].toString(),
       mangaName: map['mangaName'] as String,
+      mangaType: MangaTypeEnum.values.byName(map['mangaType']),
       previousChapterId: map['previousChapterId'] != null
           ? map['previousChapterId'] as int
           : null,
@@ -111,7 +111,7 @@ class MangaTranslation {
 
   @override
   String toString() {
-    return 'MangaTranslation(language: $language, releasedAt: $releasedAt, createdAt: $createdAt, defaultLanguage: $defaultLanguage source: $source, chapterId: $chapterId, chapterNumber: $chapterNumber, mangaName: $mangaName, previousChapterId: $previousChapterId, nextChapterId: $nextChapterId, pages: $pages)';
+    return 'MangaTranslation(language: $language, releasedAt: $releasedAt, createdAt: $createdAt, mangaType: $mangaType , source: $source, chapterId: $chapterId, chapterNumber: $chapterNumber, mangaName: $mangaName, previousChapterId: $previousChapterId, nextChapterId: $nextChapterId, pages: $pages)';
   }
 
   @override
@@ -121,8 +121,8 @@ class MangaTranslation {
 
     return other.language == language &&
         other.releasedAt == releasedAt &&
+        other.mangaType == mangaType &&
         other.chapterId == chapterId &&
-        other.defaultLanguage == defaultLanguage &&
         other.createdAt == createdAt &&
         other.chapterNumber == chapterNumber &&
         other.source == source &&
@@ -137,9 +137,9 @@ class MangaTranslation {
     return language.hashCode ^
         releasedAt.hashCode ^
         chapterId.hashCode ^
+        mangaType.hashCode ^
         chapterNumber.hashCode ^
         createdAt.hashCode ^
-        defaultLanguage.hashCode ^
         source.hashCode ^
         mangaName.hashCode ^
         previousChapterId.hashCode ^

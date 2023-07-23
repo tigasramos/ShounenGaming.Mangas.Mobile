@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/material.dart';
+import 'package:badges/badges.dart';
+import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
@@ -23,6 +24,9 @@ final orderReadingProvider = StateProvider.autoDispose<ReadingOrderByEnum?>(
 final orderASCReadingProvider = StateProvider.autoDispose<bool>(
   (ref) => true,
 );
+final readingViewModeListProvider = StateProvider<bool>(
+  (ref) => true,
+);
 
 final readingMangasProvider =
     FutureProvider.autoDispose<List<MangaUserData>>((ref) async {
@@ -35,18 +39,16 @@ final filteredReadingMangasProvider =
     Provider.autoDispose<List<MangaUserData>>((ref) {
   var orderFilter = ref.watch(orderReadingProvider);
   var orderASCFilter = ref.watch(orderASCReadingProvider);
-  var readingMangas = ref
-          .watch(readingMangasProvider)
-          .asData
-          ?.value
-          .where((element) =>
-              element.chaptersRead.length < element.manga.chaptersCount)
+  var readingMangas = ref.watch(readingMangasProvider).asData?.value;
+  readingMangas = readingMangas
+          ?.where((element) =>
+              element.filteredReadChapters < element.filteredTotalChapters)
           .toList() ??
       [];
 
   // Default Order be Last Updated Desc
   if (orderFilter == null) {
-    orderFilter = ReadingOrderByEnum.lastUpdated;
+    orderFilter = ReadingOrderByEnum.lastRead;
     orderASCFilter = false;
   }
 
@@ -80,23 +82,12 @@ final filteredReadingMangasProvider =
   }
 });
 
-/*
-final filteredReadingMangasProvider =
-    Provider.autoDispose<List<MangaUserData>>((ref) {
-  var orderFilter = ref.watch(orderReadingProvider);
-  var readingMangas = ref.watch(readingMangasProvider);
-
-  return readingMangas.when(
-      data: (data) => data, error: (_, __) => [], loading: () => []);
-});
-
-
-*/
 class LibraryReadingScreen extends ConsumerWidget {
   const LibraryReadingScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var prevState = ref.watch(readingViewModeListProvider);
     return Column(
       children: [
         Container(
@@ -110,8 +101,11 @@ class LibraryReadingScreen extends ConsumerWidget {
           child: Row(children: [
             Expanded(
                 child: IconButton(
-                    tooltip: 'Filters',
+                    tooltip: 'Grid View',
                     onPressed: () {
+                      ref.read(readingViewModeListProvider.notifier).state =
+                          !prevState;
+
                       // TODO: Modal for Filters
                       // showModalBottomSheet<void>(
                       //   context: context,
@@ -138,7 +132,7 @@ class LibraryReadingScreen extends ConsumerWidget {
                       //   },
                       // );
                     },
-                    icon: const Icon(Icons.filter_alt))),
+                    icon: const Icon(Icons.grid_view))),
             Expanded(
                 flex: 4,
                 child: Center(
@@ -231,14 +225,26 @@ class LibraryReadingScreen extends ConsumerWidget {
         ),
         Expanded(
           child: SingleChildScrollView(
-            child: Column(
-              children: [
-                for (int i = 0;
-                    i < ref.watch(filteredReadingMangasProvider).length;
-                    i++)
-                  LibraryReadingMangaTile(i, filteredReadingMangasProvider)
-              ],
-            ),
+            child: prevState
+                ? Column(
+                    children: [
+                      for (int i = 0;
+                          i < ref.watch(filteredReadingMangasProvider).length;
+                          i++)
+                        LibraryReadingMangaTile(
+                            i, filteredReadingMangasProvider)
+                    ],
+                  )
+                : GridView.count(
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: MediaQuery.of(context).size.width ~/ 110,
+                    shrinkWrap: true,
+                    childAspectRatio: 0.70,
+                    children: ref
+                        .watch(filteredReadingMangasProvider)
+                        .map((e) => LibraryReadingMangaCard(e))
+                        .toList(),
+                  ),
           ),
         ),
       ],
@@ -271,7 +277,8 @@ class LibraryReadingMangaTile extends ConsumerWidget {
             const SizedBox(
               width: 10,
             ),
-            MangaImage(mangaUserData.manga.imagesUrls[0]),
+            MangaImage(mangaUserData.manga.imagesUrls[0],
+                isNSFW: mangaUserData.manga.isNSFW),
             const SizedBox(
               width: 15,
             ),
@@ -301,7 +308,7 @@ class LibraryReadingMangaTile extends ConsumerWidget {
                     children: [
                       const Spacer(),
                       Text(
-                        '${mangaUserData.chaptersRead.length} / ${mangaUserData.manga.chaptersCount}',
+                        '${mangaUserData.filteredReadChapters} / ${mangaUserData.filteredTotalChapters}',
                         style: const TextStyle(fontSize: 11),
                       ),
                     ],
@@ -314,10 +321,10 @@ class LibraryReadingMangaTile extends ConsumerWidget {
                     child: LinearProgressIndicator(
                       minHeight: 9,
                       color: palette[1],
-                      value: mangaUserData.manga.chaptersCount == 0
+                      value: mangaUserData.filteredTotalChapters == 0
                           ? 0
-                          : mangaUserData.chaptersRead.length /
-                              mangaUserData.manga.chaptersCount,
+                          : mangaUserData.filteredReadChapters /
+                              mangaUserData.filteredTotalChapters,
                     ),
                   ),
                   const Spacer(),
@@ -349,6 +356,60 @@ class LibraryReadingMangaTile extends ConsumerWidget {
             ),
             const SizedBox(
               width: 15,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class LibraryReadingMangaCard extends StatelessWidget {
+  final MangaUserData userData;
+  const LibraryReadingMangaCard(this.userData, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        navigationKey.currentState?.push(
+          MaterialPageRoute(
+              builder: (context) => MangaProfileScreen(userData.manga.id)),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          children: [
+            Expanded(
+                child: Badge(
+                    badgeContent: Text(
+                      (userData.filteredTotalChapters -
+                              userData.filteredReadChapters)
+                          .toString(),
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                    badgeAnimation: const BadgeAnimation.fade(),
+                    badgeStyle: BadgeStyle(
+                        badgeColor: palette[0],
+                        borderRadius: BorderRadius.circular(10),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 2, horizontal: 6),
+                        shape: BadgeShape.square),
+                    child: MangaImage(userData.manga.imagesUrls[0],
+                        isNSFW: userData.manga.isNSFW))),
+            const SizedBox(
+              height: 4,
+            ),
+            SizedBox(
+              height: 35,
+              child: AutoSizeText(
+                userData.manga.name,
+                minFontSize: 10,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+              ),
             )
           ],
         ),

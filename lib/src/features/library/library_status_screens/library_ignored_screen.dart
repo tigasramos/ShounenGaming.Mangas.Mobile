@@ -91,7 +91,9 @@ class LibraryIgnoredMangaTile extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         child: Column(
           children: [
-            Expanded(child: MangaImage(manga.manga.imagesUrls[0])),
+            Expanded(
+                child: MangaImage(manga.manga.imagesUrls[0],
+                    isNSFW: manga.manga.isNSFW)),
             Text(
               manga.manga.name,
               overflow: TextOverflow.ellipsis,

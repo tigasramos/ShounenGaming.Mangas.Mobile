@@ -11,6 +11,7 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:shounengaming_mangas_mobile/src/data/models/user.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/user_mangas_configs.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/user_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/features/auth/login_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/home/featured_mangas_section.dart';
@@ -20,7 +21,7 @@ import 'package:shounengaming_mangas_mobile/src/features/home/popular_mangas_sec
 import 'package:shounengaming_mangas_mobile/src/features/library/library_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/library/library_status_screens/library_reading_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/search/search_screen.dart';
-import 'package:shounengaming_mangas_mobile/src/features/settings/settings_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/features/settings/menu_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/others/auth_helper.dart';
 import 'package:shounengaming_mangas_mobile/src/others/constants.dart';
 import 'package:shounengaming_mangas_mobile/src/others/menu_items.dart';
@@ -58,30 +59,33 @@ final appStateProvider = StateNotifierProvider<AppStateController, AppState>(
 
 class AppState {
   User? loggedUser;
+  UserMangasConfigs? userConfigs;
 
   bool loadingAuth;
 
   AppState({
     this.loggedUser,
+    this.userConfigs,
     this.loadingAuth = false,
   });
 
   AppState copyWith({
     User? loggedUser,
+    UserMangasConfigs? userConfigs,
     bool? loadingAuth,
   }) {
     return AppState(
       loggedUser: loggedUser ?? this.loggedUser,
+      userConfigs: userConfigs ?? this.userConfigs,
       loadingAuth: loadingAuth ?? this.loadingAuth,
     );
   }
 
-  AppState resetUser({
-    bool? loadingAuth,
-  }) {
+  AppState resetUser() {
     return AppState(
       loggedUser: null,
-      loadingAuth: loadingAuth ?? this.loadingAuth,
+      userConfigs: null,
+      loadingAuth: false,
     );
   }
 }
@@ -101,9 +105,17 @@ class AppStateController extends StateNotifier<AppState> {
 
   Future updateUser() async {
     try {
-      var user = await ref.read(userRepositoryProvider).getLoggedUser();
-      state = state.copyWith(loggedUser: user);
-    } catch (e) {}
+      var usersRepo = ref.read(userRepositoryProvider);
+      var user = await usersRepo.getLoggedUser();
+      var userConfigs = await usersRepo.getUserConfigsForMangas();
+      state = state.copyWith(loggedUser: user, userConfigs: userConfigs);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void setNewConfigs(UserMangasConfigs configs) {
+    state = state.copyWith(userConfigs: configs);
   }
 
   Future logout() async {
@@ -122,21 +134,26 @@ class SGMangasApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var appState = ref.watch(appStateProvider);
-    return MaterialApp(
-        title: 'SG Mangas',
-        scaffoldMessengerKey: snackbarKey,
-        debugShowCheckedModeBanner: false,
-        theme: theme,
-        navigatorKey: navigationKey,
-        home: appState.loadingAuth
-            ? const Scaffold(
-                body: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              )
-            : (appState.loggedUser != null
-                ? const MainLayoutScreen()
-                : const LoginScreen()));
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: MaterialApp(
+          title: 'SG Mangas',
+          scaffoldMessengerKey: snackbarKey,
+          debugShowCheckedModeBanner: false,
+          theme: theme,
+          navigatorKey: navigationKey,
+          home: appState.loadingAuth
+              ? const Scaffold(
+                  body: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              : (appState.loggedUser != null
+                  ? const MainLayoutScreen()
+                  : const LoginScreen())),
+    );
   }
 }
 
@@ -172,11 +189,10 @@ class _MainLayoutScreenState extends ConsumerState<MainLayoutScreen> {
           IconButton(
               onPressed: () {
                 navigationKey.currentState?.push(
-                  MaterialPageRoute(
-                      builder: (context) => const SettingsScreen()),
+                  MaterialPageRoute(builder: (context) => const MenuScreen()),
                 );
               },
-              icon: const Icon(Icons.settings)),
+              icon: const Icon(Icons.menu)),
           const SizedBox(
             width: 5,
           ),
@@ -253,16 +269,14 @@ class _MainLayoutScreenState extends ConsumerState<MainLayoutScreen> {
   }
 }
 
+final serverUrlProvider = StateProvider((ref) {
+  //return 'https://localhost:7252/';
+  //return 'https://server-dev.shounengaming.xyz/';
+  return 'https://server.shounengaming.xyz/';
+});
+
 final dioProvider = Provider<Dio>((ref) {
-  // LOCAL
-  //final dio = Dio(BaseOptions(baseUrl: 'https://localhost:7252/'));
-
-  // DEV
-  //final dio =
-  //    Dio(BaseOptions(baseUrl: 'https://server-dev.shounengaming.xyz/'));
-
-  // PROD
-  final dio = Dio(BaseOptions(baseUrl: 'https://server.shounengaming.xyz/'));
+  final dio = Dio(BaseOptions(baseUrl: ref.watch(serverUrlProvider)));
 
   ref.onDispose(dio.close);
 

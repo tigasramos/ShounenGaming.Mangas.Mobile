@@ -27,6 +27,12 @@ dependencies:
   focused_menu: ^1.0.5
   readmore: ^2.2.0
   jwt_decoder: ^2.0.1
+  flutter_custom_tabs: ^1.0.4
+  signalr_netcore: ^0.1.7+2-nullsafety.3
+  scrollable_positioned_list: ^0.3.8
+  fluttertoast: ^8.2.2
+  toggle_switch: ^2.1.0
+  flutter_switch: ^0.3.2
 
 dev_dependencies:
   flutter_test:

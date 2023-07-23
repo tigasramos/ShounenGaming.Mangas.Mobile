@@ -34,7 +34,12 @@ class LatestReleasesSection extends ConsumerWidget {
               ),
               Expanded(
                 child: LinearProgressIndicator(
-                  value: 1,
+                  value: ref.watch(newChaptersProvider).when(
+                        skipLoadingOnRefresh: false,
+                        data: (data) => 1,
+                        error: (error, stackTrace) => 1,
+                        loading: () => null,
+                      ),
                   minHeight: 1,
                   color: Theme.of(context).primaryColor,
                 ),
@@ -48,7 +53,7 @@ class LatestReleasesSection extends ConsumerWidget {
             children: ref.watch(newChaptersProvider).when(
                 data: (data) => data.map((e) => MangaReleaseCard(e)).toList(),
                 error: (error, stacktrace) => [Container()],
-                loading: () => [const CircularProgressIndicator()]),
+                loading: () => []),
           )
         ]));
   }
@@ -73,7 +78,8 @@ class MangaReleaseCard extends StatelessWidget {
         height: 100,
         child: Row(
           children: [
-            MangaImage(mangaRelease.manga.imagesUrls[0]),
+            MangaImage(mangaRelease.manga.imagesUrls[0],
+                isNSFW: mangaRelease.manga.isNSFW),
             const SizedBox(
               width: 10,
             ),

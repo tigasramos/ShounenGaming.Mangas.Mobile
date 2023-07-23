@@ -30,24 +30,26 @@ class FeaturedMangasSection extends ConsumerWidget {
     return SizedBox(
       height: min(MediaQuery.of(context).size.width / 2, 260),
       child: ref.watch(featuredMangasProvider).when(
-            data: (data) => CarouselSlider.builder(
-                unlimitedMode: true,
-                enableAutoSlider: true,
-                autoSliderTransitionTime: const Duration(seconds: 1),
-                autoSliderDelay: const Duration(seconds: 4),
-                slideBuilder: (index) {
-                  return FeaturedMangaBanner(data[index]);
-                },
-                slideTransform: const CubeTransform(),
-                slideIndicator: CircularSlideIndicator(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  indicatorRadius: 5,
-                  itemSpacing: 15,
-                  currentIndicatorColor: Theme.of(context).primaryColor,
-                  indicatorBorderColor: palette[0],
-                  indicatorBackgroundColor: Colors.white,
-                ),
-                itemCount: data.length),
+            data: (data) => data.isEmpty
+                ? Container()
+                : CarouselSlider.builder(
+                    unlimitedMode: true,
+                    enableAutoSlider: true,
+                    autoSliderTransitionTime: const Duration(seconds: 1),
+                    autoSliderDelay: const Duration(seconds: 4),
+                    slideBuilder: (index) {
+                      return FeaturedMangaBanner(data[index]);
+                    },
+                    slideTransform: const CubeTransform(),
+                    slideIndicator: CircularSlideIndicator(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      indicatorRadius: 5,
+                      itemSpacing: 15,
+                      currentIndicatorColor: Theme.of(context).primaryColor,
+                      indicatorBorderColor: palette[0],
+                      indicatorBackgroundColor: Colors.white,
+                    ),
+                    itemCount: data.length),
             error: (error, stackTrace) => Container(
               child: Text(error.toString()),
             ),

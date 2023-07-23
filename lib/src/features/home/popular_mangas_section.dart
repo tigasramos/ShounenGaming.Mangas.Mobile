@@ -34,7 +34,12 @@ class PopularMangasSection extends ConsumerWidget {
               ),
               Expanded(
                 child: LinearProgressIndicator(
-                  value: 1,
+                  value: ref.watch(popularMangasProvider).when(
+                        skipLoadingOnRefresh: false,
+                        data: (data) => 1,
+                        error: (error, stackTrace) => 1,
+                        loading: () => null,
+                      ),
                   minHeight: 1,
                   color: Theme.of(context).primaryColor,
                 ),
@@ -97,7 +102,8 @@ class PopularMangaCard extends StatelessWidget {
                           shape: BadgeShape.circle,
                           padding: const EdgeInsets.all(4),
                           badgeColor: palette[0]),
-                      child: MangaImage(manga.imagesUrls[0]))),
+                      child: MangaImage(manga.imagesUrls[0],
+                          isNSFW: manga.isNSFW))),
               const SizedBox(
                 height: 3,
               ),

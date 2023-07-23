@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
@@ -180,7 +181,8 @@ class LibraryCompletedMangaTile extends ConsumerWidget {
             const SizedBox(
               width: 10,
             ),
-            MangaImage(mangaUserData.manga.imagesUrls[0]),
+            MangaImage(mangaUserData.manga.imagesUrls[0],
+                isNSFW: mangaUserData.manga.isNSFW),
             const SizedBox(
               width: 15,
             ),
@@ -206,7 +208,31 @@ class LibraryCompletedMangaTile extends ConsumerWidget {
                     children: [
                       if (mangaUserData.manga.myAnimeListId != null) ...[
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () async {
+                            try {
+                              await launch(
+                                'https://myanimelist.net/manga/${mangaUserData.manga.myAnimeListId}',
+                                customTabsOption: CustomTabsOption(
+                                  toolbarColor: Theme.of(context).primaryColor,
+                                  enableDefaultShare: true,
+                                  enableUrlBarHiding: true,
+                                  showPageTitle: true,
+                                ),
+                                safariVCOption: SafariViewControllerOption(
+                                  preferredBarTintColor:
+                                      Theme.of(context).primaryColor,
+                                  preferredControlTintColor: Colors.white,
+                                  barCollapsingEnabled: true,
+                                  entersReaderIfAvailable: false,
+                                  dismissButtonStyle:
+                                      SafariViewControllerDismissButtonStyle
+                                          .close,
+                                ),
+                              );
+                            } catch (e) {
+                              debugPrint(e.toString());
+                            }
+                          },
                           child: Image.asset(
                             "assets/images/sources/mal_icon.png",
                             height: 25,
@@ -218,7 +244,31 @@ class LibraryCompletedMangaTile extends ConsumerWidget {
                       ],
                       if (mangaUserData.manga.anilistId != null)
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () async {
+                            try {
+                              await launch(
+                                'https://anilist.co/manga/${mangaUserData.manga.anilistId}',
+                                customTabsOption: CustomTabsOption(
+                                  toolbarColor: Theme.of(context).primaryColor,
+                                  enableDefaultShare: true,
+                                  enableUrlBarHiding: true,
+                                  showPageTitle: true,
+                                ),
+                                safariVCOption: SafariViewControllerOption(
+                                  preferredBarTintColor:
+                                      Theme.of(context).primaryColor,
+                                  preferredControlTintColor: Colors.white,
+                                  barCollapsingEnabled: true,
+                                  entersReaderIfAvailable: false,
+                                  dismissButtonStyle:
+                                      SafariViewControllerDismissButtonStyle
+                                          .close,
+                                ),
+                              );
+                            } catch (e) {
+                              debugPrint(e.toString());
+                            }
+                          },
                           child: Image.asset(
                             "assets/images/sources/al_icon.png",
                             height: 25,
