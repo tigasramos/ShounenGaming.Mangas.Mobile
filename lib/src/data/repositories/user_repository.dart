@@ -35,7 +35,8 @@ class UserRepository {
   Future<UserMangasConfigs> updateUserConfigsForMangas(
       ChangeUserMangasConfigs updatedConfigs) async {
     var response = await _client.put('$_baseURL/configs/mangas',
-        data: updatedConfigs.toMap());
+        data: updatedConfigs.toMap(),
+        options: Options(contentType: 'application/json'));
     return UserMangasConfigs.fromMap(response.data);
   }
 }

@@ -4,18 +4,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/roles_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/features/settings/add_manga_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/features/settings/configurations_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/settings/mangas_queue_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/settings/waiting_mangas_screen.dart';
 
-class SettingsScreen extends ConsumerWidget {
-  const SettingsScreen({super.key});
+class MenuScreen extends ConsumerWidget {
+  const MenuScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var appState = ref.watch(appStateProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: const Text('Menu'),
       ),
       body: SingleChildScrollView(
           child: Padding(
@@ -28,9 +29,9 @@ class SettingsScreen extends ConsumerWidget {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 8),
+                            horizontal: 15, vertical: 15),
                         decoration: BoxDecoration(
-                            color: Colors.black54,
+                            color: Colors.black38,
                             borderRadius: BorderRadius.circular(10)),
                         child: Row(
                           children: [
@@ -45,7 +46,7 @@ class SettingsScreen extends ConsumerWidget {
                               radius: 23,
                             ),
                             const SizedBox(
-                              width: 10,
+                              width: 15,
                             ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,10 +64,6 @@ class SettingsScreen extends ConsumerWidget {
                       const SizedBox(
                         height: 10,
                       ),
-                      const Text(
-                        'Options',
-                        style: TextStyle(fontSize: 19),
-                      ),
                       ListTile(
                         leading: const Icon(Icons.post_add),
                         title: const Text('Add New Manga'),
@@ -77,7 +74,7 @@ class SettingsScreen extends ConsumerWidget {
                         },
                       ),
                       ListTile(
-                        leading: const Icon(Icons.post_add),
+                        leading: const Icon(Icons.dynamic_feed),
                         title: const Text('Mangas Queue'),
                         onTap: () {
                           navigationKey.currentState?.push(MaterialPageRoute(
@@ -87,7 +84,7 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                       if (appState.loggedUser?.role != RolesEnum.USER)
                         ListTile(
-                          leading: const Icon(Icons.list_alt),
+                          leading: const Icon(Icons.checklist),
                           title: const Text('Requested Mangas'),
                           onTap: () {
                             navigationKey.currentState?.push(MaterialPageRoute(
@@ -95,6 +92,15 @@ class SettingsScreen extends ConsumerWidget {
                             ));
                           },
                         ),
+                      ListTile(
+                        leading: const Icon(Icons.settings),
+                        title: const Text('Configurations'),
+                        onTap: () {
+                          navigationKey.currentState?.push(MaterialPageRoute(
+                            builder: (context) => const ConfigurationsScreen(),
+                          ));
+                        },
+                      ),
                     ],
                   ),
                   const SizedBox(

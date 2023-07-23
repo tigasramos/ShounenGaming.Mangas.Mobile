@@ -21,7 +21,7 @@ import 'package:shounengaming_mangas_mobile/src/features/home/popular_mangas_sec
 import 'package:shounengaming_mangas_mobile/src/features/library/library_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/library/library_status_screens/library_reading_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/search/search_screen.dart';
-import 'package:shounengaming_mangas_mobile/src/features/settings/settings_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/features/settings/menu_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/others/auth_helper.dart';
 import 'package:shounengaming_mangas_mobile/src/others/constants.dart';
 import 'package:shounengaming_mangas_mobile/src/others/menu_items.dart';
@@ -114,6 +114,10 @@ class AppStateController extends StateNotifier<AppState> {
     }
   }
 
+  void setNewConfigs(UserMangasConfigs configs) {
+    state = state.copyWith(userConfigs: configs);
+  }
+
   Future logout() async {
     var sharedPreferences = ref.watch(sharedPreferencesProvider);
     await sharedPreferences.remove(localStorageAccessTokenKey);
@@ -185,11 +189,10 @@ class _MainLayoutScreenState extends ConsumerState<MainLayoutScreen> {
           IconButton(
               onPressed: () {
                 navigationKey.currentState?.push(
-                  MaterialPageRoute(
-                      builder: (context) => const SettingsScreen()),
+                  MaterialPageRoute(builder: (context) => const MenuScreen()),
                 );
               },
-              icon: const Icon(Icons.settings)),
+              icon: const Icon(Icons.menu)),
           const SizedBox(
             width: 5,
           ),

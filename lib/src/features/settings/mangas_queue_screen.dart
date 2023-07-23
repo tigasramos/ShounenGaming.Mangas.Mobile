@@ -53,7 +53,7 @@ class MangasQueueScreen extends ConsumerWidget {
               );
             },
             error: (error, stackTrace) => Text(error.toString()),
-            loading: () => const CircularProgressIndicator(),
+            loading: () => const LinearProgressIndicator(),
           ),
     );
   }

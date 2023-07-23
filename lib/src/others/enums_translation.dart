@@ -1,5 +1,7 @@
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_source_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_status_enum.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/enums/nsfw_behaviour_enum.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/enums/reading_mode_type_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/features/chapter/chapter_screen.dart';
 
 String translateMangaStatus(MangaUserStatusEnum? status) {
@@ -60,6 +62,34 @@ String translateReadingMode(ReadingDirectionEnum? readingMode) {
       return "Vertical";
     case ReadingDirectionEnum.VERTICAL_PAGED:
       return "Vertical (Paged)";
+    default:
+      return "";
+  }
+}
+
+String translateReadingModeType(ReadingModeTypeEnum? readingMode) {
+  switch (readingMode) {
+    case ReadingModeTypeEnum.ALWAYS_HORIZONTAL:
+      return "Horizontal (Paged)";
+    case ReadingModeTypeEnum.ALWAYS_VERTICAL:
+      return "Vertical";
+    case ReadingModeTypeEnum.ALWAYS_VERTICAL_PAGED:
+      return "Vertical (Paged)";
+    case ReadingModeTypeEnum.HORIZONTAL_MANGAS_OTHERS_VERTICAL:
+      return "Traditional";
+    default:
+      return "";
+  }
+}
+
+String translateNSFWBehaviour(NSFWBehaviourEnum? nsfwBehaviour) {
+  switch (nsfwBehaviour) {
+    case NSFWBehaviourEnum.NONE:
+      return "None";
+    case NSFWBehaviourEnum.BLUR_IMAGES:
+      return "Blur Images";
+    case NSFWBehaviourEnum.HIDE_ALL:
+      return "Hide All";
     default:
       return "";
   }
