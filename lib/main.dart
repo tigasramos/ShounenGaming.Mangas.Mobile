@@ -139,19 +139,19 @@ class SGMangasApp extends ConsumerWidget {
         FocusScope.of(context).requestFocus(FocusNode());
       },
       child: MaterialApp(
-        title: 'SG Mangas',
-        scaffoldMessengerKey: snackbarKey,
-        debugShowCheckedModeBanner: false,
-        theme: theme,
-        navigatorKey: navigationKey,
-        home: appState.loadingAuth
-            ? const Scaffold(
-                body: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              )
-            : (appState.loggedUser != null
-                ? const MainLayoutScreen()
+          title: 'SG Mangas',
+          scaffoldMessengerKey: snackbarKey,
+          debugShowCheckedModeBanner: false,
+          theme: theme,
+          navigatorKey: navigationKey,
+          home: appState.loadingAuth
+              ? const Scaffold(
+                  body: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              : (appState.loggedUser != null
+                  ? const MainLayoutScreen()
                   : const LoginScreen())),
     );
   }
@@ -269,16 +269,14 @@ class _MainLayoutScreenState extends ConsumerState<MainLayoutScreen> {
   }
 }
 
+final serverUrlProvider = StateProvider((ref) {
+  //return 'https://localhost:7252/';
+  //return 'https://server-dev.shounengaming.xyz/';
+  return 'https://server.shounengaming.xyz/';
+});
+
 final dioProvider = Provider<Dio>((ref) {
-  // LOCAL
-  //final dio = Dio(BaseOptions(baseUrl: 'https://localhost:7252/'));
-
-  // DEV
-  //final dio =
-  //    Dio(BaseOptions(baseUrl: 'https://server-dev.shounengaming.xyz/'));
-
-  // PROD
-  final dio = Dio(BaseOptions(baseUrl: 'https://server.shounengaming.xyz/'));
+  final dio = Dio(BaseOptions(baseUrl: ref.watch(serverUrlProvider)));
 
   ref.onDispose(dio.close);
 

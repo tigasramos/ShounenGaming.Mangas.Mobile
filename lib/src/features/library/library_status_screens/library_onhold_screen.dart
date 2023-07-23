@@ -26,14 +26,8 @@ final filteredOnHoldMangasProvider =
     Provider.autoDispose<List<MangaUserData>>((ref) {
   var orderFilter = ref.watch(orderOnHoldProvider);
   var orderASCFilter = ref.watch(orderASCOnHoldProvider);
-  var readingMangas = ref
-          .watch(onHoldMangasProvider)
-          .asData
-          ?.value
-          .where((element) =>
-              element.chaptersRead.length < element.manga.chaptersCount)
-          .toList() ??
-      [];
+  var onHoldMangas =
+      ref.watch(onHoldMangasProvider).asData?.value.toList() ?? [];
 
   // Default Order be Last Updated Desc
   if (orderFilter == null) {
@@ -43,11 +37,11 @@ final filteredOnHoldMangasProvider =
 
   switch (orderFilter) {
     case OnHoldOrderByEnum.alphabetical:
-      return readingMangas
+      return onHoldMangas
         ..sort((a, b) =>
             a.manga.name.compareTo(b.manga.name) * (orderASCFilter ? 1 : -1));
     case OnHoldOrderByEnum.lastRead:
-      return readingMangas
+      return onHoldMangas
         ..sort((a, b) =>
             (a.finishedReadingDate == null
                 ? 0
@@ -57,7 +51,7 @@ final filteredOnHoldMangasProvider =
                         .compareTo(b.finishedReadingDate!)) *
             (orderASCFilter ? 1 : -1));
     case OnHoldOrderByEnum.lastUpdated:
-      return readingMangas
+      return onHoldMangas
         ..sort((a, b) =>
             (a.manga.lastChapterDate == null
                 ? 0
@@ -67,7 +61,7 @@ final filteredOnHoldMangasProvider =
                         .compareTo(b.manga.lastChapterDate!)) *
             (orderASCFilter ? 1 : -1));
     default:
-      return readingMangas;
+      return onHoldMangas;
   }
 });
 
@@ -89,9 +83,7 @@ class LibraryOnHoldScreen extends ConsumerWidget {
           child: Row(children: [
             Expanded(
                 child: IconButton(
-                    tooltip: 'Grid View',
-                    onPressed: () {},
-                    icon: const Icon(Icons.grid_view))),
+                    onPressed: () {}, icon: const Icon(Icons.filter_alt))),
             Expanded(
                 flex: 4,
                 child: Center(

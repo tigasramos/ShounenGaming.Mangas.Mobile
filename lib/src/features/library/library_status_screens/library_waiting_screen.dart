@@ -32,7 +32,7 @@ final filteredWaitingMangasProvider =
           .asData
           ?.value
           .where((element) =>
-              element.manga.chaptersCount == element.chaptersRead.length)
+              element.filteredReadChapters == element.filteredTotalChapters)
           .toList() ??
       [];
 
@@ -91,30 +91,30 @@ class LibraryWaitingScreen extends ConsumerWidget {
             Expanded(
                 child: IconButton(
                     onPressed: () {
-                      showModalBottomSheet<void>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return SizedBox(
-                            height: 300,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  const Text('Modal BottomSheet'),
-                                  ElevatedButton(
-                                    child: const Text('Close BottomSheet'),
-                                    onPressed: () => Navigator.pop(context),
-                                  ),
-                                  const Text('Show Only with New Chapters'),
-                                  const Text('Manga Type'),
-                                  const Text('Show Only with New Chapters'),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
+                      // showModalBottomSheet<void>(
+                      //   context: context,
+                      //   builder: (BuildContext context) {
+                      //     return SizedBox(
+                      //       height: 300,
+                      //       child: Center(
+                      //         child: Column(
+                      //           mainAxisAlignment: MainAxisAlignment.center,
+                      //           mainAxisSize: MainAxisSize.min,
+                      //           children: <Widget>[
+                      //             const Text('Modal BottomSheet'),
+                      //             ElevatedButton(
+                      //               child: const Text('Close BottomSheet'),
+                      //               onPressed: () => Navigator.pop(context),
+                      //             ),
+                      //             const Text('Show Only with New Chapters'),
+                      //             const Text('Manga Type'),
+                      //             const Text('Show Only with New Chapters'),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     );
+                      //   },
+                      // );
                     },
                     icon: const Icon(Icons.filter_alt))),
             Expanded(

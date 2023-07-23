@@ -35,12 +35,10 @@ final filteredReadingMangasProvider =
     Provider.autoDispose<List<MangaUserData>>((ref) {
   var orderFilter = ref.watch(orderReadingProvider);
   var orderASCFilter = ref.watch(orderASCReadingProvider);
-  var readingMangas = ref
-          .watch(readingMangasProvider)
-          .asData
-          ?.value
-          .where((element) =>
-              element.chaptersRead.length < element.manga.chaptersCount)
+  var readingMangas = ref.watch(readingMangasProvider).asData?.value;
+  readingMangas = readingMangas
+          ?.where((element) =>
+              element.filteredReadChapters < element.filteredTotalChapters)
           .toList() ??
       [];
 
@@ -290,7 +288,7 @@ class LibraryReadingMangaTile extends ConsumerWidget {
                     children: [
                       const Spacer(),
                       Text(
-                        '${mangaUserData.chaptersRead.length} / ${mangaUserData.manga.chaptersCount}',
+                        '${mangaUserData.filteredReadChapters} / ${mangaUserData.filteredTotalChapters}',
                         style: const TextStyle(fontSize: 11),
                       ),
                     ],
@@ -303,10 +301,10 @@ class LibraryReadingMangaTile extends ConsumerWidget {
                     child: LinearProgressIndicator(
                       minHeight: 9,
                       color: palette[1],
-                      value: mangaUserData.manga.chaptersCount == 0
+                      value: mangaUserData.filteredTotalChapters == 0
                           ? 0
-                          : mangaUserData.chaptersRead.length /
-                              mangaUserData.manga.chaptersCount,
+                          : mangaUserData.filteredReadChapters /
+                              mangaUserData.filteredTotalChapters,
                     ),
                   ),
                   const Spacer(),
