@@ -258,7 +258,7 @@ class LoginScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(
-                    height: 16,
+                    height: 8,
                   ),
                   Row(
                     children: [
@@ -267,13 +267,13 @@ class LoginScreen extends ConsumerWidget {
                         onChanged: functions.changeRememberUsername,
                       ),
                       const SizedBox(
-                        width: 15,
+                        width: 4,
                       ),
                       const Text('Remember Username'),
                     ],
                   ),
                   const SizedBox(
-                    height: 16,
+                    height: 6,
                   ),
                   SizedBox(
                     width: double.infinity,
