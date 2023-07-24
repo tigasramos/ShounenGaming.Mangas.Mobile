@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/roles_enum.dart';
-import 'package:shounengaming_mangas_mobile/src/features/settings/add_manga_screen.dart';
-import 'package:shounengaming_mangas_mobile/src/features/settings/configurations_screen.dart';
-import 'package:shounengaming_mangas_mobile/src/features/settings/mangas_queue_screen.dart';
-import 'package:shounengaming_mangas_mobile/src/features/settings/waiting_mangas_screen.dart';
+
+import 'add_manga_screen.dart';
+import 'configurations_screen.dart';
+import 'mangas_queue_screen.dart';
+import 'season_mangas_screen.dart';
+import 'waiting_mangas_screen.dart';
 
 class MenuScreen extends ConsumerWidget {
   const MenuScreen({super.key});
@@ -79,6 +81,15 @@ class MenuScreen extends ConsumerWidget {
                         onTap: () {
                           navigationKey.currentState?.push(MaterialPageRoute(
                             builder: (context) => const MangasQueueScreen(),
+                          ));
+                        },
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.calendar_month),
+                        title: const Text('Season Mangas'),
+                        onTap: () {
+                          navigationKey.currentState?.push(MaterialPageRoute(
+                            builder: (context) => const SeasonMangasScreen(),
                           ));
                         },
                       ),

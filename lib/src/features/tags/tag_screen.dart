@@ -38,7 +38,9 @@ class TagScreen extends ConsumerWidget {
                   ),
                   GridView.count(
                     physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: MediaQuery.of(context).size.width ~/ 110,
+                    crossAxisCount: MediaQuery.of(context).size.width < 550
+                        ? 3
+                        : MediaQuery.of(context).size.width ~/ 120,
                     shrinkWrap: true,
                     childAspectRatio: 0.70,
                     children: data.map((e) => TagMangaCard(e)).toList(),

@@ -61,6 +61,11 @@ class MangaRepository {
     return (response.data as List).map((m) => MangaInfo.fromMap(m)).toList();
   }
 
+  Future<List<MangaInfo>> getSeasonMangas() async {
+    var response = await _client.get('$_baseURL/season');
+    return (response.data as List).map((m) => MangaInfo.fromMap(m)).toList();
+  }
+
   Future<List<MangaInfo>> getPopularMangas() async {
     var response = await _client.get('$_baseURL/popular');
     return (response.data as List).map((m) => MangaInfo.fromMap(m)).toList();

@@ -10,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import 'package:shounengaming_mangas_mobile/main.dart';
@@ -282,7 +283,8 @@ class ChapterProfileController extends StateNotifier<ChapterProfileState> {
           .markChaptersRead([state.translation!.chapterId]);
       state = state.copyWith(isLoadingUserData: false, userData: userData);
       return true;
-    } catch (e) {
+    } on Exception catch (e, stackTrace) {
+      await Sentry.captureException(e, stackTrace: stackTrace);
       return false;
     }
   }
@@ -297,7 +299,8 @@ class ChapterProfileController extends StateNotifier<ChapterProfileState> {
           .unmarkChaptersRead([state.translation!.chapterId]);
       state = state.copyWith(isLoadingUserData: false, userData: userData);
       return true;
-    } catch (e) {
+    } on Exception catch (e, stackTrace) {
+      await Sentry.captureException(e, stackTrace: stackTrace);
       return false;
     }
   }
@@ -364,6 +367,25 @@ class ChapterProfileController extends StateNotifier<ChapterProfileState> {
 
     await readChapter();
   }
+
+  bool shouldShowButtons() {
+    bool isFirstPage = state.currentPage == 1 ||
+        (scrollVerticalItemsListener.itemPositions.value.isNotEmpty &&
+            scrollVerticalItemsListener.itemPositions.value.first.index == 0 &&
+            scrollVerticalItemsListener
+                    .itemPositions.value.first.itemLeadingEdge <
+                0.5);
+    bool isLastPage =
+        state.currentPage == (state.translation?.pages.length ?? 0) - 1 ||
+            (scrollVerticalItemsListener.itemPositions.value.isNotEmpty &&
+                scrollVerticalItemsListener.itemPositions.value.last.index ==
+                    (state.translation?.pages.length ?? 0) - 1 &&
+                scrollVerticalItemsListener
+                        .itemPositions.value.last.itemTrailingEdge <
+                    1.25);
+
+    return isFirstPage || isLastPage;
+  }
 }
 
 class ChapterScreen extends ConsumerStatefulWidget {
@@ -386,7 +408,7 @@ class _ChapterScreenState extends ConsumerState<ChapterScreen>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 100),
     );
     fToast = FToast();
     fToast.init(context);
@@ -510,10 +532,7 @@ class _ChapterScreenState extends ConsumerState<ChapterScreen>
                   child: Text(
                       "${chapterState.currentPage}/${chapterState.translation!.pages.length}"),
                 )),
-            if (chapterState.currentPage == 1 ||
-                (chapterState.translation != null &&
-                    chapterState.translation!.pages.length - 1 <=
-                        chapterState.currentPage)) ...[
+            if (functions.shouldShowButtons()) ...[
               if (chapterState.translation!.previousChapterId != null)
                 Positioned(
                   left: 20,
@@ -561,8 +580,8 @@ class _ChapterScreenState extends ConsumerState<ChapterScreen>
                       child: const Icon(
                         Icons.double_arrow,
                       )),
-                )
-            ]
+                ),
+            ],
           ],
         ),
       ),

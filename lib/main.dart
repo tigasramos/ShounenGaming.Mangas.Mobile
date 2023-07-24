@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:shounengaming_mangas_mobile/src/data/models/user.dart';
@@ -29,22 +30,46 @@ import 'package:shounengaming_mangas_mobile/src/others/theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  FlutterError.onError = (details) {
+
+  PlatformDispatcher.instance.onError = (error, stack) {
+    Sentry.captureException(
+      error,
+      stackTrace: stack,
+    );
+    return true;
+  };
+
+  FlutterError.onError = (details) async {
     FlutterError.presentError(details);
+    await Sentry.captureException(
+      details,
+      stackTrace: details.stack,
+    );
     if (kReleaseMode) exit(1);
   };
 
   final sharedPreferences = await SharedPreferences.getInstance();
-  runApp(ProviderScope(
-    overrides: [
-      sharedPreferencesProvider.overrideWithValue(sharedPreferences),
-    ],
-    child: const SGMangasApp(),
-  ));
+
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = "";
+      options.tracesSampleRate = 1.0;
+
+      // TODO: Update with every Release
+      options.release = "1.1.1";
+    },
+    appRunner: () => runApp(ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+      ],
+      child: const SGMangasApp(),
+    )),
+  );
 }
 
 final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
@@ -110,7 +135,7 @@ class AppStateController extends StateNotifier<AppState> {
       var userConfigs = await usersRepo.getUserConfigsForMangas();
       state = state.copyWith(loggedUser: user, userConfigs: userConfigs);
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
     }
   }
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_status_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart';
@@ -229,7 +230,9 @@ class LibraryCompletedMangaTile extends ConsumerWidget {
                                           .close,
                                 ),
                               );
-                            } catch (e) {
+                            } catch (e, stackTrace) {
+                              await Sentry.captureException(e,
+                                  stackTrace: stackTrace);
                               debugPrint(e.toString());
                             }
                           },
@@ -265,7 +268,9 @@ class LibraryCompletedMangaTile extends ConsumerWidget {
                                           .close,
                                 ),
                               );
-                            } catch (e) {
+                            } catch (e, stackTrace) {
+                              await Sentry.captureException(e,
+                                  stackTrace: stackTrace);
                               debugPrint(e.toString());
                             }
                           },

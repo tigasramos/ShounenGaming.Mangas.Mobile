@@ -271,7 +271,7 @@ class MangaProfileScreen extends ConsumerWidget {
                         await functions.fetchNewChapters();
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: const Text(
-                            'Update for Chapters started!',
+                            'Update for Chapters started',
                             style: TextStyle(color: Colors.white),
                           ),
                           backgroundColor: Colors.green[700],

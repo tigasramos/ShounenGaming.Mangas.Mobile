@@ -9,15 +9,66 @@ import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_reposito
 import 'package:shounengaming_mangas_mobile/src/others/enums_translation.dart';
 import 'package:shounengaming_mangas_mobile/src/others/hubs_providers.dart';
 import 'package:shounengaming_mangas_mobile/src/others/manga_image.dart';
+import 'package:signalr_netcore/signalr_client.dart';
 
 class MangasQueueScreen extends ConsumerWidget {
   const MangasQueueScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var mangasHub = ref.watch(mangasHubProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Mangas Queue"),
+        actions: [
+          GestureDetector(
+            onTap: () async {
+              if (mangasHub.hasValue &&
+                  mangasHub.value!.state == HubConnectionState.Disconnected) {
+                await ref.read(mangasHubProvider).asData?.value.start();
+              }
+            },
+            child: Tooltip(
+              message: mangasHub.when(
+                data: (data) => data.state == HubConnectionState.Connected
+                    ? 'Connected'
+                    : 'Disconnected',
+                error: (error, stackTrace) => 'Error: $error $stackTrace',
+                loading: () => 'Validating',
+              ),
+              child: Container(
+                margin: const EdgeInsets.only(right: 15),
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        colors: mangasHub.when(
+                          data: (data) =>
+                              data.state == HubConnectionState.Connected
+                                  ? [
+                                      Colors.green,
+                                      Colors.greenAccent,
+                                    ]
+                                  : [
+                                      Colors.red,
+                                      Colors.redAccent,
+                                    ],
+                          error: (error, stackTrace) => [
+                            Colors.red,
+                            Colors.redAccent,
+                          ],
+                          loading: () => [
+                            Colors.orange,
+                            Colors.orangeAccent,
+                          ],
+                        )),
+                    shape: BoxShape.circle),
+              ),
+            ),
+          )
+        ],
       ),
       body: ref.watch(queueMangasProvider).when(
             data: (data) {
@@ -158,6 +209,10 @@ final queueMangasProvider =
     if (stream.hasListener) {
       stream.add(mangasQueued);
     }
+  });
+
+  ref.onDispose(() {
+    mangasHub.off('SendMangasQueue');
   });
 
   await for (final value in stream.stream) {

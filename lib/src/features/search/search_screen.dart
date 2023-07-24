@@ -13,8 +13,6 @@ import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_pro
 import 'package:shounengaming_mangas_mobile/src/others/manga_image.dart';
 import 'package:shounengaming_mangas_mobile/src/others/theme.dart';
 
-//TODO: Search from synopsys aswell, not only name
-
 final mangaSearchProvider =
     StateNotifierProvider.autoDispose<MangaSearchController, MangaSearchState>(
         (ref) => MangaSearchController(ref));
