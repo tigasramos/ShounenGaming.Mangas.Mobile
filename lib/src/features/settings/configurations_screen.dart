@@ -3,6 +3,7 @@ import 'package:dash_flags/dash_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/change_user_mangas_configs.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/user_repository.dart';
@@ -112,7 +113,8 @@ class ConfigurationsController extends StateNotifier<ConfigurationsState> {
       state = state.copyWith(isSaving: false);
       ref.watch(appStateProvider.notifier).setNewConfigs(updatedConfigs);
       fillInitialData();
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(e, stackTrace: stackTrace);
       snackbarKey.currentState?.showSnackBar(SnackBar(
         content: Text(
           'Error: $e',

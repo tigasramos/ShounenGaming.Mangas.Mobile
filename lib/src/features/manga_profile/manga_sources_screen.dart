@@ -159,7 +159,7 @@ class MangaSourcesScreen extends ConsumerWidget {
 
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: const Text(
-                                'Sources Saved!',
+                                'Sources Saved',
                                 style: TextStyle(color: Colors.white),
                               ),
                               backgroundColor: Colors.green[700],

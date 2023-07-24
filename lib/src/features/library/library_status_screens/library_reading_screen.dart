@@ -8,6 +8,7 @@ import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_sta
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_profile_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/others/constants.dart';
 import 'package:shounengaming_mangas_mobile/src/others/manga_image.dart';
 import 'package:shounengaming_mangas_mobile/src/others/theme.dart';
 
@@ -25,7 +26,10 @@ final orderASCReadingProvider = StateProvider.autoDispose<bool>(
   (ref) => true,
 );
 final readingViewModeListProvider = StateProvider<bool>(
-  (ref) => true,
+  (ref) {
+    var sharedPrefs = ref.watch(sharedPreferencesProvider);
+    return sharedPrefs.getBool(localStorageReadingListView) ?? true;
+  },
 );
 
 final readingMangasProvider =
@@ -105,6 +109,9 @@ class LibraryReadingScreen extends ConsumerWidget {
                     onPressed: () {
                       ref.read(readingViewModeListProvider.notifier).state =
                           !prevState;
+                      ref
+                          .read(sharedPreferencesProvider)
+                          .setBool(localStorageReadingListView, !prevState);
 
                       // TODO: Modal for Filters
                       // showModalBottomSheet<void>(
@@ -237,7 +244,9 @@ class LibraryReadingScreen extends ConsumerWidget {
                   )
                 : GridView.count(
                     physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: MediaQuery.of(context).size.width ~/ 110,
+                    crossAxisCount: MediaQuery.of(context).size.width < 550
+                        ? 3
+                        : MediaQuery.of(context).size.width ~/ 120,
                     shrinkWrap: true,
                     childAspectRatio: 0.70,
                     children: ref
