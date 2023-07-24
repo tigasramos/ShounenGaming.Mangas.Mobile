@@ -57,7 +57,9 @@ class LibraryIgnoredScreen extends ConsumerWidget {
               ),
               Expanded(
                 child: GridView.count(
-                  crossAxisCount: MediaQuery.of(context).size.width ~/ 110,
+                  crossAxisCount: MediaQuery.of(context).size.width < 550
+                      ? 3
+                      : MediaQuery.of(context).size.width ~/ 120,
                   crossAxisSpacing: 10,
                   shrinkWrap: true,
                   childAspectRatio: 0.70,
