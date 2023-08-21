@@ -1,8 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/roles_enum.dart';
+import 'package:shounengaming_mangas_mobile/src/features/app/app_state_provider.dart';
+import 'package:shounengaming_mangas_mobile/src/others/constants.dart';
 
 import 'add_manga_screen.dart';
 import 'configurations_screen.dart';

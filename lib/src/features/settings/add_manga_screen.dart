@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_metadata_source_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_metadata.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_repository.dart';
-import 'package:shounengaming_mangas_mobile/src/others/manga_image.dart';
+import 'package:shounengaming_mangas_mobile/src/others/shared_components/manga_image.dart';
 
 import 'package:shounengaming_mangas_mobile/src/others/theme.dart';
 

@@ -8,7 +8,7 @@ import 'package:shounengaming_mangas_mobile/src/data/models/queued_manga.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/others/enums_translation.dart';
 import 'package:shounengaming_mangas_mobile/src/others/hubs_providers.dart';
-import 'package:shounengaming_mangas_mobile/src/others/manga_image.dart';
+import 'package:shounengaming_mangas_mobile/src/others/shared_components/manga_image.dart';
 import 'package:signalr_netcore/signalr_client.dart';
 
 class MangasQueueScreen extends ConsumerWidget {

@@ -4,6 +4,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/auth_response.dart';
 import 'package:shounengaming_mangas_mobile/src/data/repositories/auth_repository.dart';
+import 'package:shounengaming_mangas_mobile/src/features/app/app_state_provider.dart';
 
 import 'constants.dart';
 

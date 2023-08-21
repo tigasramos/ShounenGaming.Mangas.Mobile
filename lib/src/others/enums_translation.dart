@@ -2,7 +2,7 @@ import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_source_e
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_status_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/nsfw_behaviour_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/reading_mode_type_enum.dart';
-import 'package:shounengaming_mangas_mobile/src/features/chapter/chapter_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/features/chapter/chapter_state.dart';
 
 String translateMangaStatus(MangaUserStatusEnum? status) {
   switch (status) {
