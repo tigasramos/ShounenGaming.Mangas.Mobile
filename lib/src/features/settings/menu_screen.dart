@@ -7,7 +7,7 @@ import 'package:shounengaming_mangas_mobile/src/others/constants.dart';
 
 import 'add_manga_screen.dart';
 import 'configurations_screen.dart';
-import 'mangas_queue_screen.dart';
+import 'mangas_queue/mangas_queue_screen.dart';
 import 'season_mangas_screen.dart';
 import 'waiting_mangas_screen.dart';
 

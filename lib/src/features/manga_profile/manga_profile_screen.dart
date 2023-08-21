@@ -10,7 +10,6 @@ import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
 import 'package:intl/intl.dart';
 import 'package:readmore/readmore.dart';
-import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_type_enum.dart';
 
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_status_enum.dart';
@@ -18,8 +17,6 @@ import 'package:shounengaming_mangas_mobile/src/data/models/enums/roles_enum.dar
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/translation_language_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_data.dart';
-import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_repository.dart';
-import 'package:shounengaming_mangas_mobile/src/data/repositories/manga_users_repository.dart';
 import 'package:shounengaming_mangas_mobile/src/features/app/app_state_provider.dart';
 import 'package:shounengaming_mangas_mobile/src/features/chapter/chapter_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_sources_screen.dart';
@@ -53,41 +50,40 @@ class MangaProfileScreen extends ConsumerWidget {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        actions: ref.watch(appStateProvider).loggedUser!.role == RolesEnum.USER
-            ? []
-            : [
-                IconButton(
-                    onPressed: () async {
-                      try {
-                        await functions.fetchNewChapters();
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: const Text(
-                            'Update for Chapters started',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          backgroundColor: Colors.green[700],
-                          duration: const Duration(seconds: 2),
-                        ));
-                      } on Exception catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                            'Error: $e',
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                          backgroundColor: Colors.red[400],
-                          duration: const Duration(seconds: 3),
-                        ));
-                      }
-                    },
-                    icon: const Icon(Icons.refresh)),
-                IconButton(
-                    onPressed: () async {
-                      await navigationKey.currentState?.push(MaterialPageRoute(
-                          builder: (context) =>
-                              MangaSourcesScreen(mangaState.manga!.id)));
-                    },
-                    icon: const Icon(Icons.edit))
-              ],
+        actions: [
+          IconButton(
+              onPressed: () async {
+                try {
+                  await functions.fetchNewChapters();
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: const Text(
+                      'Update for Chapters started',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    backgroundColor: Colors.green[700],
+                    duration: const Duration(seconds: 2),
+                  ));
+                } on Exception catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                      'Error: $e',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    backgroundColor: Colors.red[400],
+                    duration: const Duration(seconds: 3),
+                  ));
+                }
+              },
+              icon: const Icon(Icons.refresh)),
+          if (ref.watch(appStateProvider).loggedUser!.role != RolesEnum.USER)
+            IconButton(
+                onPressed: () async {
+                  await navigationKey.currentState?.push(MaterialPageRoute(
+                      builder: (context) =>
+                          MangaSourcesScreen(mangaState.manga!.id)));
+                },
+                icon: const Icon(Icons.edit))
+        ],
       ),
       floatingActionButton:
           mangaState.nextChapterId != -1 && !mangaState.isLoadingUserData

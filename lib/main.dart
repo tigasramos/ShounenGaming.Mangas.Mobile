@@ -30,7 +30,7 @@ Future<void> main() async {
   FlutterError.onError = (details) async {
     FlutterError.presentError(details);
     await Sentry.captureException(
-      details,
+      details.exception,
       stackTrace: details.stack,
     );
     if (kReleaseMode) exit(1);
