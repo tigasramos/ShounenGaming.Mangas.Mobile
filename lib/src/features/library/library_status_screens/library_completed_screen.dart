@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -12,13 +13,13 @@ import 'package:shounengaming_mangas_mobile/src/features/manga_profile/manga_pro
 import 'package:shounengaming_mangas_mobile/src/others/constants.dart';
 import 'package:shounengaming_mangas_mobile/src/others/shared_components/manga_image.dart';
 
-enum CompletedOrderByEnum { alphabetical, completedDate }
+enum CompletedOrderByEnum { alphabetical, completedDate, rating }
 
 final orderReadingProvider = StateProvider.autoDispose<CompletedOrderByEnum?>(
-  (ref) => null,
+  (ref) => CompletedOrderByEnum.completedDate,
 );
 final orderASCReadingProvider = StateProvider.autoDispose<bool>(
-  (ref) => true,
+  (ref) => false,
 );
 
 final completedMangasProvider =
@@ -35,16 +36,16 @@ final filteredCompletedMangasProvider =
   var orderASCFilter = ref.watch(orderASCReadingProvider);
   var completedMangas = ref.watch(completedMangasProvider).asData?.value ?? [];
 
-  // Default Order be Last Completed Desc
-  if (orderFilter == null) {
-    orderFilter = CompletedOrderByEnum.completedDate;
-    orderASCFilter = false;
-  }
   switch (orderFilter) {
     case CompletedOrderByEnum.alphabetical:
       return completedMangas
         ..sort((a, b) =>
             a.manga.name.compareTo(b.manga.name) * (orderASCFilter ? 1 : -1));
+    case CompletedOrderByEnum.rating:
+      return completedMangas
+        ..sort((a, b) =>
+            (a.rating ?? 0).compareTo(b.rating ?? 0) *
+            (orderASCFilter ? 1 : -1));
     case CompletedOrderByEnum.completedDate:
       return completedMangas
         ..sort((a, b) =>
@@ -66,95 +67,120 @@ class LibraryCompletedScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(
-      children: [
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          height: 50,
-          color: Theme.of(context)
-              .scaffoldBackgroundColor
-              .withBlue(35)
-              .withRed(30),
-          child: Row(children: [
-            Expanded(
-                child: IconButton(
-                    onPressed: () {}, icon: const Icon(Icons.filter_alt))),
-            Expanded(
-                flex: 4,
-                child: Center(
-                    child: Text(
-                        '${ref.watch(filteredCompletedMangasProvider).length} Mangas'))),
-            Expanded(
-              child: PopupMenuButton(
-                tooltip: 'Order By',
-                initialValue: ref.watch(orderReadingProvider),
-                onSelected: (selected) {
-                  if (ref.read(orderReadingProvider) == selected) {
-                    //If selects the same and is Desc, clears order by
-                    if (!ref.watch(orderASCReadingProvider)) {
-                      ref.watch(orderReadingProvider.notifier).state = null;
-                      ref.watch(orderASCReadingProvider.notifier).state = true;
-                    }
-                    // If select the same and its asc, goes desc
-                    else {
-                      ref.watch(orderASCReadingProvider.notifier).state =
-                          !ref.watch(orderASCReadingProvider);
-                    }
-                  }
-                  // If not the same changes and goes asc
-                  else {
-                    ref.watch(orderReadingProvider.notifier).state = selected;
-                    ref.watch(orderASCReadingProvider.notifier).state = true;
-                  }
-                },
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: CompletedOrderByEnum.alphabetical,
-                    child: Row(
-                      children: [
-                        const Text('Alphabetical'),
-                        const Spacer(),
-                        if (ref.watch(orderReadingProvider) ==
-                            CompletedOrderByEnum.alphabetical)
-                          Icon(ref.watch(orderASCReadingProvider)
-                              ? Icons.arrow_upward
-                              : Icons.arrow_downward)
+      children: ref.watch(completedMangasProvider).isLoading
+          ? [
+              const LinearProgressIndicator(
+                minHeight: 2,
+              )
+            ]
+          : [
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                height: 50,
+                color: Theme.of(context)
+                    .scaffoldBackgroundColor
+                    .withBlue(35)
+                    .withRed(30),
+                child: Row(children: [
+                  Expanded(
+                      child: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.filter_alt))),
+                  Expanded(
+                      flex: 4,
+                      child: Center(
+                          child: Text(
+                              '${ref.watch(filteredCompletedMangasProvider).length} Mangas'))),
+                  Expanded(
+                    child: PopupMenuButton(
+                      tooltip: 'Order By',
+                      initialValue: ref.watch(orderReadingProvider),
+                      onSelected: (selected) {
+                        if (ref.read(orderReadingProvider) == selected) {
+                          //If selects the same and is Desc, clears order by
+                          if (!ref.watch(orderASCReadingProvider)) {
+                            ref.watch(orderReadingProvider.notifier).state =
+                                null;
+                            ref.watch(orderASCReadingProvider.notifier).state =
+                                true;
+                          }
+                          // If select the same and its asc, goes desc
+                          else {
+                            ref.watch(orderASCReadingProvider.notifier).state =
+                                !ref.watch(orderASCReadingProvider);
+                          }
+                        }
+                        // If not the same changes and goes asc
+                        else {
+                          ref.watch(orderReadingProvider.notifier).state =
+                              selected;
+                          ref.watch(orderASCReadingProvider.notifier).state =
+                              true;
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: CompletedOrderByEnum.alphabetical,
+                          child: Row(
+                            children: [
+                              const Text('Alphabetical'),
+                              const Spacer(),
+                              if (ref.watch(orderReadingProvider) ==
+                                  CompletedOrderByEnum.alphabetical)
+                                Icon(ref.watch(orderASCReadingProvider)
+                                    ? Icons.arrow_upward
+                                    : Icons.arrow_downward)
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: CompletedOrderByEnum.completedDate,
+                          child: Row(
+                            children: [
+                              const Text('Completed At'),
+                              const Spacer(),
+                              if (ref.watch(orderReadingProvider) ==
+                                  CompletedOrderByEnum.completedDate)
+                                Icon(ref.watch(orderASCReadingProvider)
+                                    ? Icons.arrow_upward
+                                    : Icons.arrow_downward)
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: CompletedOrderByEnum.rating,
+                          child: Row(
+                            children: [
+                              const Text('Rating'),
+                              const Spacer(),
+                              if (ref.watch(orderReadingProvider) ==
+                                  CompletedOrderByEnum.rating)
+                                Icon(ref.watch(orderASCReadingProvider)
+                                    ? Icons.arrow_upward
+                                    : Icons.arrow_downward)
+                            ],
+                          ),
+                        ),
                       ],
+                      child: const Icon(Icons.sort),
                     ),
                   ),
-                  PopupMenuItem(
-                    value: CompletedOrderByEnum.completedDate,
-                    child: Row(
-                      children: [
-                        const Text('Completed At'),
-                        const Spacer(),
-                        if (ref.watch(orderReadingProvider) ==
-                            CompletedOrderByEnum.completedDate)
-                          Icon(ref.watch(orderASCReadingProvider)
-                              ? Icons.arrow_upward
-                              : Icons.arrow_downward)
-                      ],
-                    ),
-                  ),
-                ],
-                child: const Icon(Icons.sort),
+                ]),
               ),
-            ),
-          ]),
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                for (int i = 0;
-                    i < ref.watch(filteredCompletedMangasProvider).length;
-                    i++)
-                  LibraryCompletedMangaTile(i)
-              ],
-            ),
-          ),
-        ),
-      ],
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      for (int i = 0;
+                          i < ref.watch(filteredCompletedMangasProvider).length;
+                          i++)
+                        LibraryCompletedMangaTile(i)
+                    ],
+                  ),
+                ),
+              ),
+            ],
     );
   }
 }
@@ -194,16 +220,37 @@ class LibraryCompletedMangaTile extends ConsumerWidget {
                 children: [
                   AutoSizeText(
                     mangaUserData.manga.name,
-                    minFontSize: 16,
+                    minFontSize: 14,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                        fontSize: 21, fontWeight: FontWeight.w500, height: 1.2),
+                        fontSize: 18, fontWeight: FontWeight.w500, height: 1.2),
                   ),
                   Text(
-                    '${mangaUserData.manga.type.name}, ${mangaUserData.manga.startedAt?.year ?? "?"}-${mangaUserData.manga.finishedAt?.year ?? "?"}',
-                    style: const TextStyle(color: Colors.grey, fontSize: 11),
+                    '${mangaUserData.manga.type.name}, ${mangaUserData.manga.startedAt?.year ?? "?"} - ${mangaUserData.manga.finishedAt?.year ?? "Releasing"}',
+                    style: const TextStyle(color: Colors.grey, fontSize: 10),
                   ),
+                  const Spacer(),
+                  if (mangaUserData.rating != null)
+                    Row(
+                      children: [
+                        const Spacer(),
+                        RatingBar.builder(
+                          initialRating: mangaUserData.rating!,
+                          minRating: 0,
+                          itemSize: 18,
+                          direction: Axis.horizontal,
+                          allowHalfRating: true,
+                          ignoreGestures: true,
+                          itemCount: 5,
+                          itemBuilder: (context, _) => const Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                          onRatingUpdate: (rating) {},
+                        ),
+                      ],
+                    ),
                   const Spacer(),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -307,7 +354,7 @@ class LibraryCompletedMangaTile extends ConsumerWidget {
               ),
             ),
             const SizedBox(
-              width: 15,
+              width: 10,
             )
           ],
         ),

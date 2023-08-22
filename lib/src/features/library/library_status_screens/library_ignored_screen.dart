@@ -22,54 +22,63 @@ class LibraryIgnoredScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ref.watch(ignoredMangasProvider).when(
           data: (data) => Column(
-            children: [
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                height: 50,
-                color: Theme.of(context)
-                    .scaffoldBackgroundColor
-                    .withBlue(35)
-                    .withRed(30),
-                child: Row(children: [
-                  Expanded(
-                      child: IconButton(
-                          tooltip: 'Filters',
-                          onPressed: () {},
-                          icon: const Icon(Icons.filter_alt))),
-                  Expanded(
-                      flex: 4,
-                      child: Center(
-                          child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            data.length.toString(),
-                            style: const TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          const Text(' Mangas')
-                        ],
-                      ))),
-                  Expanded(
-                      child: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.sort))) //or Tune
-                ]),
-              ),
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: MediaQuery.of(context).size.width < 550
-                      ? 3
-                      : MediaQuery.of(context).size.width ~/ 120,
-                  crossAxisSpacing: 10,
-                  shrinkWrap: true,
-                  childAspectRatio: 0.70,
-                  mainAxisSpacing: 10,
-                  children:
-                      data.map((e) => LibraryIgnoredMangaTile(e)).toList(),
-                ),
-              )
-            ],
+            children: ref.watch(ignoredMangasProvider).isLoading
+                ? [
+                    const LinearProgressIndicator(
+                      minHeight: 2,
+                    )
+                  ]
+                : [
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      height: 50,
+                      color: Theme.of(context)
+                          .scaffoldBackgroundColor
+                          .withBlue(35)
+                          .withRed(30),
+                      child: Row(children: [
+                        Expanded(
+                            child: IconButton(
+                                tooltip: 'Filters',
+                                onPressed: () {},
+                                icon: const Icon(Icons.filter_alt))),
+                        Expanded(
+                            flex: 4,
+                            child: Center(
+                                child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  data.length.toString(),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                const Text(' Mangas')
+                              ],
+                            ))),
+                        Expanded(
+                            child: IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.sort))) //or Tune
+                      ]),
+                    ),
+                    Expanded(
+                      child: GridView.count(
+                        crossAxisCount: MediaQuery.of(context).size.width < 550
+                            ? 3
+                            : MediaQuery.of(context).size.width ~/ 120,
+                        crossAxisSpacing: 10,
+                        shrinkWrap: true,
+                        childAspectRatio: 0.70,
+                        mainAxisSpacing: 10,
+                        children: data
+                            .map((e) => LibraryIgnoredMangaTile(e))
+                            .toList(),
+                      ),
+                    )
+                  ],
           ),
           error: (error, stackTrace) => Text(error.toString()),
           loading: () => const Center(child: CircularProgressIndicator()),

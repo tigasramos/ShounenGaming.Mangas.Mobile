@@ -59,40 +59,48 @@ class LibraryPlanningScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(
-      children: [
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          height: 50,
-          color: Theme.of(context)
-              .scaffoldBackgroundColor
-              .withBlue(35)
-              .withRed(30),
-          child: Row(children: [
-            Expanded(
-                child: IconButton(
-                    onPressed: () {}, icon: const Icon(Icons.filter_alt))),
-            Expanded(
-                flex: 4,
-                child: Center(
-                    child: Text(
-                        '${ref.watch(filteredPlanningMangasProvider).length.toString()} Mangas'))),
-            Expanded(
-                child: IconButton(
-                    onPressed: () {}, icon: const Icon(Icons.sort))) //or Tune
-          ]),
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              children: ref
-                  .watch(filteredPlanningMangasProvider)
-                  .map((e) => LibraryPlanningMangTile(e))
-                  .toList(),
-            ),
-          ),
-        ),
-      ],
+      children: ref.watch(planningMangasProvider).isLoading
+          ? [
+              const LinearProgressIndicator(
+                minHeight: 2,
+              )
+            ]
+          : [
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                height: 50,
+                color: Theme.of(context)
+                    .scaffoldBackgroundColor
+                    .withBlue(35)
+                    .withRed(30),
+                child: Row(children: [
+                  Expanded(
+                      child: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.filter_alt))),
+                  Expanded(
+                      flex: 4,
+                      child: Center(
+                          child: Text(
+                              '${ref.watch(filteredPlanningMangasProvider).length.toString()} Mangas'))),
+                  Expanded(
+                      child: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.sort))) //or Tune
+                ]),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: ref
+                        .watch(filteredPlanningMangasProvider)
+                        .map((e) => LibraryPlanningMangTile(e))
+                        .toList(),
+                  ),
+                ),
+              ),
+            ],
     );
   }
 }
@@ -143,15 +151,15 @@ class LibraryPlanningMangTile extends StatelessWidget {
                 children: [
                   AutoSizeText(
                     mangaUserData.manga.name,
-                    minFontSize: 15,
+                    minFontSize: 14,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                        fontSize: 21, fontWeight: FontWeight.w500, height: 1.2),
+                        fontSize: 18, fontWeight: FontWeight.w500, height: 1.2),
                   ),
                   Text(
-                    '${mangaUserData.manga.type.name}, ${mangaUserData.manga.startedAt?.year ?? "?"}-${mangaUserData.manga.finishedAt?.year ?? "?"}',
-                    style: const TextStyle(color: Colors.grey, fontSize: 11),
+                    '${mangaUserData.manga.type.name}, ${mangaUserData.manga.startedAt?.year ?? "?"} - ${mangaUserData.manga.finishedAt?.year ?? "?"}',
+                    style: const TextStyle(color: Colors.grey, fontSize: 10),
                   ),
                   Text(
                     mangaUserData.manga.tags.join(', '),
@@ -176,7 +184,7 @@ class LibraryPlanningMangTile extends StatelessWidget {
               ),
             ),
             const SizedBox(
-              width: 15,
+              width: 10,
             )
           ],
         ),
