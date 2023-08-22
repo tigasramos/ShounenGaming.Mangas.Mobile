@@ -223,7 +223,8 @@ class MangaProfileScreen extends ConsumerWidget {
                                       ? MangaUserStatusSection(
                                           mangaState.manga!,
                                           mangaState.userData,
-                                          functions.changeMangaUserStatus)
+                                          functions.changeMangaUserStatus,
+                                          functions.changeMangaUserRating)
                                       : const SizedBox(
                                           height: 130,
                                           width: double.infinity,
@@ -253,7 +254,9 @@ class MangaUserStatusSection extends StatelessWidget {
   final Manga manga;
   final MangaUserData? userData;
   final Future Function(MangaUserStatusEnum?) changeStatus;
-  const MangaUserStatusSection(this.manga, this.userData, this.changeStatus,
+  final Future Function(double) changeRating;
+  const MangaUserStatusSection(
+      this.manga, this.userData, this.changeStatus, this.changeRating,
       {super.key});
 
   @override
@@ -266,9 +269,9 @@ class MangaUserStatusSection extends StatelessWidget {
         ),
         Center(
           child: RatingBar.builder(
-            initialRating: 0,
+            initialRating: userData?.rating ?? 0,
             minRating: 0,
-            itemSize: 36,
+            itemSize: 30,
             direction: Axis.horizontal,
             allowHalfRating: true,
             itemCount: 5,
@@ -277,13 +280,13 @@ class MangaUserStatusSection extends StatelessWidget {
               Icons.star,
               color: Colors.amber,
             ),
-            onRatingUpdate: (rating) {
-              print(rating);
+            onRatingUpdate: (rating) async {
+              await changeRating(rating);
             },
           ),
         ),
         const SizedBox(
-          height: 10,
+          height: 4,
         ),
         Text(
           'Status',

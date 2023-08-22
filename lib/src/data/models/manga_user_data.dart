@@ -7,7 +7,8 @@ import 'package:shounengaming_mangas_mobile/src/data/models/manga_info.dart';
 class MangaUserData {
   int userId;
   MangaInfo manga;
-  MangaUserStatusEnum status;
+  MangaUserStatusEnum? status;
+  double? rating;
   int filteredReadChapters;
   int filteredTotalChapters;
   DateTime? addedToStatusDate;
@@ -17,7 +18,8 @@ class MangaUserData {
   MangaUserData({
     required this.userId,
     required this.manga,
-    required this.status,
+    this.status,
+    this.rating,
     required this.filteredReadChapters,
     required this.filteredTotalChapters,
     this.addedToStatusDate,
@@ -55,7 +57,8 @@ class MangaUserData {
     return <String, dynamic>{
       'userId': userId,
       'manga': manga.toMap(),
-      'status': status.name,
+      'status': status?.name,
+      'rating': rating,
       'filteredReadChapters': filteredReadChapters,
       'filteredTotalChapters': filteredTotalChapters,
       'addedToStatusDate': addedToStatusDate?.toString(),
@@ -69,7 +72,11 @@ class MangaUserData {
     return MangaUserData(
       userId: map['userId'] as int,
       manga: MangaInfo.fromMap(map['manga'] as Map<String, dynamic>),
-      status: MangaUserStatusEnum.values.byName(map['status']),
+      status: map['status'] != null
+          ? MangaUserStatusEnum.values.byName(map['status'])
+          : null,
+      rating:
+          map['rating'] != null ? double.parse(map['rating'].toString()) : null,
       filteredReadChapters: map['filteredReadChapters'] as int,
       filteredTotalChapters: map['filteredTotalChapters'] as int,
       addedToStatusDate: map['addedToStatusDate'] != null
@@ -92,7 +99,7 @@ class MangaUserData {
 
   @override
   String toString() {
-    return 'MangaUserData(userId: $userId, manga: $manga, filteredReadChapters: $filteredReadChapters, filteredTotalChapters: $filteredTotalChapters, status: $status, addedToStatusDate: $addedToStatusDate, startedReadingDate: $startedReadingDate, finishedReadingDate: $finishedReadingDate, chaptersRead: $chaptersRead)';
+    return 'MangaUserData(userId: $userId, manga: $manga, rating: $rating, filteredReadChapters: $filteredReadChapters, filteredTotalChapters: $filteredTotalChapters, status: $status, addedToStatusDate: $addedToStatusDate, startedReadingDate: $startedReadingDate, finishedReadingDate: $finishedReadingDate, chaptersRead: $chaptersRead)';
   }
 
   @override
@@ -103,6 +110,7 @@ class MangaUserData {
         other.manga == manga &&
         other.filteredReadChapters == filteredReadChapters &&
         other.filteredTotalChapters == filteredTotalChapters &&
+        other.rating == rating &&
         other.status == status &&
         other.addedToStatusDate == addedToStatusDate &&
         other.startedReadingDate == startedReadingDate &&
@@ -117,6 +125,7 @@ class MangaUserData {
         filteredReadChapters.hashCode ^
         filteredTotalChapters.hashCode ^
         status.hashCode ^
+        rating.hashCode ^
         addedToStatusDate.hashCode ^
         startedReadingDate.hashCode ^
         finishedReadingDate.hashCode ^

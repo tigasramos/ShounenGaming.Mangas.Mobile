@@ -56,4 +56,12 @@ class MangaUsersRepository {
     if (response.data == null) return null;
     return MangaUserData.fromMap(response.data);
   }
+
+  Future<MangaUserData?> updateMangaRatingByUser(
+      int mangaId, double? rating) async {
+    var response = await _client.put(
+        '$_baseURL/$mangaId/rating?${rating != null ? 'rating=$rating' : ''}');
+    if (response.data == null) return null;
+    return MangaUserData.fromMap(response.data);
+  }
 }

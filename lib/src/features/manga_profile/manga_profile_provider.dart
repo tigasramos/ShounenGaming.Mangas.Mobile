@@ -85,6 +85,14 @@ class MangaProfileController extends StateNotifier<MangaProfileState> {
     state = state.copyWith(isLoadingUserData: false, userData: userData);
   }
 
+  Future changeMangaUserRating(double rating) async {
+    state = state.copyWith(isLoadingUserData: true);
+    var userData = await ref
+        .watch(mangaUsersRepositoryProvider)
+        .updateMangaRatingByUser(mangaId, rating == 0 ? null : rating);
+    state = state.copyWith(isLoadingUserData: false, userData: userData);
+  }
+
   void changeSelectedLanguage(TranslationLanguageEnum language) async {
     state = state.copyWith(selectedLanguage: language);
     calculateNextChapter();
