@@ -3,17 +3,21 @@ import 'package:dash_flags/dash_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_switch/flutter_switch.dart';
-import 'package:toggle_switch/toggle_switch.dart';
-
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/nsfw_behaviour_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/reading_mode_type_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/translation_language_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/others/enums_translation.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 import 'configurations_provider.dart';
 
 class ConfigurationsScreen extends ConsumerWidget {
   const ConfigurationsScreen({super.key});
+
+  Future saveConfigs(
+      ConfigurationsController functions, BuildContext context) async {
+    await functions.saveConfigs();
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,21 +28,6 @@ class ConfigurationsScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Configurations'),
       ),
-      floatingActionButton: configsState.isSaving
-          ? null
-          : FloatingActionButton(
-              onPressed: () async {
-                await functions.saveConfigs();
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: const Text(
-                    'Configurations saved',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  backgroundColor: Colors.green[800],
-                  duration: const Duration(milliseconds: 1000),
-                ));
-              },
-              child: const Icon(Icons.save)),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
@@ -64,10 +53,12 @@ class ConfigurationsScreen extends ConsumerWidget {
                       labels: ReadingModeTypeEnum.values
                           .map((e) => translateReadingModeType(e))
                           .toList(),
-                      onToggle: (index) {
+                      onToggle: (index) async {
                         if (index == null) return;
                         functions.selectReadingMode(
                             ReadingModeTypeEnum.values[index]);
+
+                        await saveConfigs(functions, context);
                       },
                     ),
                     const SizedBox(
@@ -91,10 +82,11 @@ class ConfigurationsScreen extends ConsumerWidget {
                       labels: NSFWBehaviourEnum.values
                           .map((e) => translateNSFWBehaviour(e))
                           .toList(),
-                      onToggle: (index) {
+                      onToggle: (index) async {
                         if (index == null) return;
                         functions.selectNSFWBehaviour(
                             NSFWBehaviourEnum.values[index]);
+                        await saveConfigs(functions, context);
                       },
                     ),
                     const SizedBox(
@@ -110,9 +102,10 @@ class ConfigurationsScreen extends ConsumerWidget {
                           width: 10,
                         ),
                         InkWell(
-                          onTap: () {
+                          onTap: () async {
                             functions
                                 .selectLanguage(TranslationLanguageEnum.EN);
+                            await saveConfigs(functions, context);
                           },
                           child: Container(
                             decoration: configsState.language! ==
@@ -137,9 +130,10 @@ class ConfigurationsScreen extends ConsumerWidget {
                           width: 6,
                         ),
                         InkWell(
-                          onTap: () {
+                          onTap: () async {
                             functions
                                 .selectLanguage(TranslationLanguageEnum.PT);
+                            await saveConfigs(functions, context);
                           },
                           child: Container(
                             decoration: configsState.language ==
@@ -176,8 +170,9 @@ class ConfigurationsScreen extends ConsumerWidget {
                           activeText: 'Yes',
                           inactiveText: 'No',
                           activeColor: Theme.of(context).primaryColor,
-                          onToggle: (val) {
+                          onToggle: (val) async {
                             functions.changeSkipTranslations(val);
+                            await saveConfigs(functions, context);
                           },
                         ),
                       ],
@@ -210,8 +205,9 @@ class ConfigurationsScreen extends ConsumerWidget {
                           activeText: 'Yes',
                           inactiveText: 'No',
                           activeColor: Theme.of(context).primaryColor,
-                          onToggle: (val) {
+                          onToggle: (val) async {
                             functions.changeShowRealProgress(val);
+                            await saveConfigs(functions, context);
                           },
                         ),
                       ],
