@@ -1,12 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:sentry_dio/sentry_dio.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shounengaming_mangas_mobile/src/features/app/sg_mangas_app.dart';
@@ -33,18 +33,19 @@ Future<void> main() async {
       details.exception,
       stackTrace: details.stack,
     );
-    if (kReleaseMode) exit(1);
   };
 
   final sharedPreferences = await SharedPreferences.getInstance();
 
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
   await SentryFlutter.init(
     (options) {
       options.dsn = "";
       options.tracesSampleRate = 1.0;
+      options.attachScreenshot = true;
+      options.environment = "local";
 
-      // TODO: Update with every Release
-      options.release = "1.1.1";
+      options.release = "${packageInfo.version}.${packageInfo.buildNumber}";
     },
     appRunner: () => runApp(ProviderScope(
       overrides: [
@@ -70,5 +71,6 @@ final dioProvider = Provider<Dio>((ref) {
 
   ref.onDispose(dio.close);
 
+  dio.addSentry();
   return dio;
 });

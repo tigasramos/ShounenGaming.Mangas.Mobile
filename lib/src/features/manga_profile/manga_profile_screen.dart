@@ -466,7 +466,7 @@ class MangaDetailsSection extends StatelessWidget {
           height: 4,
         ),
         Text(
-          "${manga.averageScore.toStringAsFixed(2)} / 10",
+          "${manga.averageScore?.toStringAsFixed(2)} / 10",
         ),
         const SizedBox(
           height: 16,

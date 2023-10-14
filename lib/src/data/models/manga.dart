@@ -19,7 +19,7 @@ class Manga {
   List<MangaChapter> chapters;
   List<String> imagesUrls;
   MangaWriter writer;
-  double averageScore;
+  double? averageScore;
   int? mangaMyAnimeListId;
   DateTime? startedAt;
   DateTime? finishedAt;
@@ -31,7 +31,7 @@ class Manga {
     required this.description,
     required this.isReleasing,
     required this.type,
-    required this.averageScore,
+    this.averageScore,
     required this.tags,
     required this.chapters,
     required this.imagesUrls,
@@ -118,7 +118,9 @@ class Manga {
       ),
       imagesUrls: List<String>.from(map['imagesUrls']),
       writer: MangaWriter.fromMap(map['writer']),
-      averageScore: double.parse(map["averageScore"].toString()),
+      averageScore: map["averageScore"] != null
+          ? double.parse(map["averageScore"].toString())
+          : null,
       mangaMyAnimeListId: map['mangaMyAnimeListId'] != null
           ? map['mangaMyAnimeListId'] as int
           : null,

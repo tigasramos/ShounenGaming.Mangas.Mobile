@@ -14,25 +14,18 @@ Anyone who is in our Shounen Gaming's Discord Server is able to login and use ou
 
 My main motivation developing this was not only to have a tool for me and my "Weeb" friends but to learn Riverpod and develop my Flutter skills at the same time.
 
-## TODO
+FontAwesome??
+Explore more about pageview instead of listview to see chapter (https://stackoverflow.com/questions/53843828/pageview-with-pages-in-customscrollview-with-flutter)
+Automapper instead of map
 
-Main Page Popular Mangas Design
-Library Ignored Design
-Login and Connection #1
-Settings Screen #1
-Add New Mangas #1
-Chapter Images that don't work
-
+Add MAL & AL Accounts and save automatically
 History Screen #?
-Ignored Mangas Behaviour #?
-Search Filters #2
 Library Filters #2
-Tags Screens #2
-Writers Screens #2
+Top 3 Favorites, Recomendations
+
 Refactor Library Code #2
-Library MAL Launch #2
-Mark Seen and Unseen Chapters #2
 
 See Later:
-https://docs.consumet.org/
-Shiny Images for Popular??
+Shiny Images for Popular or Favorites??
+
+flutter build apk --build-name=1.0.1
