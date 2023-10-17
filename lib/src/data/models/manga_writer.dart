@@ -1,52 +1,15 @@
-import 'dart:convert';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class MangaWriter {
-  int id;
-  String name;
-  MangaWriter({
-    required this.id,
-    required this.name,
-  });
+part 'manga_writer.freezed.dart';
+part 'manga_writer.g.dart';
 
-  MangaWriter copyWith({
-    int? id,
-    String? name,
-  }) {
-    return MangaWriter(
-      id: id ?? this.id,
-      name: name ?? this.name,
-    );
-  }
+@freezed
+class MangaWriter with _$MangaWriter {
+  factory MangaWriter({
+    required int id,
+    required String name,
+  }) = _MangaWriter;
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'id': id,
-      'name': name,
-    };
-  }
-
-  factory MangaWriter.fromMap(Map<String, dynamic> map) {
-    return MangaWriter(
-      id: map['id'] as int,
-      name: map['name'] as String,
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory MangaWriter.fromJson(String source) =>
-      MangaWriter.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  String toString() => 'MangaWriter(id: $id, name: $name)';
-
-  @override
-  bool operator ==(covariant MangaWriter other) {
-    if (identical(this, other)) return true;
-
-    return other.id == id && other.name == name;
-  }
-
-  @override
-  int get hashCode => id.hashCode ^ name.hashCode;
+  factory MangaWriter.fromJson(Map<String, dynamic> json) =>
+      _$MangaWriterFromJson(json);
 }

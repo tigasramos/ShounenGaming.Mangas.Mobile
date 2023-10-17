@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-import 'package:shounengaming_mangas_mobile/src/features/home/home_providers.dart';
-import 'package:shounengaming_mangas_mobile/src/features/home/home_screen.dart';
-import 'package:shounengaming_mangas_mobile/src/features/library/library_screen.dart';
-import 'package:shounengaming_mangas_mobile/src/features/library/library_status_screens/library_reading_screen.dart';
-import 'package:shounengaming_mangas_mobile/src/features/search/manga_search_provider.dart';
-import 'package:shounengaming_mangas_mobile/src/features/search/search_screen.dart';
-import 'package:shounengaming_mangas_mobile/src/features/settings/menu_screen.dart';
-import 'package:shounengaming_mangas_mobile/src/others/constants.dart';
-import 'package:shounengaming_mangas_mobile/src/others/menu_items.dart';
+import 'package:shounengaming_mangas_mobile/src/features/home/providers/home.providers.dart';
+import 'package:shounengaming_mangas_mobile/src/features/home/screens/home_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/features/library/providers/library.providers.dart';
+import 'package:shounengaming_mangas_mobile/src/features/library/screens/library_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/features/mangas_search/providers/manga_search.providers.dart';
+import 'package:shounengaming_mangas_mobile/src/features/mangas_search/screens/search_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/features/app/menu_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/shared/utils/constants.dart';
+import 'package:shounengaming_mangas_mobile/src/shared/utils/menu_items.dart';
 
 class MainLayoutScreen extends ConsumerStatefulWidget {
   const MainLayoutScreen({super.key});

@@ -28,19 +28,19 @@ class MangaRepository {
 
   Future<Manga> getMangaById(int id) async {
     var response = await _client.get('$_baseURL/$id');
-    return Manga.fromMap(response.data);
+    return Manga.fromJson(response.data);
   }
 
   Future<List<MangaSource>> getMangaSourcesById(int id) async {
     var response = await _client.get('$_baseURL/$id/sources');
-    return (response.data as List).map((m) => MangaSource.fromMap(m)).toList();
+    return (response.data as List).map((m) => MangaSource.fromJson(m)).toList();
   }
 
   Future<MangaTranslation> getMangaTranslation(
       int mangaId, int chapterId, TranslationLanguageEnum language) async {
     var response = await _client.get(
         '$_baseURL/$mangaId/chapters/$chapterId/translations/${language.name}');
-    return MangaTranslation.fromMap(response.data);
+    return MangaTranslation.fromJson(response.data);
   }
 
   Future<PaginatedMangaResponse> searchMangas(
@@ -48,54 +48,54 @@ class MangaRepository {
     var response = await _client.get(
       '$_baseURL/search?page=$page&name=${query.name}',
     );
-    return PaginatedMangaResponse.fromMap(response.data);
+    return PaginatedMangaResponse.fromJson(response.data);
   }
 
   Future<List<MangaInfo>> getFeaturedMangas() async {
     var response = await _client.get('$_baseURL/featured');
-    return (response.data as List).map((m) => MangaInfo.fromMap(m)).toList();
+    return (response.data as List).map((m) => MangaInfo.fromJson(m)).toList();
   }
 
   Future<List<MangaInfo>> getWaitingMangas() async {
     var response = await _client.get('$_baseURL/waiting');
-    return (response.data as List).map((m) => MangaInfo.fromMap(m)).toList();
+    return (response.data as List).map((m) => MangaInfo.fromJson(m)).toList();
   }
 
   Future<List<MangaInfo>> getSeasonMangas() async {
     var response = await _client.get('$_baseURL/season');
-    return (response.data as List).map((m) => MangaInfo.fromMap(m)).toList();
+    return (response.data as List).map((m) => MangaInfo.fromJson(m)).toList();
   }
 
   Future<List<MangaInfo>> getPopularMangas() async {
     var response = await _client.get('$_baseURL/popular');
-    return (response.data as List).map((m) => MangaInfo.fromMap(m)).toList();
+    return (response.data as List).map((m) => MangaInfo.fromJson(m)).toList();
   }
 
   Future<List<MangaInfo>> getRecentlyAddedMangas() async {
     var response = await _client.get('$_baseURL/recent');
-    return (response.data as List).map((m) => MangaInfo.fromMap(m)).toList();
+    return (response.data as List).map((m) => MangaInfo.fromJson(m)).toList();
   }
 
   Future<List<LatestReleaseManga>> getRecentlyReleasedChapters() async {
     var response = await _client.get('$_baseURL/recent/chapters');
     return (response.data as List)
-        .map((m) => LatestReleaseManga.fromMap(m))
+        .map((m) => LatestReleaseManga.fromJson(m))
         .toList();
   }
 
   Future<MangaWriter> getMangaWriterById(int id) async {
     var response = await _client.get('$_baseURL/writers/$id');
-    return MangaWriter.fromMap(response.data);
+    return MangaWriter.fromJson(response.data);
   }
 
   Future<List<MangaWriter>> getMangaWriters() async {
     var response = await _client.get('$_baseURL/writers');
-    return (response.data as List).map((m) => MangaWriter.fromMap(m)).toList();
+    return (response.data as List).map((m) => MangaWriter.fromJson(m)).toList();
   }
 
   Future<List<MangaInfo>> getMangasFromTag(String tag) async {
     var response = await _client.get('$_baseURL/tags/$tag');
-    return (response.data as List).map((m) => MangaInfo.fromMap(m)).toList();
+    return (response.data as List).map((m) => MangaInfo.fromJson(m)).toList();
   }
 
   Future<List<String>> getMangaTags() async {
@@ -105,15 +105,15 @@ class MangaRepository {
 
   Future<List<MangaSource>> searchMangaSource(String name) async {
     var response = await _client.get('$_baseURL/search/sources?name=$name');
-    return (response.data as List).map((m) => MangaSource.fromMap(m)).toList();
+    return (response.data as List).map((m) => MangaSource.fromJson(m)).toList();
   }
 
   Future<List<MangaSource>> linkSourcesToManga(
       int mangaId, List<MangaSource> mangas) async {
-    var body = mangas.map((e) => e.toMap()).toList();
+    var body = mangas.map((e) => e.toJson()).toList();
     var response = await _client.put('$_baseURL/$mangaId/links',
         data: body, options: Options(contentType: 'application/json'));
-    return (response.data as List).map((m) => MangaSource.fromMap(m)).toList();
+    return (response.data as List).map((m) => MangaSource.fromJson(m)).toList();
   }
 
   Future fetchChaptersForManga(int mangaId) async {
@@ -127,7 +127,7 @@ class MangaRepository {
     var response = await _client.post(
       '$_baseURL/${source.name}/$mangaId',
     );
-    return Manga.fromMap(response.data);
+    return Manga.fromJson(response.data);
   }
 
   Future<List<MangaMetadata>> searchMangaMetadata(
@@ -135,12 +135,12 @@ class MangaRepository {
     var response =
         await _client.get('$_baseURL/search/${source.name}?name=$name');
     return (response.data as List)
-        .map((m) => MangaMetadata.fromMap(m))
+        .map((m) => MangaMetadata.fromJson(m))
         .toList();
   }
 
   Future<List<QueuedManga>> getQueueStatus() async {
     var response = await _client.get('$_baseURL/queue');
-    return (response.data as List).map((m) => QueuedManga.fromMap(m)).toList();
+    return (response.data as List).map((m) => QueuedManga.fromJson(m)).toList();
   }
 }
