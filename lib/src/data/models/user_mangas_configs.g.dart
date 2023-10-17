@@ -36,7 +36,6 @@ Map<String, dynamic> _$$UserMangasConfigsImplToJson(
 
 const _$ReadingModeTypeEnumEnumMap = {
   ReadingModeTypeEnum.ALWAYS_VERTICAL: 'ALWAYS_VERTICAL',
-  ReadingModeTypeEnum.ALWAYS_VERTICAL_PAGED: 'ALWAYS_VERTICAL_PAGED',
   ReadingModeTypeEnum.ALWAYS_HORIZONTAL: 'ALWAYS_HORIZONTAL',
   ReadingModeTypeEnum.HORIZONTAL_MANGAS_OTHERS_VERTICAL:
       'HORIZONTAL_MANGAS_OTHERS_VERTICAL',

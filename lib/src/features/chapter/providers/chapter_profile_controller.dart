@@ -61,10 +61,12 @@ class ChapterProfileController extends StateNotifier<ChapterProfileState> {
         readingMode = ReadingDirectionEnum.HORIZONTAL_PAGED;
         break;
       case ReadingModeTypeEnum.ALWAYS_VERTICAL:
-        readingMode = ReadingDirectionEnum.VERTICAL;
+        if (state.translation?.mangaType == MangaTypeEnum.MANGA) {
+          readingMode = ReadingDirectionEnum.VERTICAL_PAGED;
+        } else {
+          readingMode = ReadingDirectionEnum.VERTICAL;
+        }
         break;
-      case ReadingModeTypeEnum.ALWAYS_VERTICAL_PAGED:
-        readingMode = ReadingDirectionEnum.VERTICAL_PAGED;
       case ReadingModeTypeEnum.HORIZONTAL_MANGAS_OTHERS_VERTICAL:
         if (state.translation?.mangaType == MangaTypeEnum.MANGA) {
           readingMode = ReadingDirectionEnum.HORIZONTAL_PAGED;
@@ -135,8 +137,14 @@ class ChapterProfileController extends StateNotifier<ChapterProfileState> {
   }
 
   Future<ReadingDirectionEnum> rotateReading() async {
-    var readingMode = ReadingDirectionEnum.values[
-        (state.readingMode.index + 1) % ReadingDirectionEnum.values.length];
+    var readingMode = ReadingDirectionEnum.HORIZONTAL_PAGED;
+    if (state.readingMode == ReadingDirectionEnum.HORIZONTAL_PAGED) {
+      if (state.translation?.mangaType == MangaTypeEnum.MANGA) {
+        readingMode = ReadingDirectionEnum.VERTICAL_PAGED;
+      } else {
+        readingMode = ReadingDirectionEnum.VERTICAL;
+      }
+    }
     state = state.copyWith(currentPagePercentage: 0, readingMode: readingMode);
 
     resetVerticalScrolls();

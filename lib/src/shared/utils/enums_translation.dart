@@ -70,11 +70,9 @@ String translateReadingMode(ReadingDirectionEnum? readingMode) {
 String translateReadingModeType(ReadingModeTypeEnum? readingMode) {
   switch (readingMode) {
     case ReadingModeTypeEnum.ALWAYS_HORIZONTAL:
-      return "Horizontal (Paged)";
+      return "Horizontal";
     case ReadingModeTypeEnum.ALWAYS_VERTICAL:
       return "Vertical";
-    case ReadingModeTypeEnum.ALWAYS_VERTICAL_PAGED:
-      return "Vertical (Paged)";
     case ReadingModeTypeEnum.HORIZONTAL_MANGAS_OTHERS_VERTICAL:
       return "Traditional";
     default:
