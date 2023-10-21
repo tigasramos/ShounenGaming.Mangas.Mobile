@@ -20,6 +20,7 @@ _$MangaInfoImpl _$$MangaInfoImplFromJson(Map<String, dynamic> json) =>
           .toList(),
       myAnimeListId: json['myAnimeListId'] as int?,
       anilistId: json['anilistId'] as int?,
+      averageScore: (json['averageScore'] as num?)?.toDouble(),
       startedAt: json['startedAt'] == null
           ? null
           : DateTime.parse(json['startedAt'] as String),
@@ -43,6 +44,7 @@ Map<String, dynamic> _$$MangaInfoImplToJson(_$MangaInfoImpl instance) =>
       'imagesUrls': instance.imagesUrls,
       'myAnimeListId': instance.myAnimeListId,
       'anilistId': instance.anilistId,
+      'averageScore': instance.averageScore,
       'startedAt': instance.startedAt?.toIso8601String(),
       'finishedAt': instance.finishedAt?.toIso8601String(),
       'lastChapterDate': instance.lastChapterDate?.toIso8601String(),

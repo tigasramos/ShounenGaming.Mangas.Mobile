@@ -30,6 +30,7 @@ mixin _$MangaInfo {
   List<String> get imagesUrls => throw _privateConstructorUsedError;
   int? get myAnimeListId => throw _privateConstructorUsedError;
   int? get anilistId => throw _privateConstructorUsedError;
+  double? get averageScore => throw _privateConstructorUsedError;
   DateTime? get startedAt => throw _privateConstructorUsedError;
   DateTime? get finishedAt => throw _privateConstructorUsedError;
   DateTime? get lastChapterDate => throw _privateConstructorUsedError;
@@ -56,6 +57,7 @@ abstract class $MangaInfoCopyWith<$Res> {
       List<String> imagesUrls,
       int? myAnimeListId,
       int? anilistId,
+      double? averageScore,
       DateTime? startedAt,
       DateTime? finishedAt,
       DateTime? lastChapterDate});
@@ -84,6 +86,7 @@ class _$MangaInfoCopyWithImpl<$Res, $Val extends MangaInfo>
     Object? imagesUrls = null,
     Object? myAnimeListId = freezed,
     Object? anilistId = freezed,
+    Object? averageScore = freezed,
     Object? startedAt = freezed,
     Object? finishedAt = freezed,
     Object? lastChapterDate = freezed,
@@ -129,6 +132,10 @@ class _$MangaInfoCopyWithImpl<$Res, $Val extends MangaInfo>
           ? _value.anilistId
           : anilistId // ignore: cast_nullable_to_non_nullable
               as int?,
+      averageScore: freezed == averageScore
+          ? _value.averageScore
+          : averageScore // ignore: cast_nullable_to_non_nullable
+              as double?,
       startedAt: freezed == startedAt
           ? _value.startedAt
           : startedAt // ignore: cast_nullable_to_non_nullable
@@ -164,6 +171,7 @@ abstract class _$$MangaInfoImplCopyWith<$Res>
       List<String> imagesUrls,
       int? myAnimeListId,
       int? anilistId,
+      double? averageScore,
       DateTime? startedAt,
       DateTime? finishedAt,
       DateTime? lastChapterDate});
@@ -190,6 +198,7 @@ class __$$MangaInfoImplCopyWithImpl<$Res>
     Object? imagesUrls = null,
     Object? myAnimeListId = freezed,
     Object? anilistId = freezed,
+    Object? averageScore = freezed,
     Object? startedAt = freezed,
     Object? finishedAt = freezed,
     Object? lastChapterDate = freezed,
@@ -235,6 +244,10 @@ class __$$MangaInfoImplCopyWithImpl<$Res>
           ? _value.anilistId
           : anilistId // ignore: cast_nullable_to_non_nullable
               as int?,
+      averageScore: freezed == averageScore
+          ? _value.averageScore
+          : averageScore // ignore: cast_nullable_to_non_nullable
+              as double?,
       startedAt: freezed == startedAt
           ? _value.startedAt
           : startedAt // ignore: cast_nullable_to_non_nullable
@@ -265,6 +278,7 @@ class _$MangaInfoImpl implements _MangaInfo {
       required final List<String> imagesUrls,
       this.myAnimeListId,
       this.anilistId,
+      this.averageScore,
       this.startedAt,
       this.finishedAt,
       this.lastChapterDate})
@@ -307,6 +321,8 @@ class _$MangaInfoImpl implements _MangaInfo {
   @override
   final int? anilistId;
   @override
+  final double? averageScore;
+  @override
   final DateTime? startedAt;
   @override
   final DateTime? finishedAt;
@@ -315,7 +331,7 @@ class _$MangaInfoImpl implements _MangaInfo {
 
   @override
   String toString() {
-    return 'MangaInfo(id: $id, name: $name, isReleasing: $isReleasing, isNSFW: $isNSFW, type: $type, tags: $tags, chaptersCount: $chaptersCount, imagesUrls: $imagesUrls, myAnimeListId: $myAnimeListId, anilistId: $anilistId, startedAt: $startedAt, finishedAt: $finishedAt, lastChapterDate: $lastChapterDate)';
+    return 'MangaInfo(id: $id, name: $name, isReleasing: $isReleasing, isNSFW: $isNSFW, type: $type, tags: $tags, chaptersCount: $chaptersCount, imagesUrls: $imagesUrls, myAnimeListId: $myAnimeListId, anilistId: $anilistId, averageScore: $averageScore, startedAt: $startedAt, finishedAt: $finishedAt, lastChapterDate: $lastChapterDate)';
   }
 
   @override
@@ -338,6 +354,8 @@ class _$MangaInfoImpl implements _MangaInfo {
                 other.myAnimeListId == myAnimeListId) &&
             (identical(other.anilistId, anilistId) ||
                 other.anilistId == anilistId) &&
+            (identical(other.averageScore, averageScore) ||
+                other.averageScore == averageScore) &&
             (identical(other.startedAt, startedAt) ||
                 other.startedAt == startedAt) &&
             (identical(other.finishedAt, finishedAt) ||
@@ -360,6 +378,7 @@ class _$MangaInfoImpl implements _MangaInfo {
       const DeepCollectionEquality().hash(_imagesUrls),
       myAnimeListId,
       anilistId,
+      averageScore,
       startedAt,
       finishedAt,
       lastChapterDate);
@@ -390,6 +409,7 @@ abstract class _MangaInfo implements MangaInfo {
       required final List<String> imagesUrls,
       final int? myAnimeListId,
       final int? anilistId,
+      final double? averageScore,
       final DateTime? startedAt,
       final DateTime? finishedAt,
       final DateTime? lastChapterDate}) = _$MangaInfoImpl;
@@ -417,6 +437,8 @@ abstract class _MangaInfo implements MangaInfo {
   int? get myAnimeListId;
   @override
   int? get anilistId;
+  @override
+  double? get averageScore;
   @override
   DateTime? get startedAt;
   @override

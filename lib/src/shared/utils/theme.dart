@@ -30,9 +30,11 @@ var theme = ThemeData(
 
 var palette = <Color>[
   //const Color.fromARGB(255, 111, 51, 206),
-  Colors.purple[700]!,
-  const Color(0xFF845EC2),
-  const Color(0xFFA178DF),
+  Color(0xFF613E9E),
+  Color(0xFF815BBE),
+  //Colors.purple[700]!,
+  //const Color(0xFF845EC2),
+  const Color(0xFFA178DF), // !IMPORTANT COLOR
   const Color(0xFFBE93FD),
   const Color(0xFFDCB0FF),
   const Color(0xFFFACCFF)

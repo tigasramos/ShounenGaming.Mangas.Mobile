@@ -18,6 +18,7 @@ class MangaInfo with _$MangaInfo {
     required List<String> imagesUrls,
     int? myAnimeListId,
     int? anilistId,
+    double? averageScore,
     DateTime? startedAt,
     DateTime? finishedAt,
     DateTime? lastChapterDate,

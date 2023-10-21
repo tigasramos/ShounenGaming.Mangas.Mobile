@@ -22,8 +22,11 @@ PaginatedMangaResponse _$PaginatedMangaResponseFromJson(
 /// @nodoc
 mixin _$PaginatedMangaResponse {
   List<MangaInfo> get data => throw _privateConstructorUsedError;
+  set data(List<MangaInfo> value) => throw _privateConstructorUsedError;
   int get currentPage => throw _privateConstructorUsedError;
+  set currentPage(int value) => throw _privateConstructorUsedError;
   int get maxCount => throw _privateConstructorUsedError;
+  set maxCount(int value) => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -106,7 +109,7 @@ class __$$PaginatedMangaResponseImplCopyWithImpl<$Res>
   }) {
     return _then(_$PaginatedMangaResponseImpl(
       data: null == data
-          ? _value._data
+          ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
               as List<MangaInfo>,
       currentPage: null == currentPage
@@ -125,48 +128,22 @@ class __$$PaginatedMangaResponseImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PaginatedMangaResponseImpl implements _PaginatedMangaResponse {
   _$PaginatedMangaResponseImpl(
-      {required final List<MangaInfo> data,
-      required this.currentPage,
-      required this.maxCount})
-      : _data = data;
+      {required this.data, required this.currentPage, required this.maxCount});
 
   factory _$PaginatedMangaResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$PaginatedMangaResponseImplFromJson(json);
 
-  final List<MangaInfo> _data;
   @override
-  List<MangaInfo> get data {
-    if (_data is EqualUnmodifiableListView) return _data;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_data);
-  }
-
+  List<MangaInfo> data;
   @override
-  final int currentPage;
+  int currentPage;
   @override
-  final int maxCount;
+  int maxCount;
 
   @override
   String toString() {
     return 'PaginatedMangaResponse(data: $data, currentPage: $currentPage, maxCount: $maxCount)';
   }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$PaginatedMangaResponseImpl &&
-            const DeepCollectionEquality().equals(other._data, _data) &&
-            (identical(other.currentPage, currentPage) ||
-                other.currentPage == currentPage) &&
-            (identical(other.maxCount, maxCount) ||
-                other.maxCount == maxCount));
-  }
-
-  @JsonKey(ignore: true)
-  @override
-  int get hashCode => Object.hash(runtimeType,
-      const DeepCollectionEquality().hash(_data), currentPage, maxCount);
 
   @JsonKey(ignore: true)
   @override
@@ -185,19 +162,22 @@ class _$PaginatedMangaResponseImpl implements _PaginatedMangaResponse {
 
 abstract class _PaginatedMangaResponse implements PaginatedMangaResponse {
   factory _PaginatedMangaResponse(
-      {required final List<MangaInfo> data,
-      required final int currentPage,
-      required final int maxCount}) = _$PaginatedMangaResponseImpl;
+      {required List<MangaInfo> data,
+      required int currentPage,
+      required int maxCount}) = _$PaginatedMangaResponseImpl;
 
   factory _PaginatedMangaResponse.fromJson(Map<String, dynamic> json) =
       _$PaginatedMangaResponseImpl.fromJson;
 
   @override
   List<MangaInfo> get data;
+  set data(List<MangaInfo> value);
   @override
   int get currentPage;
+  set currentPage(int value);
   @override
   int get maxCount;
+  set maxCount(int value);
   @override
   @JsonKey(ignore: true)
   _$$PaginatedMangaResponseImplCopyWith<_$PaginatedMangaResponseImpl>

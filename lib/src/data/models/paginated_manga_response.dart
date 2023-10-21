@@ -5,7 +5,7 @@ import 'manga_info.dart';
 part 'paginated_manga_response.freezed.dart';
 part 'paginated_manga_response.g.dart';
 
-@freezed
+@unfreezed
 class PaginatedMangaResponse with _$PaginatedMangaResponse {
   factory PaginatedMangaResponse({
     required List<MangaInfo> data,

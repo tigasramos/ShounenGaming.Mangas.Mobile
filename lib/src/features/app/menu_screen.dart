@@ -7,6 +7,7 @@ import 'package:shounengaming_mangas_mobile/src/features/configurations/screens/
 import 'package:shounengaming_mangas_mobile/src/features/manga_add/screens/manga_add_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/mangas_queue/mangas_queue_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/season_mangas/screens/season_mangas_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/features/user_profile/screens/user_profile_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/waiting_mangas/screens/waiting_mangas_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/shared/utils/constants.dart';
 
@@ -30,7 +31,14 @@ class MenuScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          if (appState.loggedUser == null) return;
+
+                          navigationKey.currentState?.push(MaterialPageRoute(
+                            builder: (context) =>
+                                UserProfileScreen(appState.loggedUser!.id),
+                          ));
+                        },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 15, vertical: 15),
@@ -57,7 +65,7 @@ class MenuScreen extends ConsumerWidget {
                                 children: [
                                   Text(appState.loggedUser?.fullName ?? ""),
                                   Text(
-                                    appState.loggedUser?.username ?? "",
+                                    "@${appState.loggedUser?.username}",
                                     style: const TextStyle(fontSize: 12),
                                   ),
                                 ],
