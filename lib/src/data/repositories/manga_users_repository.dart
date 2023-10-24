@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/manga_user_activity.dart';
 
 import '../models/enums/manga_user_status_enum.dart';
+import '../models/manga_info.dart';
 import '../models/manga_user_data.dart';
 
 final mangaUsersRepositoryProvider = Provider<MangaUsersRepository>((ref) {
@@ -63,5 +65,17 @@ class MangaUsersRepository {
         '$_baseURL/$mangaId/rating?${rating != null ? 'rating=$rating' : ''}');
     if (response.data == null) return null;
     return MangaUserData.fromJson(response.data);
+  }
+
+  Future<List<MangaInfo>> getMangaRecommendations() async {
+    var response = await _client.get('$_baseURL/recommendations');
+    return (response.data as List).map((m) => MangaInfo.fromJson(m)).toList();
+  }
+
+  Future<List<MangaUserActivity>> getCommunityActivity() async {
+    var response = await _client.get('$_baseURL/activities');
+    return (response.data as List)
+        .map((m) => MangaUserActivity.fromJson(m))
+        .toList();
   }
 }

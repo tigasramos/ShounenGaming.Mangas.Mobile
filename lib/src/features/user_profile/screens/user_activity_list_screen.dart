@@ -192,9 +192,9 @@ class ActivityListCard extends StatelessWidget {
               children: [
                 Tooltip(
                   message: DateFormat("dd/MM/yyyy HH:mm")
-                      .format(chapterReadHistory.readAt),
+                      .format(chapterReadHistory.readAt.toLocal()),
                   child: Text(
-                    howMuchHasPassed(chapterReadHistory.readAt),
+                    howMuchHasPassed(chapterReadHistory.readAt.toLocal()),
                     style: TextStyle(
                         color: Colors.grey[400],
                         fontSize: 11,

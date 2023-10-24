@@ -1,0 +1,6 @@
+enum UserActivityTypeEnum {
+  SEE_CHAPTER,
+  UNSEE_CHAPTER,
+  ADD_MANGA,
+  CHANGE_STATUS
+}

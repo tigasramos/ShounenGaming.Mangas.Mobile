@@ -9,7 +9,7 @@ String howMuchHasPassed(DateTime date) {
   var difference = todayTreated.difference(dateTreated).inDays;
 
   if (dateTreated == todayTreated)
-    return "Today";
+    return "${date.hour}:${date.minute}";
   else if (dateTreated.add(Duration(days: 1)) == todayTreated)
     return "Yesterday";
   else if (dateTreated.isAfter(todayTreated.subtract(Duration(days: 31))))

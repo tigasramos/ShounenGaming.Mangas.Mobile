@@ -133,7 +133,7 @@ class ActivityHeatmapDay extends ConsumerWidget {
     else if (num < 50) color = palette[1];
 
     return Tooltip(
-      message: "${DateFormat("dd/MM/yyyy").format(date)}",
+      message: "${DateFormat("dd/MM/yyyy").format(date.toLocal())}",
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 3),
         decoration:

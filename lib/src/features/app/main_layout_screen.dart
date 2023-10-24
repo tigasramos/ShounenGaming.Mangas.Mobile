@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:shounengaming_mangas_mobile/src/features/community/providers/community.providers.dart';
+import 'package:shounengaming_mangas_mobile/src/features/community/screens/community_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/home/providers/home.providers.dart';
 import 'package:shounengaming_mangas_mobile/src/features/home/screens/home_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/library/providers/library.providers.dart';
@@ -70,6 +72,8 @@ class _MainLayoutScreenState extends ConsumerState<MainLayoutScreen> {
               ref.invalidate(mangaSearchProvider);
               break;
             case 3:
+              ref.invalidate(mangaRecommendationsProvider);
+              ref.invalidate(communityActivitiesProvider);
               break;
             case 4:
               break;
@@ -80,10 +84,7 @@ class _MainLayoutScreenState extends ConsumerState<MainLayoutScreen> {
           HomeScreen(),
           LibraryScreen(),
           SearchScreen(),
-          Scaffold(
-              body: Center(
-            child: Text('In Construction'),
-          )),
+          CommunityScreen(),
           Scaffold(
               body: Center(
             child: Text('In Construction'),

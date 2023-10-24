@@ -4,8 +4,8 @@ const menuItems = <MenuItem>[
   MenuItem('Home', Icons.home),
   MenuItem('Library', Icons.menu_book),
   MenuItem('Search', Icons.search),
-  MenuItem('History', Icons.history),
   MenuItem('Community', Icons.people),
+  MenuItem('History', Icons.history),
 ];
 
 class MenuItem {
