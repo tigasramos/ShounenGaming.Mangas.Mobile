@@ -29,3 +29,11 @@ See Later:
 Shiny Images for Popular or Favorites??
 
 flutter build apk --build-name=1.0.1
+
+TODO:
+Search Cards
+Manga Profile Revamp
+Search Filters
+
+Mangas Queue Test (?)
+?? Top Users Icon, Name e Mangas Completed + Reading + OnHold

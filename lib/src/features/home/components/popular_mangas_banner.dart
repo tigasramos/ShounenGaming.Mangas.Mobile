@@ -9,9 +9,9 @@ import 'package:shounengaming_mangas_mobile/src/features/manga_profile/screens/m
 import 'package:shounengaming_mangas_mobile/src/shared/utils/constants.dart';
 import 'package:shounengaming_mangas_mobile/src/shared/utils/theme.dart';
 
-class FeaturedMangasBanner extends StatelessWidget {
+class PopularMangasBanner extends StatelessWidget {
   final MangaInfo manga;
-  const FeaturedMangasBanner(this.manga, {super.key});
+  const PopularMangasBanner(this.manga, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class FeaturedMangasBanner extends StatelessWidget {
             width: width,
             child: ImageFiltered(
               imageFilter: ImageFilter.blur(
-                  sigmaY: 3, sigmaX: 3, tileMode: TileMode.mirror),
+                  sigmaY: 3, sigmaX: 3, tileMode: TileMode.clamp),
               child: CachedNetworkImage(
                 errorWidget: (context, url, error) =>
                     const CircularProgressIndicator(),
@@ -43,7 +43,7 @@ class FeaturedMangasBanner extends StatelessWidget {
                 left: width / 15,
                 right: width / 15),
             child: Container(
-              color: Colors.white60,
+              color: const Color.fromARGB(180, 255, 255, 255),
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,10 +52,40 @@ class FeaturedMangasBanner extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AutoSizeText(
-                        manga.name,
-                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                            color: Colors.black, fontWeight: FontWeight.w600),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: AutoSizeText(
+                              manga.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              minFontSize: 10,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge!
+                                  .copyWith(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                            size: 14,
+                          ),
+                          SizedBox(
+                            width: 3,
+                          ),
+                          Text(
+                            "${manga.averageScore?.toStringAsFixed(1)}",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ],
                       ),
                       Text(
                         manga.tags.take(3).join(", "),
@@ -63,7 +93,7 @@ class FeaturedMangasBanner extends StatelessWidget {
                             .textTheme
                             .labelMedium!
                             .copyWith(color: palette[0]),
-                      )
+                      ),
                     ],
                   ),
                   Row(

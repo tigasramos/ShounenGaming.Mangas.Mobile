@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'enums/manga_metadata_source_enum.dart';
+import 'enums/manga_type_enum.dart';
 
 part 'manga_metadata.freezed.dart';
 part 'manga_metadata.g.dart';
@@ -13,7 +14,7 @@ class MangaMetadata with _$MangaMetadata {
     required List<String> titles,
     required String imageUrl,
     required bool alreadyExists,
-    required String type,
+    required MangaTypeEnum type,
     required String description,
     required String status,
     num? score,

@@ -45,8 +45,10 @@ mixin _$Manga {
   set writer(MangaWriter value) => throw _privateConstructorUsedError;
   double? get averageScore => throw _privateConstructorUsedError;
   set averageScore(double? value) => throw _privateConstructorUsedError;
-  int? get mangaMyAnimeListId => throw _privateConstructorUsedError;
-  set mangaMyAnimeListId(int? value) => throw _privateConstructorUsedError;
+  int? get mangaMyAnimeListID => throw _privateConstructorUsedError;
+  set mangaMyAnimeListID(int? value) => throw _privateConstructorUsedError;
+  int? get mangaAniListID => throw _privateConstructorUsedError;
+  set mangaAniListID(int? value) => throw _privateConstructorUsedError;
   DateTime? get startedAt => throw _privateConstructorUsedError;
   set startedAt(DateTime? value) => throw _privateConstructorUsedError;
   DateTime? get finishedAt => throw _privateConstructorUsedError;
@@ -75,7 +77,8 @@ abstract class $MangaCopyWith<$Res> {
       List<String> imagesUrls,
       MangaWriter writer,
       double? averageScore,
-      int? mangaMyAnimeListId,
+      int? mangaMyAnimeListID,
+      int? mangaAniListID,
       DateTime? startedAt,
       DateTime? finishedAt});
 
@@ -107,7 +110,8 @@ class _$MangaCopyWithImpl<$Res, $Val extends Manga>
     Object? imagesUrls = null,
     Object? writer = null,
     Object? averageScore = freezed,
-    Object? mangaMyAnimeListId = freezed,
+    Object? mangaMyAnimeListID = freezed,
+    Object? mangaAniListID = freezed,
     Object? startedAt = freezed,
     Object? finishedAt = freezed,
   }) {
@@ -160,9 +164,13 @@ class _$MangaCopyWithImpl<$Res, $Val extends Manga>
           ? _value.averageScore
           : averageScore // ignore: cast_nullable_to_non_nullable
               as double?,
-      mangaMyAnimeListId: freezed == mangaMyAnimeListId
-          ? _value.mangaMyAnimeListId
-          : mangaMyAnimeListId // ignore: cast_nullable_to_non_nullable
+      mangaMyAnimeListID: freezed == mangaMyAnimeListID
+          ? _value.mangaMyAnimeListID
+          : mangaMyAnimeListID // ignore: cast_nullable_to_non_nullable
+              as int?,
+      mangaAniListID: freezed == mangaAniListID
+          ? _value.mangaAniListID
+          : mangaAniListID // ignore: cast_nullable_to_non_nullable
               as int?,
       startedAt: freezed == startedAt
           ? _value.startedAt
@@ -204,7 +212,8 @@ abstract class _$$MangaImplCopyWith<$Res> implements $MangaCopyWith<$Res> {
       List<String> imagesUrls,
       MangaWriter writer,
       double? averageScore,
-      int? mangaMyAnimeListId,
+      int? mangaMyAnimeListID,
+      int? mangaAniListID,
       DateTime? startedAt,
       DateTime? finishedAt});
 
@@ -235,7 +244,8 @@ class __$$MangaImplCopyWithImpl<$Res>
     Object? imagesUrls = null,
     Object? writer = null,
     Object? averageScore = freezed,
-    Object? mangaMyAnimeListId = freezed,
+    Object? mangaMyAnimeListID = freezed,
+    Object? mangaAniListID = freezed,
     Object? startedAt = freezed,
     Object? finishedAt = freezed,
   }) {
@@ -288,9 +298,13 @@ class __$$MangaImplCopyWithImpl<$Res>
           ? _value.averageScore
           : averageScore // ignore: cast_nullable_to_non_nullable
               as double?,
-      mangaMyAnimeListId: freezed == mangaMyAnimeListId
-          ? _value.mangaMyAnimeListId
-          : mangaMyAnimeListId // ignore: cast_nullable_to_non_nullable
+      mangaMyAnimeListID: freezed == mangaMyAnimeListID
+          ? _value.mangaMyAnimeListID
+          : mangaMyAnimeListID // ignore: cast_nullable_to_non_nullable
+              as int?,
+      mangaAniListID: freezed == mangaAniListID
+          ? _value.mangaAniListID
+          : mangaAniListID // ignore: cast_nullable_to_non_nullable
               as int?,
       startedAt: freezed == startedAt
           ? _value.startedAt
@@ -320,7 +334,8 @@ class _$MangaImpl implements _Manga {
       required this.imagesUrls,
       required this.writer,
       this.averageScore,
-      this.mangaMyAnimeListId,
+      this.mangaMyAnimeListID,
+      this.mangaAniListID,
       this.startedAt,
       this.finishedAt});
 
@@ -352,7 +367,9 @@ class _$MangaImpl implements _Manga {
   @override
   double? averageScore;
   @override
-  int? mangaMyAnimeListId;
+  int? mangaMyAnimeListID;
+  @override
+  int? mangaAniListID;
   @override
   DateTime? startedAt;
   @override
@@ -360,7 +377,7 @@ class _$MangaImpl implements _Manga {
 
   @override
   String toString() {
-    return 'Manga(id: $id, name: $name, alternativeNames: $alternativeNames, synonyms: $synonyms, description: $description, isReleasing: $isReleasing, type: $type, tags: $tags, chapters: $chapters, imagesUrls: $imagesUrls, writer: $writer, averageScore: $averageScore, mangaMyAnimeListId: $mangaMyAnimeListId, startedAt: $startedAt, finishedAt: $finishedAt)';
+    return 'Manga(id: $id, name: $name, alternativeNames: $alternativeNames, synonyms: $synonyms, description: $description, isReleasing: $isReleasing, type: $type, tags: $tags, chapters: $chapters, imagesUrls: $imagesUrls, writer: $writer, averageScore: $averageScore, mangaMyAnimeListID: $mangaMyAnimeListID, mangaAniListID: $mangaAniListID, startedAt: $startedAt, finishedAt: $finishedAt)';
   }
 
   @JsonKey(ignore: true)
@@ -391,7 +408,8 @@ abstract class _Manga implements Manga {
       required List<String> imagesUrls,
       required MangaWriter writer,
       double? averageScore,
-      int? mangaMyAnimeListId,
+      int? mangaMyAnimeListID,
+      int? mangaAniListID,
       DateTime? startedAt,
       DateTime? finishedAt}) = _$MangaImpl;
 
@@ -434,8 +452,11 @@ abstract class _Manga implements Manga {
   double? get averageScore;
   set averageScore(double? value);
   @override
-  int? get mangaMyAnimeListId;
-  set mangaMyAnimeListId(int? value);
+  int? get mangaMyAnimeListID;
+  set mangaMyAnimeListID(int? value);
+  @override
+  int? get mangaAniListID;
+  set mangaAniListID(int? value);
   @override
   DateTime? get startedAt;
   set startedAt(DateTime? value);

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -9,9 +10,12 @@ import 'package:shounengaming_mangas_mobile/src/features/library/providers/libra
 import 'package:shounengaming_mangas_mobile/src/features/library/screens/library_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/mangas_search/providers/manga_search.providers.dart';
 import 'package:shounengaming_mangas_mobile/src/features/mangas_search/screens/search_screen.dart';
-import 'package:shounengaming_mangas_mobile/src/features/app/menu_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/features/app/more_options_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/features/user_profile/screens/user_profile_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/shared/utils/constants.dart';
 import 'package:shounengaming_mangas_mobile/src/shared/utils/menu_items.dart';
+
+import 'app_state.providers.dart';
 
 class MainLayoutScreen extends ConsumerStatefulWidget {
   const MainLayoutScreen({super.key});
@@ -42,13 +46,25 @@ class _MainLayoutScreenState extends ConsumerState<MainLayoutScreen> {
           ],
         ),
         actions: [
-          IconButton(
-              onPressed: () {
-                navigationKey.currentState?.push(
-                  MaterialPageRoute(builder: (context) => const MenuScreen()),
-                );
-              },
-              icon: const Icon(Icons.menu)),
+          Consumer(builder: (context, ref, child) {
+            var loggedUser = ref.watch(appStateProvider).loggedUser;
+            if (loggedUser == null) return Container();
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 8),
+              child: InkWell(
+                onTap: () {
+                  navigationKey.currentState?.push(MaterialPageRoute(
+                    builder: (context) => UserProfileScreen(loggedUser.id),
+                  ));
+                },
+                child: CircleAvatar(
+                  backgroundImage:
+                      CachedNetworkImageProvider(loggedUser.discordImage),
+                  radius: 14,
+                ),
+              ),
+            );
+          }),
           const SizedBox(
             width: 5,
           ),
@@ -61,7 +77,7 @@ class _MainLayoutScreenState extends ConsumerState<MainLayoutScreen> {
           //TODO: Refresh providers state
           switch (i) {
             case 0:
-              ref.invalidate(featuredMangasProvider);
+              ref.invalidate(newMangasProvider);
               ref.invalidate(popularMangasProvider);
               ref.invalidate(newChaptersProvider);
               break;
@@ -85,10 +101,7 @@ class _MainLayoutScreenState extends ConsumerState<MainLayoutScreen> {
           LibraryScreen(),
           SearchScreen(),
           CommunityScreen(),
-          Scaffold(
-              body: Center(
-            child: Text('In Construction'),
-          )),
+          MoreOptionsScreen()
         ],
         items: menuItems
             .map(

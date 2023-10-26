@@ -26,7 +26,8 @@ _$MangaImpl _$$MangaImplFromJson(Map<String, dynamic> json) => _$MangaImpl(
           .toList(),
       writer: MangaWriter.fromJson(json['writer'] as Map<String, dynamic>),
       averageScore: (json['averageScore'] as num?)?.toDouble(),
-      mangaMyAnimeListId: json['mangaMyAnimeListId'] as int?,
+      mangaMyAnimeListID: json['mangaMyAnimeListID'] as int?,
+      mangaAniListID: json['mangaAniListID'] as int?,
       startedAt: json['startedAt'] == null
           ? null
           : DateTime.parse(json['startedAt'] as String),
@@ -49,7 +50,8 @@ Map<String, dynamic> _$$MangaImplToJson(_$MangaImpl instance) =>
       'imagesUrls': instance.imagesUrls,
       'writer': instance.writer,
       'averageScore': instance.averageScore,
-      'mangaMyAnimeListId': instance.mangaMyAnimeListId,
+      'mangaMyAnimeListID': instance.mangaMyAnimeListID,
+      'mangaAniListID': instance.mangaAniListID,
       'startedAt': instance.startedAt?.toIso8601String(),
       'finishedAt': instance.finishedAt?.toIso8601String(),
     };

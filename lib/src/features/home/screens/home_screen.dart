@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../components/featured_mangas_section.dart';
-import '../components/latest_releases_section.dart';
 import '../components/popular_mangas_section.dart';
+import '../components/latest_releases_section.dart';
+import '../components/recent_mangas_section.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -15,8 +15,8 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            FeaturedMangasSection(),
             PopularMangasSection(),
+            RecentMangasSection(),
             LatestReleasesSection()
           ],
         ),

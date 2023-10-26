@@ -6,10 +6,10 @@ import 'package:shounengaming_mangas_mobile/src/shared/utils/constants.dart';
 import 'package:shounengaming_mangas_mobile/src/shared/components/manga_image.dart';
 import 'package:shounengaming_mangas_mobile/src/shared/utils/theme.dart';
 
-class PopularMangaCard extends StatelessWidget {
-  final int index;
+class HomeMangaCard extends StatelessWidget {
   final MangaInfo manga;
-  const PopularMangaCard(this.index, this.manga, {super.key});
+  final String? badgeLabel;
+  const HomeMangaCard(this.manga, {super.key, this.badgeLabel});
 
   @override
   Widget build(BuildContext context) {
@@ -31,19 +31,26 @@ class PopularMangaCard extends StatelessWidget {
           child: Column(
             children: [
               Expanded(
-                  child: Badge(
-                      badgeContent: Text(
-                        '#$index',
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                      badgeAnimation: const BadgeAnimation.fade(),
-                      position: BadgePosition.topStart(),
-                      badgeStyle: BadgeStyle(
-                          shape: BadgeShape.circle,
-                          padding: const EdgeInsets.all(4),
-                          badgeColor: palette[0]),
-                      child: MangaImage(manga.imagesUrls[0],
-                          isNSFW: manga.isNSFW))),
+                  child: badgeLabel != null
+                      ? Badge(
+                          badgeContent: Container(
+                            width: 22,
+                            child: Center(
+                              child: Text(
+                                badgeLabel!,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ),
+                          badgeAnimation: const BadgeAnimation.fade(),
+                          position: BadgePosition.topStart(top: -10),
+                          badgeStyle: BadgeStyle(
+                              shape: BadgeShape.circle,
+                              padding: const EdgeInsets.all(4),
+                              badgeColor: palette[0]),
+                          child: MangaImage(manga.imagesUrls[0],
+                              isNSFW: manga.isNSFW))
+                      : MangaImage(manga.imagesUrls[0], isNSFW: manga.isNSFW)),
               const SizedBox(
                 height: 3,
               ),

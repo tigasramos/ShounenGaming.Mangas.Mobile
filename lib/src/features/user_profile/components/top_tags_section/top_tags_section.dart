@@ -15,7 +15,7 @@ class TopTagsSection extends StatelessWidget {
         children: [
           Text(
             'Top Tags',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
           SizedBox(
             height: 10,

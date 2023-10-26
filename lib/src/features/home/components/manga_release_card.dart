@@ -35,12 +35,36 @@ class MangaReleaseCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    mangaRelease.manga.name,
-                    overflow: TextOverflow.ellipsis,
-                    //minFontSize: 12,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: 15, height: 1.2, fontWeight: FontWeight.w500),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          mangaRelease.manga.name,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(
+                                  fontSize: 15,
+                                  height: 1.2,
+                                  fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                        size: 10,
+                      ),
+                      SizedBox(
+                        width: 2,
+                      ),
+                      Text(
+                        "${mangaRelease.manga.averageScore?.toStringAsFixed(1)}",
+                        style: TextStyle(
+                          fontSize: 11,
+                        ),
+                      )
+                    ],
                   ),
                   Text(
                     mangaRelease.manga.tags.join(", "),
@@ -77,7 +101,8 @@ class MangaReleaseCard extends StatelessWidget {
                                       ?.copyWith(fontSize: 13)),
                               const Spacer(),
                               Text(
-                                  DateFormat("dd MMM yyyy").format(e.createdAt),
+                                  DateFormat("dd MMM yyyy")
+                                      .format(e.createdAt.toLocal()),
                                   style: Theme.of(context)
                                       .textTheme
                                       .labelSmall

@@ -26,7 +26,7 @@ class UserActivityHeatmap extends StatelessWidget {
           children: [
             Text(
               'Activity',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             Container(
               padding: EdgeInsets.all(12),

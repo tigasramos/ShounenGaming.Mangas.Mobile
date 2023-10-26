@@ -516,7 +516,7 @@ class MangaDetailsSection extends StatelessWidget {
           height: 4,
         ),
         Text(
-          '${manga.startedAt != null ? DateFormat("dd MMM yyyy").format(manga.startedAt!) : "?"} - ${manga.finishedAt != null ? DateFormat("dd MMM yyyy").format(manga.finishedAt!) : "?"}',
+          '${manga.startedAt != null ? DateFormat("dd MMM yyyy").format(manga.startedAt!) : "?"} - ${manga.finishedAt != null ? DateFormat("dd MMM yyyy").format(manga.finishedAt!) : "Releasing"}',
         ),
         const SizedBox(
           height: 16,

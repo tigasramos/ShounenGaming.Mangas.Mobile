@@ -16,7 +16,7 @@ class MangaTypesSection extends StatelessWidget {
         children: [
           Text(
             'Top Types',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
           MangaTypesPieChart(mangaTypesStats),
         ],

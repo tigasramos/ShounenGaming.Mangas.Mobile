@@ -51,11 +51,6 @@ class MangaRepository {
     return PaginatedMangaResponse.fromJson(response.data);
   }
 
-  Future<List<MangaInfo>> getFeaturedMangas() async {
-    var response = await _client.get('$_baseURL/featured');
-    return (response.data as List).map((m) => MangaInfo.fromJson(m)).toList();
-  }
-
   Future<List<MangaInfo>> getWaitingMangas() async {
     var response = await _client.get('$_baseURL/waiting');
     return (response.data as List).map((m) => MangaInfo.fromJson(m)).toList();
@@ -134,6 +129,18 @@ class MangaRepository {
       String name, MangaMetadataSourceEnum source) async {
     var response =
         await _client.get('$_baseURL/search/${source.name}?name=$name');
+    return (response.data as List)
+        .map((m) => MangaMetadata.fromJson(m))
+        .toList();
+  }
+
+  Future<List<MangaInfo>> getMangaRecommendations() async {
+    var response = await _client.get('$_baseURL/recommendations');
+    return (response.data as List).map((m) => MangaInfo.fromJson(m)).toList();
+  }
+
+  Future<List<MangaMetadata>> searchMangaRecommendations() async {
+    var response = await _client.get('$_baseURL/recommendations/search');
     return (response.data as List)
         .map((m) => MangaMetadata.fromJson(m))
         .toList();

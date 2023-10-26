@@ -211,7 +211,7 @@ class MangaMetadataTile extends ConsumerWidget {
                               ?.copyWith(fontSize: 10),
                           children: [
                         TextSpan(
-                            text: manga.type,
+                            text: manga.type.name,
                             style: const TextStyle(color: Colors.white)),
                       ])),
                   RichText(

@@ -46,13 +46,13 @@ class UserProfileScreen extends ConsumerWidget {
                         errorWidget: (context, url, error) =>
                             const CircularProgressIndicator(),
                         fit: BoxFit.fitWidth,
-                        height: 240,
+                        height: 220,
                         width: double.infinity,
                         alignment: Alignment.center),
                   ),
                 ),
                 Container(
-                  height: 240,
+                  height: 220,
                   decoration: BoxDecoration(
                       gradient: LinearGradient(colors: [
                     Theme.of(context).scaffoldBackgroundColor,
@@ -60,7 +60,7 @@ class UserProfileScreen extends ConsumerWidget {
                   ], begin: Alignment.bottomCenter, end: Alignment.center)),
                 ),
                 Container(
-                  height: 320,
+                  height: 290,
                   width: double.infinity,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,

@@ -1,12 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_metadata_source_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/features/library/providers/library_filters.dart';
 import 'package:shounengaming_mangas_mobile/src/features/manga_profile/screens/manga_profile_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/shared/components/manga_metadata_source_icon.dart';
 import 'package:shounengaming_mangas_mobile/src/shared/utils/constants.dart';
 import 'package:shounengaming_mangas_mobile/src/shared/components/manga_image.dart';
 
@@ -209,77 +209,16 @@ class LibraryCompletedMangaTile extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       if (mangaUserData.manga.myAnimeListId != null) ...[
-                        GestureDetector(
-                          onTap: () async {
-                            try {
-                              await launch(
-                                'https://myanimelist.net/manga/${mangaUserData.manga.myAnimeListId}',
-                                customTabsOption: CustomTabsOption(
-                                  toolbarColor: Theme.of(context).primaryColor,
-                                  enableDefaultShare: true,
-                                  enableUrlBarHiding: true,
-                                  showPageTitle: true,
-                                ),
-                                safariVCOption: SafariViewControllerOption(
-                                  preferredBarTintColor:
-                                      Theme.of(context).primaryColor,
-                                  preferredControlTintColor: Colors.white,
-                                  barCollapsingEnabled: true,
-                                  entersReaderIfAvailable: false,
-                                  dismissButtonStyle:
-                                      SafariViewControllerDismissButtonStyle
-                                          .close,
-                                ),
-                              );
-                            } catch (e, stackTrace) {
-                              await Sentry.captureException(e,
-                                  stackTrace: stackTrace);
-                              debugPrint(e.toString());
-                            }
-                          },
-                          child: Image.asset(
-                            "assets/images/sources/mal_icon.png",
-                            height: 25,
-                          ),
-                        ),
+                        MangaMetadataSourceIcon(
+                            mangaUserData.manga.myAnimeListId!,
+                            MangaMetadataSourceEnum.MYANIMELIST),
                         const SizedBox(
                           width: 10,
                         ),
                       ],
                       if (mangaUserData.manga.anilistId != null)
-                        GestureDetector(
-                          onTap: () async {
-                            try {
-                              await launch(
-                                'https://anilist.co/manga/${mangaUserData.manga.anilistId}',
-                                customTabsOption: CustomTabsOption(
-                                  toolbarColor: Theme.of(context).primaryColor,
-                                  enableDefaultShare: true,
-                                  enableUrlBarHiding: true,
-                                  showPageTitle: true,
-                                ),
-                                safariVCOption: SafariViewControllerOption(
-                                  preferredBarTintColor:
-                                      Theme.of(context).primaryColor,
-                                  preferredControlTintColor: Colors.white,
-                                  barCollapsingEnabled: true,
-                                  entersReaderIfAvailable: false,
-                                  dismissButtonStyle:
-                                      SafariViewControllerDismissButtonStyle
-                                          .close,
-                                ),
-                              );
-                            } catch (e, stackTrace) {
-                              await Sentry.captureException(e,
-                                  stackTrace: stackTrace);
-                              debugPrint(e.toString());
-                            }
-                          },
-                          child: Image.asset(
-                            "assets/images/sources/al_icon.png",
-                            height: 25,
-                          ),
-                        ),
+                        MangaMetadataSourceIcon(mangaUserData.manga.anilistId!,
+                            MangaMetadataSourceEnum.ANILIST),
                       const Spacer(),
                       Text(
                         'Completed At: ',

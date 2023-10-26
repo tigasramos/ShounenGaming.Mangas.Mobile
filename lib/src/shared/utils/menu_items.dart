@@ -5,7 +5,7 @@ const menuItems = <MenuItem>[
   MenuItem('Library', Icons.menu_book),
   MenuItem('Search', Icons.search),
   MenuItem('Community', Icons.people),
-  MenuItem('History', Icons.history),
+  MenuItem('More', Icons.more_horiz),
 ];
 
 class MenuItem {

@@ -1,5 +1,4 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:math';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,27 +27,6 @@ final userActivityListProvider = FutureProvider.family
     .autoDispose<List<UserChapterReadHistory>, int>((ref, userId) async {
   var mangaStatsRepo = ref.read(mangaUsersStatsRepositoryProvider);
   var data = await mangaStatsRepo.getMangaDataByStatusByUser(userId);
-
-//TODO : REMOVE
-  for (var i = 0; i < 100; i++) {
-    var days = Random().nextInt(1000);
-    var newDate = DateTime.now().subtract(Duration(days: days));
-    data.add(UserChapterReadHistory(
-        readAt: newDate,
-        numOfFirstChapter: 5,
-        numOfLastChapter: newDate.day % 2 == 0 ? 5 : 10,
-        manga: data[Random().nextInt(data.length)].manga));
-  }
-
-  for (var i = 0; i < 10; i++) {
-    var days = Random().nextInt(30);
-    var newDate = DateTime.now().subtract(Duration(days: days));
-    data.add(UserChapterReadHistory(
-        readAt: newDate,
-        numOfFirstChapter: 5,
-        numOfLastChapter: newDate.day % 2 == 0 ? 5 : 10,
-        manga: data[Random().nextInt(data.length)].manga));
-  }
 
   return data
     ..sort(

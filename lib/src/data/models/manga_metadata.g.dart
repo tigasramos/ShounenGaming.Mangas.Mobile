@@ -14,7 +14,7 @@ _$MangaMetadataImpl _$$MangaMetadataImplFromJson(Map<String, dynamic> json) =>
           (json['titles'] as List<dynamic>).map((e) => e as String).toList(),
       imageUrl: json['imageUrl'] as String,
       alreadyExists: json['alreadyExists'] as bool,
-      type: json['type'] as String,
+      type: $enumDecode(_$MangaTypeEnumEnumMap, json['type']),
       description: json['description'] as String,
       status: json['status'] as String,
       score: json['score'] as num?,
@@ -34,7 +34,7 @@ Map<String, dynamic> _$$MangaMetadataImplToJson(_$MangaMetadataImpl instance) =>
       'titles': instance.titles,
       'imageUrl': instance.imageUrl,
       'alreadyExists': instance.alreadyExists,
-      'type': instance.type,
+      'type': _$MangaTypeEnumEnumMap[instance.type]!,
       'description': instance.description,
       'status': instance.status,
       'score': instance.score,
@@ -46,4 +46,10 @@ Map<String, dynamic> _$$MangaMetadataImplToJson(_$MangaMetadataImpl instance) =>
 const _$MangaMetadataSourceEnumEnumMap = {
   MangaMetadataSourceEnum.MYANIMELIST: 'MYANIMELIST',
   MangaMetadataSourceEnum.ANILIST: 'ANILIST',
+};
+
+const _$MangaTypeEnumEnumMap = {
+  MangaTypeEnum.MANGA: 'MANGA',
+  MangaTypeEnum.MANWHA: 'MANWHA',
+  MangaTypeEnum.MANHUA: 'MANHUA',
 };

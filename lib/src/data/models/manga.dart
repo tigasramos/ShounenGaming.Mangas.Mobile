@@ -23,7 +23,8 @@ class Manga with _$Manga {
     required List<String> imagesUrls,
     required MangaWriter writer,
     double? averageScore,
-    int? mangaMyAnimeListId,
+    int? mangaMyAnimeListID,
+    int? mangaAniListID,
     DateTime? startedAt,
     DateTime? finishedAt,
   }) = _Manga;

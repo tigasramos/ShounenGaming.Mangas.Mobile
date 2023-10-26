@@ -25,7 +25,7 @@ mixin _$MangaMetadata {
   List<String> get titles => throw _privateConstructorUsedError;
   String get imageUrl => throw _privateConstructorUsedError;
   bool get alreadyExists => throw _privateConstructorUsedError;
-  String get type => throw _privateConstructorUsedError;
+  MangaTypeEnum get type => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
   num? get score => throw _privateConstructorUsedError;
@@ -51,7 +51,7 @@ abstract class $MangaMetadataCopyWith<$Res> {
       List<String> titles,
       String imageUrl,
       bool alreadyExists,
-      String type,
+      MangaTypeEnum type,
       String description,
       String status,
       num? score,
@@ -110,7 +110,7 @@ class _$MangaMetadataCopyWithImpl<$Res, $Val extends MangaMetadata>
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
+              as MangaTypeEnum,
       description: null == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -153,7 +153,7 @@ abstract class _$$MangaMetadataImplCopyWith<$Res>
       List<String> titles,
       String imageUrl,
       bool alreadyExists,
-      String type,
+      MangaTypeEnum type,
       String description,
       String status,
       num? score,
@@ -210,7 +210,7 @@ class __$$MangaMetadataImplCopyWithImpl<$Res>
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
+              as MangaTypeEnum,
       description: null == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -278,7 +278,7 @@ class _$MangaMetadataImpl implements _MangaMetadata {
   @override
   final bool alreadyExists;
   @override
-  final String type;
+  final MangaTypeEnum type;
   @override
   final String description;
   @override
@@ -365,7 +365,7 @@ abstract class _MangaMetadata implements MangaMetadata {
       required final List<String> titles,
       required final String imageUrl,
       required final bool alreadyExists,
-      required final String type,
+      required final MangaTypeEnum type,
       required final String description,
       required final String status,
       final num? score,
@@ -387,7 +387,7 @@ abstract class _MangaMetadata implements MangaMetadata {
   @override
   bool get alreadyExists;
   @override
-  String get type;
+  MangaTypeEnum get type;
   @override
   String get description;
   @override

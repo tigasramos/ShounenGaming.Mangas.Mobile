@@ -28,23 +28,31 @@ class MangaSourcesController extends StateNotifier<MangaSourcesState> {
 
   Future fetchMangaSources() async {
     state = state.copyWith(isLoadingExistingSources: true);
-    var sources =
-        await ref.watch(mangaRepositoryProvider).getMangaSourcesById(mangaId);
-    state = state.copyWith(
-        isLoadingExistingSources: false,
-        existingSources: sources.toList(),
-        selectedScrapped: sources.toList());
+    try {
+      var sources =
+          await ref.watch(mangaRepositoryProvider).getMangaSourcesById(mangaId);
+      state = state.copyWith(
+          isLoadingExistingSources: false,
+          existingSources: sources.toList(),
+          selectedScrapped: sources.toList());
+    } catch (ex) {
+      state = state.copyWith(isLoadingExistingSources: false);
+    }
   }
 
   Future searchMangaScrappers() async {
     state = state.copyWith(isLoadingNewScrappers: true);
-    var scrappedList = await ref
-        .watch(mangaRepositoryProvider)
-        .searchMangaSource(searchController.text);
-    scrappedList
-        .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
-    state = state.copyWith(
-        isLoadingNewScrappers: false, scrappedList: scrappedList);
+    try {
+      var scrappedList = await ref
+          .watch(mangaRepositoryProvider)
+          .searchMangaSource(searchController.text);
+      scrappedList
+          .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+      state = state.copyWith(
+          isLoadingNewScrappers: false, scrappedList: scrappedList);
+    } catch (ex) {
+      state = state.copyWith(isLoadingNewScrappers: false);
+    }
   }
 
   Future addMangaSources() async {

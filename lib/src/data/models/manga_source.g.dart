@@ -35,4 +35,7 @@ const _$MangaSourceEnumEnumMap = {
   MangaSourceEnum.YES_MANGAS: 'YES_MANGAS',
   MangaSourceEnum.MANGAS_DEX_PT: 'MANGAS_DEX_PT',
   MangaSourceEnum.MANGAS_DEX_EN: 'MANGAS_DEX_EN',
+  MangaSourceEnum.MANGA_CLASH: 'MANGA_CLASH',
+  MangaSourceEnum.RANDOM_SCAN: 'RANDOM_SCAN',
+  MangaSourceEnum.SAIKAI_SCANS: 'SAIKAI_SCANS',
 };

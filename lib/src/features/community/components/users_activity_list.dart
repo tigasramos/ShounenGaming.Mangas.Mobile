@@ -10,7 +10,7 @@ class UsersAtivityList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(12),
+      padding: EdgeInsets.all(14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

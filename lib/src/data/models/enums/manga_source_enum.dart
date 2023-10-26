@@ -11,4 +11,7 @@ enum MangaSourceEnum {
   YES_MANGAS,
   MANGAS_DEX_PT,
   MANGAS_DEX_EN,
+  MANGA_CLASH,
+  RANDOM_SCAN,
+  SAIKAI_SCANS,
 }

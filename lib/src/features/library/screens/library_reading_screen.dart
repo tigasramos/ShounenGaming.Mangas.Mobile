@@ -293,14 +293,38 @@ class LibraryReadingMangaTile extends ConsumerWidget {
                   ),
                   ClipRRect(
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    child: LinearProgressIndicator(
-                      minHeight: 9,
-                      color: palette[1],
-                      value: mangaUserData.filteredTotalChapters == 0
-                          ? 0
-                          : mangaUserData.filteredReadChapters /
-                              mangaUserData.filteredTotalChapters,
-                    ),
+                    child: Container(
+                        height: 9,
+                        color: Colors.grey,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: (mangaUserData.filteredTotalChapters == 0
+                                      ? 0
+                                      : mangaUserData.filteredReadChapters /
+                                          mangaUserData.filteredTotalChapters *
+                                          100)
+                                  .toInt(),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                        colors: [palette[0], palette[2]],
+                                        begin: Alignment.bottomLeft,
+                                        end: Alignment.topRight)),
+                              ),
+                            ),
+                            Spacer(
+                              flex: 100 -
+                                  (mangaUserData.filteredTotalChapters == 0
+                                          ? 0
+                                          : mangaUserData.filteredReadChapters /
+                                              mangaUserData
+                                                  .filteredTotalChapters *
+                                              100)
+                                      .toInt(),
+                            )
+                          ],
+                        )),
                   ),
                   const Spacer(),
                   Row(

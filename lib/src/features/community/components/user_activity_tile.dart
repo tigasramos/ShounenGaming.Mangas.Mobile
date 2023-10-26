@@ -19,8 +19,8 @@ class UserActivityTile extends StatelessWidget {
     return Container(
       height: 80,
       decoration: BoxDecoration(
-        color: Color.fromARGB(122, 55, 55, 55),
-        borderRadius: BorderRadius.circular(4),
+        color: Color.fromARGB(100, 55, 55, 55),
+        borderRadius: BorderRadius.circular(2),
       ),
       child: Row(
         children: [
@@ -34,8 +34,8 @@ class UserActivityTile extends StatelessWidget {
             },
             child: ClipRRect(
                 borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(4),
-                    bottomLeft: Radius.circular(4)),
+                    topLeft: Radius.circular(2),
+                    bottomLeft: Radius.circular(2)),
                 child: CachedNetworkImage(
                     fit: BoxFit.fitWidth,
                     width: 55,
@@ -115,24 +115,28 @@ class UserActivityTile extends StatelessWidget {
     switch (activity.activityType) {
       case UserActivityTypeEnum.ADD_MANGA:
         return RichText(
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             text: TextSpan(
                 style: TextStyle(
                   fontSize: 11,
-                  color: Colors.grey[400],
+                  color: Colors.grey[300],
                 ),
                 children: [
-              TextSpan(text: "Added "),
-              TextSpan(
-                  text: "${activity.manga.name}",
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.w600))
-            ]));
+                  TextSpan(text: "Added "),
+                  TextSpan(
+                      text: "${activity.manga.name}",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.w600))
+                ]));
       case UserActivityTypeEnum.CHANGE_STATUS:
         return RichText(
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             text: TextSpan(
                 style: TextStyle(
                   fontSize: 11,
-                  color: Colors.grey[400],
+                  color: Colors.grey[300],
                 ),
                 children: activity.previousState == null
                     ? [
@@ -171,42 +175,50 @@ class UserActivityTile extends StatelessWidget {
                           ]));
       case UserActivityTypeEnum.SEE_CHAPTER:
         return RichText(
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             text: TextSpan(
                 style: TextStyle(
                   fontSize: 11,
-                  color: Colors.grey[400],
+                  color: Colors.grey[300],
                 ),
                 children: [
-              TextSpan(
-                  text: activity.firstChapterRead == activity.lastChapterRead
-                      ? "Read chapter "
-                      : "Read chapters "),
-              TextSpan(
-                  text: activity.firstChapterRead == activity.lastChapterRead
-                      ? "${removeDecimalZeroFormat(activity.firstChapterRead)}"
-                      : "${removeDecimalZeroFormat(activity.firstChapterRead)} - ${removeDecimalZeroFormat(activity.lastChapterRead)}",
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.w600))
-            ]));
+                  TextSpan(
+                      text:
+                          activity.firstChapterRead == activity.lastChapterRead
+                              ? "Read chapter "
+                              : "Read chapters "),
+                  TextSpan(
+                      text: activity.firstChapterRead ==
+                              activity.lastChapterRead
+                          ? "${removeDecimalZeroFormat(activity.firstChapterRead)}"
+                          : "${removeDecimalZeroFormat(activity.firstChapterRead)} - ${removeDecimalZeroFormat(activity.lastChapterRead)}",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.w600))
+                ]));
       case UserActivityTypeEnum.UNSEE_CHAPTER:
         return RichText(
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             text: TextSpan(
                 style: TextStyle(
                   fontSize: 11,
-                  color: Colors.grey[400],
+                  color: Colors.grey[300],
                 ),
                 children: [
-              TextSpan(
-                  text: activity.firstChapterRead == activity.lastChapterRead
-                      ? "Unread chapter "
-                      : "Unread chapters "),
-              TextSpan(
-                  text: activity.firstChapterRead == activity.lastChapterRead
-                      ? "${removeDecimalZeroFormat(activity.firstChapterRead)}"
-                      : "${removeDecimalZeroFormat(activity.firstChapterRead)} - ${removeDecimalZeroFormat(activity.lastChapterRead)}",
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.w600))
-            ]));
+                  TextSpan(
+                      text:
+                          activity.firstChapterRead == activity.lastChapterRead
+                              ? "Unread chapter "
+                              : "Unread chapters "),
+                  TextSpan(
+                      text: activity.firstChapterRead ==
+                              activity.lastChapterRead
+                          ? "${removeDecimalZeroFormat(activity.firstChapterRead)}"
+                          : "${removeDecimalZeroFormat(activity.firstChapterRead)} - ${removeDecimalZeroFormat(activity.lastChapterRead)}",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.w600))
+                ]));
       default:
         return RichText(text: TextSpan());
     }
