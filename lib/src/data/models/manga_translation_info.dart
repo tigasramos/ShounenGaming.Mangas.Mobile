@@ -1,63 +1,18 @@
-import 'dart:convert';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'enums/translation_language_enum.dart';
 
-class MangaTranslationInfo {
-  int id;
-  TranslationLanguageEnum language;
-  DateTime createdAt;
-  MangaTranslationInfo({
-    required this.id,
-    required this.language,
-    required this.createdAt,
-  });
+part 'manga_translation_info.freezed.dart';
+part 'manga_translation_info.g.dart';
 
-  MangaTranslationInfo copyWith({
-    int? id,
-    TranslationLanguageEnum? language,
-    DateTime? createdAt,
-  }) {
-    return MangaTranslationInfo(
-      id: id ?? this.id,
-      language: language ?? this.language,
-      createdAt: createdAt ?? this.createdAt,
-    );
-  }
+@freezed
+class MangaTranslationInfo with _$MangaTranslationInfo {
+  factory MangaTranslationInfo({
+    required int id,
+    required TranslationLanguageEnum language,
+    required DateTime createdAt,
+  }) = _MangaTranslationInfo;
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'id': id,
-      'language': language.name,
-      'createdAt': createdAt.toString(),
-    };
-  }
-
-  factory MangaTranslationInfo.fromMap(Map<String, dynamic> map) {
-    return MangaTranslationInfo(
-      id: map['id'] as int,
-      language: TranslationLanguageEnum.values.byName(map['language']),
-      createdAt: DateTime.parse(map['createdAt']),
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory MangaTranslationInfo.fromJson(String source) =>
-      MangaTranslationInfo.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  String toString() =>
-      'MangaTranslation(id: $id, language: $language, createdAt: $createdAt)';
-
-  @override
-  bool operator ==(covariant MangaTranslationInfo other) {
-    if (identical(this, other)) return true;
-
-    return other.language == language &&
-        other.createdAt == createdAt &&
-        other.id == id;
-  }
-
-  @override
-  int get hashCode => language.hashCode ^ createdAt.hashCode ^ id.hashCode;
+  factory MangaTranslationInfo.fromJson(Map<String, dynamic> json) =>
+      _$MangaTranslationInfoFromJson(json);
 }

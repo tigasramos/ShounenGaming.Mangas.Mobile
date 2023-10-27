@@ -24,7 +24,7 @@ class AuthRepository {
     var response = await _client
         .get('$_baseURL/user/login?username=$username&token=$token');
     if (response.statusCode == 200) {
-      var authResponse = AuthResponse.fromMap(response.data);
+      var authResponse = AuthResponse.fromJson(response.data);
 
       return authResponse;
     }
@@ -37,7 +37,7 @@ class AuthRepository {
       var response = await _client.get('$_baseURL/refreshToken',
           options: Options(headers: {'refreshToken': token}));
 
-      var authResponse = AuthResponse.fromMap(response.data);
+      var authResponse = AuthResponse.fromJson(response.data);
       return authResponse;
     } on Exception {
       return null;
