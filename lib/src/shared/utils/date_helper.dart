@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 DateTime dateOnly(DateTime date) {
   return DateTime(date.year, date.month, date.day);
 }
@@ -9,7 +11,7 @@ String howMuchHasPassed(DateTime date) {
   var difference = todayTreated.difference(dateTreated).inDays;
 
   if (dateTreated == todayTreated)
-    return "${date.hour}:${date.minute}";
+    return DateFormat("HH:mm").format(date);
   else if (dateTreated.add(Duration(days: 1)) == todayTreated)
     return "Yesterday";
   else if (dateTreated.isAfter(todayTreated.subtract(Duration(days: 31))))

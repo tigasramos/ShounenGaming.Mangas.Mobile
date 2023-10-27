@@ -1,4 +1,6 @@
+import 'package:dash_flags/dash_flags.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_source_enum.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_type_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_status_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/nsfw_behaviour_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/reading_mode_type_enum.dart';
@@ -20,6 +22,17 @@ String translateMangaStatus(MangaUserStatusEnum? status) {
       return "Reading";
     default:
       return "";
+  }
+}
+
+Country getFlag(MangaTypeEnum type) {
+  switch (type) {
+    case MangaTypeEnum.MANWHA:
+      return Country.kr;
+    case MangaTypeEnum.MANHUA:
+      return Country.cn;
+    default:
+      return Country.jp;
   }
 }
 

@@ -87,7 +87,7 @@ class StatusDistributionSection extends StatelessWidget {
                       text: TextSpan(children: [
                     TextSpan(
                         text:
-                            "${mangaStatusStats[MangaUserStatusEnum.READING]}",
+                            "${mangaStatusStats[MangaUserStatusEnum.READING] ?? 0}",
                         style: TextStyle(
                             color: Colors.blue[400],
                             fontWeight: FontWeight.w700)),
@@ -120,7 +120,7 @@ class StatusDistributionSection extends StatelessWidget {
                       text: TextSpan(children: [
                     TextSpan(
                         text:
-                            "${mangaStatusStats[MangaUserStatusEnum.COMPLETED]}",
+                            "${mangaStatusStats[MangaUserStatusEnum.COMPLETED] ?? 0}",
                         style: TextStyle(
                             color: Colors.green[500],
                             fontWeight: FontWeight.w700)),
@@ -153,7 +153,7 @@ class StatusDistributionSection extends StatelessWidget {
                       text: TextSpan(children: [
                     TextSpan(
                         text:
-                            "${mangaStatusStats[MangaUserStatusEnum.PLANNED]}",
+                            "${mangaStatusStats[MangaUserStatusEnum.PLANNED] ?? 0}",
                         style: TextStyle(
                             color: Colors.purple[400],
                             fontWeight: FontWeight.w700)),
@@ -194,7 +194,7 @@ class StatusDistributionSection extends StatelessWidget {
                       text: TextSpan(children: [
                     TextSpan(
                         text:
-                            "${mangaStatusStats[MangaUserStatusEnum.ON_HOLD]}",
+                            "${mangaStatusStats[MangaUserStatusEnum.ON_HOLD] ?? 0}",
                         style: TextStyle(
                             color: Colors.orange[700],
                             fontWeight: FontWeight.w700)),
@@ -227,7 +227,7 @@ class StatusDistributionSection extends StatelessWidget {
                       text: TextSpan(children: [
                     TextSpan(
                         text:
-                            "${mangaStatusStats[MangaUserStatusEnum.DROPPED]}",
+                            "${mangaStatusStats[MangaUserStatusEnum.DROPPED] ?? 0}",
                         style: TextStyle(
                             color: Colors.red[700],
                             fontWeight: FontWeight.w700)),

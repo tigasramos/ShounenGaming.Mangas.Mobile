@@ -28,7 +28,7 @@ final userActivityListProvider = FutureProvider.family
   var mangaStatsRepo = ref.read(mangaUsersStatsRepositoryProvider);
   var data = await mangaStatsRepo.getMangaDataByStatusByUser(userId);
 
-  return data
+  return data.where((element) => !element.manga.isNSFW).toList()
     ..sort(
       (a, b) => b.readAt.compareTo(a.readAt),
     );

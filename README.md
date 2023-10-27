@@ -14,26 +14,16 @@ Anyone who is in our Shounen Gaming's Discord Server is able to login and use ou
 
 My main motivation developing this was not only to have a tool for me and my "Weeb" friends but to learn Riverpod and develop my Flutter skills at the same time.
 
-FontAwesome??
-Explore more about pageview instead of listview to see chapter (https://stackoverflow.com/questions/53843828/pageview-with-pages-in-customscrollview-with-flutter)
-Automapper instead of map
+## Others
 
-Add MAL & AL Accounts and save automatically
-History Screen #?
-Library Filters #2
-Top 3 Favorites, Recomendations
-
-Refactor Library Code #2
-
-See Later:
-Shiny Images for Popular or Favorites??
-
+Commands:
+flutter pub run build_runner watch --delete-conflicting-outputs  
 flutter build apk --build-name=1.0.1
 
-TODO:
-Search Cards
-Manga Profile Revamp
-Search Filters
+Next Steps:
+Manga Profile Revamp (UI, Show Users Scores, Change Data from BottomSheet)
+Search (Filters)
+Community (Top Readers ?)
 
-Mangas Queue Test (?)
-?? Top Users Icon, Name e Mangas Completed + Reading + OnHold
+Later:
+Top 3 Favorites, Recomendations from Users, Add MAL & AL Accounts and save automatically

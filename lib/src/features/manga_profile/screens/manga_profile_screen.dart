@@ -11,7 +11,6 @@ import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
 import 'package:intl/intl.dart';
 import 'package:readmore/readmore.dart';
-import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_type_enum.dart';
 
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_user_status_enum.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/roles_enum.dart';
@@ -482,13 +481,7 @@ class MangaDetailsSection extends StatelessWidget {
             const SizedBox(
               width: 4,
             ),
-            CountryFlag(
-                height: 13,
-                country: manga.type == MangaTypeEnum.MANGA
-                    ? Country.jp
-                    : (manga.type == MangaTypeEnum.MANHUA
-                        ? Country.cn
-                        : Country.kr)),
+            CountryFlag(height: 13, country: getFlag(manga.type)),
             const SizedBox(
               width: 10,
             ),

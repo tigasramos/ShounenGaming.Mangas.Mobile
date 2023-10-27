@@ -7,6 +7,7 @@ import 'package:shounengaming_mangas_mobile/src/features/configurations/screens/
 import 'package:shounengaming_mangas_mobile/src/features/manga_add/screens/manga_add_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/mangas_queue/mangas_queue_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/season_mangas/screens/season_mangas_screen.dart';
+import 'package:shounengaming_mangas_mobile/src/features/users_list/screens/users_list_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/features/waiting_mangas/screens/waiting_mangas_screen.dart';
 import 'package:shounengaming_mangas_mobile/src/shared/utils/constants.dart';
 import 'package:shounengaming_mangas_mobile/src/shared/utils/theme.dart';
@@ -58,7 +59,21 @@ class MoreOptionsScreen extends ConsumerWidget {
                               'Season Mangas',
                               (context) => const SeasonMangasScreen(),
                               "Mangas from Animes being released")),
-                      if (appState.loggedUser?.role != RolesEnum.USER) ...[
+                      Expanded(
+                        child: MoreOptionsButtonTile(
+                            Icons.group,
+                            'Users',
+                            (context) => const UsersListScreen(),
+                            "List of All SG Users"),
+                      )
+                    ],
+                  ),
+                  if (appState.loggedUser?.role != RolesEnum.USER) ...[
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      children: [
                         Expanded(
                           child: MoreOptionsButtonTile(
                               Icons.checklist,
@@ -66,9 +81,9 @@ class MoreOptionsScreen extends ConsumerWidget {
                               (context) => const WaitingMangasScreen(),
                               "Mangas Requested by the Users"),
                         )
-                      ]
-                    ],
-                  ),
+                      ],
+                    ),
+                  ],
                   SizedBox(
                     height: 10,
                   ),

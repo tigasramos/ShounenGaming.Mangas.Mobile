@@ -20,7 +20,7 @@ class UserActivityTile extends StatelessWidget {
       height: 80,
       decoration: BoxDecoration(
         color: Color.fromARGB(100, 55, 55, 55),
-        borderRadius: BorderRadius.circular(2),
+        borderRadius: BorderRadius.circular(3),
       ),
       child: Row(
         children: [
@@ -34,8 +34,8 @@ class UserActivityTile extends StatelessWidget {
             },
             child: ClipRRect(
                 borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(2),
-                    bottomLeft: Radius.circular(2)),
+                    topLeft: Radius.circular(3),
+                    bottomLeft: Radius.circular(3)),
                 child: CachedNetworkImage(
                     fit: BoxFit.fitWidth,
                     width: 55,

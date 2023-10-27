@@ -14,9 +14,30 @@ class UsersAtivityList extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Activity',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          Row(
+            children: [
+              Text(
+                'Activity',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(
+                width: 20,
+              ),
+              Expanded(
+                child: Consumer(
+                  builder: (context, ref, child) => LinearProgressIndicator(
+                    value: ref.watch(communityActivitiesProvider).when(
+                          skipLoadingOnRefresh: false,
+                          data: (data) => 1,
+                          error: (error, stackTrace) => 1,
+                          loading: () => null,
+                        ),
+                    minHeight: 1,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              )
+            ],
           ),
           SizedBox(
             height: 10,
@@ -25,6 +46,7 @@ class UsersAtivityList extends StatelessWidget {
             builder: (context, ref, child) =>
                 ref.watch(communityActivitiesProvider).when(
                       data: (data) => ListView.separated(
+                          physics: NeverScrollableScrollPhysics(),
                           separatorBuilder: (context, index) => SizedBox(
                                 height: 15,
                               ),

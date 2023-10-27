@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shounengaming_mangas_mobile/main.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/change_user_mangas_configs.dart';
+import 'package:shounengaming_mangas_mobile/src/data/models/simple_user.dart';
 
 import '../models/user.dart';
 import '../models/user_mangas_configs.dart';
@@ -25,6 +26,11 @@ class UserRepository {
   Future<User> getUserById(int id) async {
     var response = await _client.get('$_baseURL/$id');
     return User.fromJson(response.data);
+  }
+
+  Future<List<SimpleUser>> getAllUsers() async {
+    var response = await _client.get('$_baseURL');
+    return (response.data as List).map((m) => SimpleUser.fromJson(m)).toList();
   }
 
   Future<UserMangasConfigs> getUserConfigsForMangas() async {

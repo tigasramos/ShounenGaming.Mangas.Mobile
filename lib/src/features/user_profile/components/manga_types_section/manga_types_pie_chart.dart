@@ -2,6 +2,7 @@ import 'package:dash_flags/dash_flags.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:shounengaming_mangas_mobile/src/data/models/enums/manga_type_enum.dart';
+import 'package:shounengaming_mangas_mobile/src/shared/utils/enums_translation.dart';
 import 'package:shounengaming_mangas_mobile/src/shared/utils/theme.dart';
 
 class MangaTypesPieChart extends StatefulWidget {
@@ -71,11 +72,7 @@ class _MangaTypesPieChartState extends State<MangaTypesPieChart> {
               ? palette[2]
               : palette[3];
       final value = e.value / totalValue * 100;
-      final flag = e.key == MangaTypeEnum.MANGA
-          ? Country.jp
-          : e.key == MangaTypeEnum.MANHUA
-              ? Country.cn
-              : Country.kr;
+      final flag = getFlag(e.key);
 
       list.add(PieChartSectionData(
         color: color,

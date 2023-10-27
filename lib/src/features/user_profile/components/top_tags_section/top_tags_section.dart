@@ -9,13 +9,16 @@ class TopTagsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 20, left: 20, right: 20),
+      margin: EdgeInsets.only(bottom: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Top Tags',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              'Top Tags',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
           ),
           SizedBox(
             height: 10,
@@ -30,10 +33,11 @@ class TopTagsSection extends StatelessWidget {
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 shrinkWrap: true,
+                padding: EdgeInsets.symmetric(horizontal: 20),
                 separatorBuilder: (context, index) => SizedBox(
                   width: 10,
                 ),
-                itemCount: 4,
+                itemCount: tagsStats.length,
                 itemBuilder: (context, index) => Container(
                   padding:
                       EdgeInsets.only(top: 2, bottom: 2, left: 14, right: 14),

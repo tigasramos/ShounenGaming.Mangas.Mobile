@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -29,7 +30,7 @@ class UserActivityHeatmap extends StatelessWidget {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             Container(
-              padding: EdgeInsets.all(12),
+              padding: EdgeInsets.symmetric(vertical: 12),
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
@@ -69,7 +70,7 @@ class ActivityHeatmapWeekDay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final numOfWeekDays = (MediaQuery.sizeOf(context).width - 122) ~/ 25 -
+    final numOfWeekDays = (MediaQuery.sizeOf(context).width - 127) ~/ 25 -
         (DateTime.now().weekday > (weekDay - 1) ? 0 : 1);
 
     DateTime? lastWeekDay;
@@ -88,9 +89,11 @@ class ActivityHeatmapWeekDay extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-              width: 80,
-              child: Text(
+              width: 90,
+              child: AutoSizeText(
                 day,
+                maxLines: 1,
+                minFontSize: 3,
                 textAlign: TextAlign.end,
               )),
           SizedBox(

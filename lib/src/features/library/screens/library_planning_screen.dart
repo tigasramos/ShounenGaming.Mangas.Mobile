@@ -115,7 +115,7 @@ class LibraryPlanningMangTile extends StatelessWidget {
                         fontSize: 18, fontWeight: FontWeight.w500, height: 1.2),
                   ),
                   Text(
-                    '${mangaUserData.manga.type.name}, ${mangaUserData.manga.startedAt?.year ?? "?"} - ${mangaUserData.manga.finishedAt?.year ?? "?"}',
+                    '${mangaUserData.manga.type.name}, ${mangaUserData.manga.startedAt?.year ?? "?"} - ${mangaUserData.manga.finishedAt?.year ?? "Releasing"}',
                     style: const TextStyle(color: Colors.grey, fontSize: 10),
                   ),
                   Text(
